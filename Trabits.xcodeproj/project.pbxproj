@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 19020CFE2A7D98CF00616BBE /* Trabits.xcdatamodeld */; };
+		19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19020D022A7DBC8B00616BBE /* EmptyStateView.swift */; };
 		194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59C2A40F49900383B29 /* AppDelegate.swift */; };
 		194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59E2A40F49900383B29 /* SceneDelegate.swift */; };
 		194AC5A12A40F49900383B29 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC5A02A40F49900383B29 /* CategoriesViewController.swift */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		19020CFF2A7D98CF00616BBE /* Trabits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Trabits.xcdatamodel; sourceTree = "<group>"; };
+		19020D022A7DBC8B00616BBE /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		194AC5992A40F49900383B29 /* Trabits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trabits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194AC59C2A40F49900383B29 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		194AC59E2A40F49900383B29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		19020D012A7DBC6B00616BBE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				19020D022A7DBC8B00616BBE /* EmptyStateView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		194AC5902A40F49900383B29 = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +94,7 @@
 		194AC59B2A40F49900383B29 /* Trabits */ = {
 			isa = PBXGroup;
 			children = (
+				19020D012A7DBC6B00616BBE /* Views */,
 				19BB9BE62A6F285600D328BD /* Assets */,
 				19BB9BE52A6F284600D328BD /* App */,
 				19BB9BE12A6F168900D328BD /* CoreData */,
@@ -229,6 +240,7 @@
 			files = (
 				19BB9BE92A6F313100D328BD /* CategoryDetailHabitCell.swift in Sources */,
 				194AC5A12A40F49900383B29 /* CategoriesViewController.swift in Sources */,
+				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
 				19C539392A7D4E1B003D9C4C /* TodayViewController.swift in Sources */,
 				19C539372A7C1EE4003D9C4C /* EditHabitViewController.swift in Sources */,
 				19C539332A76BD2F003D9C4C /* CategoryDetailCell.swift in Sources */,

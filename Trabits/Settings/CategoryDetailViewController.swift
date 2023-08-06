@@ -15,6 +15,7 @@ class CategoryDetailViewController: UIViewController {
   private var fetchResultsController: NSFetchedResultsController<Habit>!
   private var dataSource: CategoryDetailDataSource!
   private let tableView = UITableView()
+  private let editHabitsBarButton = UIBarButtonItem(title: "Edit Habits")
 
   init(category: Category) {
     self.category = category
@@ -35,6 +36,11 @@ class CategoryDetailViewController: UIViewController {
     let navigationViewController = UINavigationController(rootViewController: addHabitViewController)
     present(navigationViewController, animated: true)
   }
+
+  @objc private func editHabits() {
+    tableView.isEditing.toggle()
+    editHabitsBarButton.title = tableView.isEditing ? "Done" : "Edit Habits"
+  }
 }
 
 enum CategoryDetailTableViewSection: String {
@@ -47,8 +53,59 @@ enum CategoryDetailTableViewItem: Hashable {
   case habit(NSManagedObjectID)
 }
 
+protocol CategoryDetailDataSourceDelegate {
+  func deleteHabit(at indexPath: IndexPath)
+  func moveHabit(at sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+}
+
+extension CategoryDetailViewController: CategoryDetailDataSourceDelegate {
+  func deleteHabit(at indexPath: IndexPath) {
+    let habit = fetchResultsController.object(at: indexPath)
+    let itemsCount = (fetchResultsController.sections?[0].numberOfObjects ?? 0)
+    for i in (indexPath.row + 1)..<itemsCount {
+      let item = fetchResultsController.object(at: IndexPath(row: i, section: 0))
+      item.orderPriority -= 1
+    }
+
+    context.delete(habit)
+
+    do {
+      try context.save()
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
+  }
+
+  func moveHabit(at sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    let habit = fetchResultsController.object(at: sourceIndexPath)
+    habit.orderPriority = destinationIndexPath.row
+
+    if sourceIndexPath.row < destinationIndexPath.row {
+      for i in (sourceIndexPath.row + 1)...(destinationIndexPath.row) {
+        let item = fetchResultsController.object(at: IndexPath(row: i, section: 0))
+        item.orderPriority -= 1
+      }
+    } else {
+      for i in (destinationIndexPath.row)..<(sourceIndexPath.row) {
+        let item = fetchResultsController.object(at: IndexPath(row: i, section: 0))
+        item.orderPriority += 1
+      }
+    }
+
+    Task {
+      do {
+        try context.save()
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
+    }
+  }
+}
+
 class CategoryDetailDataSource: UITableViewDiffableDataSource<CategoryDetailTableViewSection, CategoryDetailTableViewItem> {
-//  var delegate: CategoryDataSourceDelegate?
+  var delegate: CategoryDetailDataSourceDelegate?
 
   override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
     indexPath.section != 0
@@ -59,30 +116,60 @@ class CategoryDetailDataSource: UITableViewDiffableDataSource<CategoryDetailTabl
   }
 
   override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//    delegate?.moveCategory(at: sourceIndexPath, to: destinationIndexPath)
+    delegate?.moveHabit(
+      at: IndexPath(row: sourceIndexPath.row, section: 0),
+      to: IndexPath(row: destinationIndexPath.row, section: 0)
+    )
   }
 
   override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
-//      delegate?.deleteCategory(at: indexPath)
+      delegate?.deleteHabit(at: IndexPath(row: indexPath.row, section: 0))
     }
   }
 }
 
 extension CategoryDetailViewController: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-    let snapshot = snapshot as NSDiffableDataSourceSnapshot<AnyHashable, NSManagedObjectID>
 
-    var newSnapshot = dataSource.snapshot()
-    newSnapshot.deleteItems(newSnapshot.itemIdentifiers(inSection: .habits))
+    let fetchedSnapshot = snapshot as NSDiffableDataSourceSnapshot<AnyHashable, NSManagedObjectID>
+    var currentSnapshot = dataSource.snapshot()
 
-    let items = snapshot.itemIdentifiers.map { CategoryDetailTableViewItem.habit($0) }
-    newSnapshot.appendItems(items, toSection: .habits)
-    dataSource.apply(newSnapshot, animatingDifferences: false)
+    let items = fetchedSnapshot.itemIdentifiers.map { CategoryDetailTableViewItem.habit($0) }
+    currentSnapshot.deleteItems(currentSnapshot.itemIdentifiers(inSection: .habits))
+    currentSnapshot.appendItems(items, toSection: .habits)
+
+    var reloadIdentifiers = [CategoryDetailTableViewItem]()
+    if #available(iOS 15.0, *) {
+      reloadIdentifiers.append(contentsOf: fetchedSnapshot.reloadedItemIdentifiers.map { CategoryDetailTableViewItem.habit($0)
+      })
+    } else {
+      let reloadItems: [CategoryDetailTableViewItem] = fetchedSnapshot.itemIdentifiers.compactMap { identifier in
+        let transformedIdentifier = CategoryDetailTableViewItem.habit(identifier)
+
+        guard let fetchedIndex = fetchedSnapshot.indexOfItem(identifier),
+              let currentIndex = currentSnapshot.indexOfItem(transformedIdentifier),
+              fetchedIndex + 1 == currentIndex else { return nil }
+
+        guard context.object(with: identifier).isUpdated else { return nil }
+        return transformedIdentifier
+      }
+      reloadIdentifiers.append(contentsOf: reloadItems)
+    }
+
+    currentSnapshot.reloadItems(reloadIdentifiers)
+    dataSource.apply(currentSnapshot, animatingDifferences: false)
   }
 }
 
 extension CategoryDetailViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let habit = fetchResultsController.object(at: IndexPath(row: indexPath.row, section: 0))
+    let editHabitViewController = EditHabitViewController(habit: habit)
+    let navigationViewController = UINavigationController(rootViewController: editHabitViewController)
+    present(navigationViewController, animated: true)
+  }
+
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
     guard section > 0 else {
       return nil
@@ -101,6 +188,14 @@ extension CategoryDetailViewController: UITableViewDelegate {
 
   func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
     section == 0 ? 0 : 40
+  }
+
+  func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+    if proposedDestinationIndexPath.section == 0 {
+      return sourceIndexPath
+    } else {
+      return proposedDestinationIndexPath
+    }
   }
 }
 
@@ -124,9 +219,9 @@ extension CategoryDetailViewController {
         }
         return cell
       }
-
       return nil
     }
+    dataSource.delegate = self
   }
 
   func applySnapshot() {
@@ -182,8 +277,10 @@ extension CategoryDetailViewController {
       tableView.sectionHeaderTopPadding = 0
     }
 
+    editHabitsBarButton.target = self
+    editHabitsBarButton.action = #selector(editHabits)
     let addHabitBarButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
-    navigationItem.rightBarButtonItem = addHabitBarButton
+    navigationItem.rightBarButtonItems = [editHabitsBarButton, addHabitBarButton]
 
     navigationController?.isToolbarHidden = true
   }

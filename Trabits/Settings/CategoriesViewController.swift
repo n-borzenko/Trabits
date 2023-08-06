@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-enum Section: String {
+enum CategoriesTableViewSection: String {
   case main
 }
 
@@ -48,8 +48,9 @@ class CategoriesViewController: UIViewController {
 
 extension CategoriesViewController: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-    let snapshot = snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
+    let snapshot = snapshot as NSDiffableDataSourceSnapshot<CategoriesTableViewSection, NSManagedObjectID>
     dataSource.apply(snapshot, animatingDifferences: false)
+    tableView.backgroundView?.isHidden = dataSource.snapshot().numberOfItems > 0
   }
 }
 
@@ -104,7 +105,7 @@ extension CategoriesViewController: CategoryDataSourceDelegate {
   }
 }
 
-class CategoryDataSource: UITableViewDiffableDataSource<Section, NSManagedObjectID> {
+class CategoryDataSource: UITableViewDiffableDataSource<CategoriesTableViewSection, NSManagedObjectID> {
   var delegate: CategoryDataSourceDelegate?
 
   override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -177,6 +178,9 @@ extension CategoriesViewController {
     tableView.delegate = self
     tableView.allowsSelection = true
     tableView.allowsMultipleSelection = false
+
+    let emptyView = EmptyStateView()
+    tableView.backgroundView = emptyView
 
     navigationItem.title = "Categories"
     navigationItem.largeTitleDisplayMode = .always

@@ -36,7 +36,7 @@ class CategoryDetailHabitCell: UITableViewCell {
   }
 
   func fill(with habit: Habit) {
-    titleLabel.text = habit.title
+    titleLabel.text = "\(habit.orderPriority): \(habit.title ?? "")"
 
     habit.category?.publisher(for: \.color)
       .map { $0?.cgColor }

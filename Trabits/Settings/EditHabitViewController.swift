@@ -19,6 +19,7 @@ class EditHabitViewController: UIViewController {
   var category: Category? = nil
   var habit: Habit? = nil
 
+  // edit existing habit
   init(habit: Habit) {
     self.habit = habit
     super.init(nibName: nil, bundle: nil)
@@ -28,6 +29,7 @@ class EditHabitViewController: UIViewController {
     categoryLabel.text = "Category: \(habit.category?.title ?? "Unknown")"
   }
 
+  // add new habit
   init(category: Category) {
     self.category = category
     super.init(nibName: nil, bundle: nil)
@@ -52,6 +54,7 @@ class EditHabitViewController: UIViewController {
       let habit = Habit(context: context)
       habit.title = textField.text
       habit.category = category
+      habit.orderPriority = Int(category?.habitsCount ?? 0)
     }
 
     if context.hasChanges {

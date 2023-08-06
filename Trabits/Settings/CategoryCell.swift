@@ -25,7 +25,7 @@ class CategoryCell: UITableViewCell {
   }
 
   func fill(with category: Category) {
-    titleLabel.text = "\(category.orderPriority): \(category.title!)"
+    titleLabel.text = "\(category.orderPriority): \(category.title ?? "")"
     habitsCountLabel.text = "\(category.habitsCount)"
     rectangleView.backgroundColor = category.color
   }
