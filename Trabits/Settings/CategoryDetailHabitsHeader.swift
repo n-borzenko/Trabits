@@ -72,8 +72,13 @@ extension CategoryDetailHabitsHeader {
     stackView.spacing = 8
     stackView.distribution = .equalSpacing
 
-    titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     stackView.addArrangedSubview(titleLabel)
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .title2)
+    titleLabel.adjustsFontForContentSizeCategory = true
+    titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
     stackView.addArrangedSubview(habitsCountLabel)
+    habitsCountLabel.font = UIFont.preferredFont(forTextStyle: .title3)
+    habitsCountLabel.adjustsFontForContentSizeCategory = true
   }
 }

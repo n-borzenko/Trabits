@@ -85,13 +85,19 @@ extension EditHabitViewController {
     stackView.widthAnchor.constraint(equalTo: safeArea.widthAnchor, multiplier: 0.7).isActive = true
 
     stackView.addArrangedSubview(categoryLabel)
+    categoryLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    categoryLabel.adjustsFontForContentSizeCategory = true
 
     let titleLabel = UILabel()
     titleLabel.text = "Habit title"
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.adjustsFontForContentSizeCategory = true
     stackView.addArrangedSubview(titleLabel)
 
-    textField.borderStyle = .roundedRect
     stackView.addArrangedSubview(textField)
+    textField.borderStyle = .roundedRect
+    textField.font = UIFont.preferredFont(forTextStyle: .body)
+    textField.adjustsFontForContentSizeCategory = true
 
     let cancelBarButton =  UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel))
     navigationItem.leftBarButtonItem = cancelBarButton

@@ -50,7 +50,9 @@ extension CategoryDetailHabitCell {
     contentView.addSubview(rectangleView)
     rectangleView.translatesAutoresizingMaskIntoConstraints = false
     rectangleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
-    rectangleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
+    let bottomConstraint = rectangleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4)
+    bottomConstraint.isActive = true
+    bottomConstraint.priority = .defaultHigh
     rectangleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4).isActive = true
     rectangleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4).isActive = true
 
@@ -63,6 +65,9 @@ extension CategoryDetailHabitCell {
     titleLabel.bottomAnchor.constraint(equalTo: rectangleView.bottomAnchor, constant: -8).isActive = true
     titleLabel.leadingAnchor.constraint(equalTo: rectangleView.leadingAnchor, constant: 16).isActive = true
     titleLabel.trailingAnchor.constraint(equalTo: rectangleView.trailingAnchor, constant: -16).isActive = true
+
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.adjustsFontForContentSizeCategory = true
 
     selectionStyle = .none
   }

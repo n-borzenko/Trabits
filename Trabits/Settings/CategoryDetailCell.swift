@@ -81,7 +81,9 @@ extension CategoryDetailCell {
     stackView.alignment = .fill
 
     stackView.addArrangedSubview(titleLabel)
-    titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+    titleLabel.numberOfLines = 0
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
+    titleLabel.adjustsFontForContentSizeCategory = true
 
     let buttonWrapper = UIStackView()
     stackView.addArrangedSubview(buttonWrapper)
@@ -98,6 +100,10 @@ extension CategoryDetailCell {
     editButton.layer.cornerRadius = 8
     editButton.widthAnchor.constraint(equalTo: buttonWrapper.widthAnchor, multiplier: 0.6).isActive = true
     buttonWrapper.addArrangedSubview(UIView(frame: CGRect.zero))
+    editButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+    editButton.titleLabel?.adjustsFontForContentSizeCategory = true
+    editButton.titleLabel?.lineBreakMode = .byTruncatingTail
+    editButton.titleLabel?.numberOfLines = 1
 
     selectionStyle = .none
   }

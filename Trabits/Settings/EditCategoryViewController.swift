@@ -82,10 +82,14 @@ extension EditCategoryViewController {
 
     let titleLabel = UILabel()
     titleLabel.text = "Title"
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.adjustsFontForContentSizeCategory = true
     stackView.addArrangedSubview(titleLabel)
 
-    textField.borderStyle = .roundedRect
     stackView.addArrangedSubview(textField)
+    textField.borderStyle = .roundedRect
+    textField.font = UIFont.preferredFont(forTextStyle: .body)
+    textField.adjustsFontForContentSizeCategory = true
 
     let colorStackView = UIStackView()
     colorStackView.axis = .horizontal
@@ -95,6 +99,8 @@ extension EditCategoryViewController {
 
     let colorLabel = UILabel()
     colorLabel.text = "Color"
+    colorLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    colorLabel.adjustsFontForContentSizeCategory = true
     colorStackView.addArrangedSubview(colorLabel)
     colorLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 

@@ -56,8 +56,13 @@ extension CategoryCell {
     stackView.trailingAnchor.constraint(equalTo: rectangleView.trailingAnchor, constant: -16).isActive = true
 
     stackView.addArrangedSubview(titleLabel)
+    titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.adjustsFontForContentSizeCategory = true
+
     stackView.addArrangedSubview(habitsCountLabel)
-    titleLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+    habitsCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    habitsCountLabel.adjustsFontForContentSizeCategory = true
 
     selectionStyle = .none
   }

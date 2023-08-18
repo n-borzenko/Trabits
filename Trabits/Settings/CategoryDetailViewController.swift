@@ -192,7 +192,7 @@ extension CategoryDetailViewController: UITableViewDelegate {
 
   func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
     if proposedDestinationIndexPath.section == 0 {
-      return sourceIndexPath
+      return IndexPath(row: 0, section: 1)
     } else {
       return proposedDestinationIndexPath
     }
