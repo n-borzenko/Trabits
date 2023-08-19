@@ -6,143 +6,24 @@
 //
 
 import UIKit
-
-class MyGradientView : UIView {
-    override static var layerClass: AnyClass { CAGradientLayer.self }
-}
-
-class CategoryListCell: UICollectionViewListCell {
-  override func updateConfiguration(using state: UICellConfigurationState) {
-    var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-
-    //      var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
-    //      backgroundConfiguration.backgroundColor = colors[indexPath.section].withAlphaComponent(0.3)
-    //      backgroundConfiguration.strokeColor = colors[indexPath.section]
-    //      backgroundConfiguration.strokeWidth = 2
-    //      backgroundConfiguration.cornerRadius = 16
-    //      backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-    //      cell.backgroundConfiguration = backgroundConfiguration
-
-    backgroundConfiguration.backgroundColor = .clear
-
-    if state.isHighlighted {
-      backgroundConfiguration.backgroundColor = .orange
-    }
-
-    if state.isSelected {
-      backgroundConfiguration.backgroundColor = .brown
-    }
-
-    if state.cellDropState == .targeted {
-      backgroundConfiguration.backgroundColor = .red
-    }
-
-    if state.cellDragState == .lifting {
-      backgroundConfiguration.backgroundColor = .purple
-    }
-
-    self.backgroundConfiguration = backgroundConfiguration
-  }
-}
-
-class HabitListCell: UICollectionViewListCell {
-  override func updateConfiguration(using state: UICellConfigurationState) {
-    var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-
-    //      var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
-    //      let view = MyGradientView()
-    //      (view.layer as! CAGradientLayer).colors = [
-    //        colors[indexPath.section].withAlphaComponent(0.5).cgColor,
-    //        UIColor.lightGray.withAlphaComponent(0.5).cgColor
-    //      ]
-    //      (view.layer as! CAGradientLayer).startPoint = CGPoint(x: 0, y: 0.5)
-    //      (view.layer as! CAGradientLayer).endPoint = CGPoint(x: 1, y: 0.5)
-    //      backgroundConfiguration.customView = view
-    //      backgroundConfiguration.backgroundColor = .purple.withAlphaComponent(0.2)
-    //      backgroundConfiguration.cornerRadius = 16
-    //      backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-    //      cell.backgroundConfiguration = backgroundConfiguration
-
-    backgroundConfiguration.backgroundColor = .clear
-
-    if state.isHighlighted {
-      backgroundConfiguration.backgroundColor = .orange
-    }
-
-    if state.isSelected {
-      backgroundConfiguration.backgroundColor = .brown
-    }
-
-    if state.cellDragState == .lifting {
-      backgroundConfiguration.backgroundColor = .purple
-    }
-
-    self.backgroundConfiguration = backgroundConfiguration
-  }
-}
+import CoreData
 
 class HabitsListViewController: UIViewController {
-  typealias DataSource = UICollectionViewDiffableDataSource<Int, ItemIdentifier>
-  typealias Snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifier>
+  private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
 
-  private var dataSource: DataSource!
   private var safeArea: UILayoutGuide!
+  private var dataSource: HabitsListDataProvider.DataSource!
+  private var dataProvider: HabitsListDataProvider!
 
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
 
-  enum ItemIdentifier: Hashable {
-    case category(String)
-    case habit(String)
-  }
-
-  private var expandedCategories = Set<ItemIdentifier>()
-
-  private var items = [
-    [
-      ItemIdentifier.category("Group of items #1"),
-      ItemIdentifier.habit("Test item 1"),
-      ItemIdentifier.habit("Test item 2"),
-      ItemIdentifier.habit("Test item 3"),
-      ItemIdentifier.habit("Test item 4"),
-      ItemIdentifier.habit("Test item 5"),
-      ItemIdentifier.habit("Test item 6"),
-      ItemIdentifier.habit("Test item 7")
-    ],
-    [
-      ItemIdentifier.category("Group of items #2"),
-      ItemIdentifier.habit("Not not test item 1"),
-      ItemIdentifier.habit("Not not test item 2"),
-      ItemIdentifier.habit("Not not test item 3")
-    ],
-    [
-      ItemIdentifier.category("Group of items #3"),
-      ItemIdentifier.habit("Not test item 1"),
-      ItemIdentifier.habit("Not test item 2"),
-      ItemIdentifier.habit("Not test item 3"),
-      ItemIdentifier.habit("Not test item 4"),
-      ItemIdentifier.habit("Not test item 5"),
-      ItemIdentifier.habit("Not test item 6"),
-      ItemIdentifier.habit("Not test item 7")
-    ],
-    [
-      ItemIdentifier.category("Group of items #4")
-    ],
-    [
-      ItemIdentifier.category("Group of items #5"),
-      ItemIdentifier.habit("Test Test item 1"),
-      ItemIdentifier.habit("Test Test item 2"),
-      ItemIdentifier.habit("Test Test item 3")
-    ],
-  ]
-  let colors: [UIColor] = [.blue, .gray, .green, .yellow, .orange]
-
   init() {
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
-    applySnapshot()
+    dataProvider = HabitsListDataProvider(dataSource: dataSource)
     collectionView.dataSource = dataSource
   }
 
@@ -150,19 +31,9 @@ class HabitsListViewController: UIViewController {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-
 }
 
 extension HabitsListViewController {
-  private func deleteItem(at indexPath: IndexPath) {
-    if indexPath.item == 0 {
-      items.remove(at: indexPath.section)
-    } else {
-      items[indexPath.section].remove(at: indexPath.item)
-    }
-    applySnapshot()
-  }
-
   private func editCategory(at indexPath: IndexPath) {
     let addCategoryViewController = EditCategoryViewController()
     let navigationViewController = UINavigationController(rootViewController: addCategoryViewController)
@@ -175,56 +46,50 @@ extension HabitsListViewController {
     configuration.showsSeparators = false
     configuration.backgroundColor = .clear
     configuration.footerMode = .none
+
     configuration.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
       let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {[weak self] action, sourceView, actionPerformed in
-        self?.deleteItem(at: indexPath)
+        self?.dataProvider.deleteItem(at: indexPath)
         actionPerformed(true)
       }
       deleteAction.image = UIImage(systemName: "trash")
-
       return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 
     configuration.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-      guard indexPath.item == 0 else {
-        return nil
-      }
-
+      guard indexPath.item == 0 else { return nil }
       let editCategoryAction = UIContextualAction(style: .normal, title: "Edit") {[weak self] action, sourceView, actionPerformed in
         self?.editCategory(at: indexPath)
         actionPerformed(true)
       }
       editCategoryAction.backgroundColor = .green
       editCategoryAction.image = UIImage(systemName: "square.and.pencil")
-
       return UISwipeActionsConfiguration(actions: [editCategoryAction])
     }
+    
     return UICollectionViewCompositionalLayout.list(using: configuration)
   }
 
   private func configureDataSource() {
     let categoryCellRegistration = UICollectionView.CellRegistration {
-      (cell: CategoryListCell, indexPath: IndexPath, itemIdentifier: ItemIdentifier) in
-      guard case let ItemIdentifier.category(item) = itemIdentifier else { return }
-      var contentConfiguration = cell.defaultContentConfiguration()
-      contentConfiguration.text = item
-      cell.contentConfiguration = contentConfiguration
+      [unowned self] (cell: CategoryListCell, indexPath: IndexPath, itemIdentifier: HabitsListDataProvider.ItemIdentifier) in
+      guard case let HabitsListDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
+      guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
 
+      cell.updateContent(with: category)
       let options = UICellAccessory.OutlineDisclosureOptions(style: .header)
       cell.accessories = [.outlineDisclosure(options: options)]
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration {
-      (cell: HabitListCell, indexPath: IndexPath, itemIdentifier: ItemIdentifier) in
-      guard case let ItemIdentifier.habit(item) = itemIdentifier else { return }
-      var contentConfiguration = cell.defaultContentConfiguration()
-      contentConfiguration.text = item
-      cell.contentConfiguration = contentConfiguration
+      [unowned self] (cell: HabitListCell, indexPath: IndexPath, itemIdentifier: HabitsListDataProvider.ItemIdentifier) in
+      guard case let HabitsListDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
+      guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
 
-      cell.accessories = [.disclosureIndicator()]
+      cell.updateContent(with: habit)
     }
 
-    dataSource = DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+    dataSource = HabitsListDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       switch itemIdentifier {
       case .category(_):
         return collectionView.dequeueConfiguredReusableCell(using: categoryCellRegistration, for: indexPath, item: itemIdentifier)
@@ -234,30 +99,11 @@ extension HabitsListViewController {
     }
 
     dataSource.sectionSnapshotHandlers.willCollapseItem = { [weak self] itemIdentifier in
-      self?.expandedCategories.remove(itemIdentifier)
+      self?.dataProvider.expandedCategories.remove(itemIdentifier)
     }
 
     dataSource.sectionSnapshotHandlers.willExpandItem = { [weak self] itemIdentifier in
-      self?.expandedCategories.insert(itemIdentifier)
-    }
-  }
-
-  private func applySnapshot() {
-    var snapshot = Snapshot()
-    for index in 0..<items.count {
-      snapshot.appendSections([index])
-    }
-    dataSource.apply(snapshot)
-
-    for index in 0..<items.count {
-      var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<ItemIdentifier>()
-      let parentItem = items[index][0]
-      sectionSnapshot.append([parentItem])
-      sectionSnapshot.append(Array(items[index][1..<items[index].count]), to: parentItem)
-      if expandedCategories.contains(parentItem) {
-        sectionSnapshot.expand([parentItem])
-      }
-      dataSource.apply(sectionSnapshot, to: index, animatingDifferences: false)
+      self?.dataProvider.expandedCategories.insert(itemIdentifier)
     }
   }
 
@@ -322,30 +168,23 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
 
     if sourceIndexPath.item == 0 {
       // category replacement
-      let section = items.remove(at: sourceIndexPath.section)
-      var sectionIndex: Int
+      var destinationIndex: Int
       if let destinationIndexPath = coordinator.destinationIndexPath {
-        sectionIndex = sourceIndexPath.section < destinationIndexPath.section ? destinationIndexPath.section - 1 : destinationIndexPath.section
+        destinationIndex = sourceIndexPath.section < destinationIndexPath.section ? destinationIndexPath.section - 1 : destinationIndexPath.section
         if destinationIndexPath.item > 0 {
-          sectionIndex += 1
+          destinationIndex += 1
         }
-        items.insert(section, at: sectionIndex)
       } else {
-        sectionIndex = items.count - 1
-        items.append(section)
+        destinationIndex = dataProvider.getCategoriesCount() - 1
       }
-      dropIndexPath = IndexPath(item: 0, section: sectionIndex)
+      dataProvider.moveCategory(from: sourceIndexPath.section, to: destinationIndex)
+      dropIndexPath = IndexPath(item: 0, section: destinationIndex)
     } else {
-      guard let destinationIndexPath = coordinator.destinationIndexPath else {
-        return
-      }
+      guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
       // habit replacement
-      let itemIdentifier = items[sourceIndexPath.section].remove(at: sourceIndexPath.item)
-      items[destinationIndexPath.section].insert(itemIdentifier, at: max(1, destinationIndexPath.item))
+      dataProvider.moveHabit(from: sourceIndexPath, to: destinationIndexPath)
       dropIndexPath = destinationIndexPath
     }
-
-    applySnapshot()
     coordinator.drop(item.dragItem, toItemAt: dropIndexPath)
   }
 
@@ -364,7 +203,7 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
 
     // category should be always the first item in a section
     if sourceIndexPath.item == 0 {
-      // replacement to the end of the list is allowed
+      // replacement to the end of the list is allowed (actualDestinationIndexPath == nil)
       guard let destinationIndexPath = actualDestinationIndexPath else {
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
       }
@@ -375,14 +214,17 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
       }
 
       // category can be suggested as the last item in the section and should be placed to the next section
-      let category = items[destinationIndexPath.section][0]
-      let maxItemIndex = expandedCategories.contains(category) ? items[destinationIndexPath.section].count : 1
-      if destinationIndexPath.item == maxItemIndex {
-        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+      let category = dataProvider.getCategory(at: destinationIndexPath.section)
+      if let category = category {
+        let maxItemIndex = dataProvider.expandedCategories.contains(HabitsListDataProvider.ItemIdentifier.category(category.objectID)) ? category.habitsCount + 1 : 1
+        if destinationIndexPath.item == maxItemIndex {
+          return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
       }
     }
 
     if sourceIndexPath.item != 0 {
+      // habit should be inside some category (section)
       guard let destinationIndexPath = destinationIndexPath else {
         return UICollectionViewDropProposal(operation: .forbidden)
       }

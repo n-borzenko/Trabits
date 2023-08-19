@@ -10,6 +10,9 @@
 		19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 19020CFE2A7D98CF00616BBE /* Trabits.xcdatamodeld */; };
 		19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19020D022A7DBC8B00616BBE /* EmptyStateView.swift */; };
 		19020D062A83042600616BBE /* HabitsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19020D052A83042600616BBE /* HabitsListViewController.swift */; };
+		190961E02A8FBB9B006C37DD /* HabitsListDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190961DF2A8FBB9B006C37DD /* HabitsListDataProvider.swift */; };
+		190961E22A8FD444006C37DD /* CategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190961E12A8FD444006C37DD /* CategoryListCell.swift */; };
+		190961E42A8FD46B006C37DD /* HabitListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190961E32A8FD46B006C37DD /* HabitListCell.swift */; };
 		194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59C2A40F49900383B29 /* AppDelegate.swift */; };
 		194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59E2A40F49900383B29 /* SceneDelegate.swift */; };
 		194AC5A12A40F49900383B29 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC5A02A40F49900383B29 /* CategoriesViewController.swift */; };
@@ -35,6 +38,9 @@
 		19020CFF2A7D98CF00616BBE /* Trabits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Trabits.xcdatamodel; sourceTree = "<group>"; };
 		19020D022A7DBC8B00616BBE /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		19020D052A83042600616BBE /* HabitsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsListViewController.swift; sourceTree = "<group>"; };
+		190961DF2A8FBB9B006C37DD /* HabitsListDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsListDataProvider.swift; sourceTree = "<group>"; };
+		190961E12A8FD444006C37DD /* CategoryListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListCell.swift; sourceTree = "<group>"; };
+		190961E32A8FD46B006C37DD /* HabitListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitListCell.swift; sourceTree = "<group>"; };
 		194AC5992A40F49900383B29 /* Trabits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trabits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194AC59C2A40F49900383B29 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		194AC59E2A40F49900383B29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +87,9 @@
 			isa = PBXGroup;
 			children = (
 				19020D052A83042600616BBE /* HabitsListViewController.swift */,
+				190961DF2A8FBB9B006C37DD /* HabitsListDataProvider.swift */,
+				190961E12A8FD444006C37DD /* CategoryListCell.swift */,
+				190961E32A8FD46B006C37DD /* HabitListCell.swift */,
 			);
 			path = Habits;
 			sourceTree = "<group>";
@@ -254,16 +263,19 @@
 				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
 				19C539392A7D4E1B003D9C4C /* TodayViewController.swift in Sources */,
 				19C539372A7C1EE4003D9C4C /* EditHabitViewController.swift in Sources */,
+				190961E22A8FD444006C37DD /* CategoryListCell.swift in Sources */,
 				19C539332A76BD2F003D9C4C /* CategoryDetailCell.swift in Sources */,
 				194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */,
 				19020D062A83042600616BBE /* HabitsListViewController.swift in Sources */,
 				19BB9BE42A6F16D000D328BD /* CoreDataStack.swift in Sources */,
 				194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */,
 				19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */,
+				190961E02A8FBB9B006C37DD /* HabitsListDataProvider.swift in Sources */,
 				19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,
 				19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */,
 				19801E532A450A150050C8C9 /* EditCategoryViewController.swift in Sources */,
+				190961E42A8FD46B006C37DD /* HabitListCell.swift in Sources */,
 				19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */,
 				19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */,
 				19801E4D2A4121BF0050C8C9 /* CategoryCell.swift in Sources */,
