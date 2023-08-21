@@ -53,8 +53,14 @@ class EditHabitViewController: UIViewController {
     } else {
       let habit = Habit(context: context)
       habit.title = textField.text
+      habit.orderPriority = Int(category?.habits?.count ?? 0)
       habit.category = category
-      habit.orderPriority = Int(category?.habitsCount ?? 0)
+      do {
+        try context.obtainPermanentIDs(for: [habit])
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
     }
 
     if context.hasChanges {

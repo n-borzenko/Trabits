@@ -2,7 +2,6 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Category" representedClassName=".Category" syncable="YES">
         <attribute name="color" attributeType="Transformable" valueTransformerName="UIColorValueTransformer" customClassName="UIColor"/>
-        <attribute name="habitsCount" optional="YES" attributeType="Integer 32" derived="YES" derivationExpression="habits.@count" usesScalarValueType="YES"/>
         <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="habits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Habit" inverseName="category" inverseEntity="Habit"/>

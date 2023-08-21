@@ -153,12 +153,16 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
     var newSnapshot = Snapshot()
     for index in 0..<snapshot.numberOfItems {
       newSnapshot.appendSections([index])
+      let itemIdentifier = snapshot.itemIdentifiers[index]
+      guard let category = context.object(with: itemIdentifier) as? Category else { continue }
+      newSnapshot.appendItems([ItemIdentifier.category(category.objectID)])
     }
     dataSource.apply(newSnapshot)
 
     for index in 0..<snapshot.numberOfItems {
       let itemIdentifier = snapshot.itemIdentifiers[index]
       guard let category = context.object(with: itemIdentifier) as? Category else { continue }
+
       var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<ItemIdentifier>()
       let parentItem = ItemIdentifier.category(category.objectID)
       sectionSnapshot.append([parentItem])
@@ -174,7 +178,6 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
 
 extension HabitsListDataProvider {
   private func updateSections() {
-    print("sections")
     guard let categories = fetchResultsController.fetchedObjects, !categories.isEmpty else { return }
     for index in 0..<categories.count {
       let category = categories[index]

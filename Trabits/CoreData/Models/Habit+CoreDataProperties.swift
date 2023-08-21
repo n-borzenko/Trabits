@@ -16,7 +16,7 @@ extension Habit: Identifiable {
   }
 
   @NSManaged public var title: String?
-  @NSManaged private var order: Int32
+  @NSManaged public var order: Int32
   @NSManaged public var category: Category?
 
   public var orderPriority: Int {

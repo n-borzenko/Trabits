@@ -20,8 +20,7 @@ extension Category {
   @NSManaged public var color: UIColor?
   @NSManaged public var habits: NSSet?
 
-  @NSManaged private var order: Int32
-  @NSManaged public var habitsCount: Int32
+  @NSManaged public var order: Int32
 
   public var orderPriority: Int {
     get { Int(order) }

@@ -6,15 +6,32 @@
 //
 
 import UIKit
+import Combine
 
 class CategoryListCell: UICollectionViewListCell {
+  private var subscriptions: Set<AnyCancellable> = []
   private var category: Category?
 
   public func updateContent(with category: Category) {
     self.category = category
-    var newContentConfiguration = defaultContentConfiguration()
-    newContentConfiguration.text = "\(category.orderPriority): \(category.title!)"
-    contentConfiguration = newContentConfiguration
+
+    let titlePublisher = category.publisher(for: \.title)
+    let orderPublisher = category.publisher(for: \.order)
+    titlePublisher.combineLatest(orderPublisher)
+      .sink { [unowned self] (title, order) in
+        var newContentConfiguration = self.defaultContentConfiguration()
+        newContentConfiguration.text = "\(order): \(title)"
+        self.contentConfiguration = newContentConfiguration
+      }
+      .store(in: &subscriptions)
+  }
+
+  override func prepareForReuse() {
+    for subscription in subscriptions {
+      subscription.cancel()
+    }
+    subscriptions.removeAll()
+    super.prepareForReuse()
   }
 
   override func updateConfiguration(using state: UICellConfigurationState) {

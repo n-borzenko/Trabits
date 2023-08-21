@@ -216,7 +216,7 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
       // category can be suggested as the last item in the section and should be placed to the next section
       let category = dataProvider.getCategory(at: destinationIndexPath.section)
       if let category = category {
-        let maxItemIndex = dataProvider.expandedCategories.contains(HabitsListDataProvider.ItemIdentifier.category(category.objectID)) ? category.habitsCount + 1 : 1
+        let maxItemIndex = dataProvider.expandedCategories.contains(HabitsListDataProvider.ItemIdentifier.category(category.objectID)) ? (category.habits?.count ?? 0) + 1 : 1
         if destinationIndexPath.item == maxItemIndex {
           return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
         }

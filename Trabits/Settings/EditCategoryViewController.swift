@@ -51,6 +51,12 @@ class EditCategoryViewController: UIViewController {
       category.color = colorPicker.selectedColor
       category.orderPriority = categoriesCount
       category.habits = Set<Habit>() as NSSet
+      do {
+        try context.obtainPermanentIDs(for: [category])
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
     }
 
     if context.hasChanges {

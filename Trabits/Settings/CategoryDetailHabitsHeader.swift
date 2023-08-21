@@ -33,8 +33,8 @@ class CategoryDetailHabitsHeader: UITableViewHeaderFooterView {
     category.publisher(for: \.color)
       .assign(to: \.backgroundColor, on: lineView)
       .store(in: &subscriptions)
-    category.publisher(for: \.habitsCount)
-      .map({ "\($0)" })
+    category.publisher(for: \.habits)
+      .map({ "\($0?.count ?? 0)" })
       .assign(to: \.text, on: habitsCountLabel)
       .store(in: &subscriptions)
   }

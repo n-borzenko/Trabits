@@ -19,10 +19,12 @@ class HabitListCell: UICollectionViewListCell {
   public func updateContent(with habit: Habit) {
     self.habit = habit
 
-    habit.publisher(for: \.title)
-      .sink { [unowned self] h in
+    let titlePublisher = habit.publisher(for: \.title)
+    let orderPublisher = habit.publisher(for: \.order)
+    titlePublisher.combineLatest(orderPublisher)
+      .sink { [unowned self] (title, order) in
         var newContentConfiguration = self.defaultContentConfiguration()
-        newContentConfiguration.text = "\(h)"
+        newContentConfiguration.text = "\(order): \(title)"
         self.contentConfiguration = newContentConfiguration
       }
       .store(in: &subscriptions)
