@@ -15,9 +15,9 @@ class EmptyStateView: UIView {
     setupViews()
   }
 
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    setupViews()
+    fatalError("init(coder:) has not been implemented")
   }
 
   override class var requiresConstraintBasedLayout: Bool {

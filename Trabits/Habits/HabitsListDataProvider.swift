@@ -15,13 +15,13 @@ class HabitsListDataProvider: NSObject {
   }
 
   typealias DataSource = UICollectionViewDiffableDataSource<Int, ItemIdentifier>
-  typealias Snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifier>
+  private typealias Snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifier>
 
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
   private var fetchResultsController: NSFetchedResultsController<Category>!
-  public var dataSource: DataSource!
+  var dataSource: DataSource!
 
-  public var expandedCategories = Set<ItemIdentifier>()
+  var expandedCategories = Set<ItemIdentifier>()
 
   init(dataSource: DataSource) {
     self.dataSource = dataSource
@@ -62,17 +62,34 @@ class HabitsListDataProvider: NSObject {
     }
     if hasHabitChanges { updateSections() }
   }
+}
 
-  public func getCategoriesCount() -> Int {
+// MARK: - data access
+extension HabitsListDataProvider {
+  func getCategoriesCount() -> Int {
     fetchResultsController.fetchedObjects?.count ?? 0
   }
 
-  public func getCategory(at index: Int) -> Category? {
+  func getCategories() -> [Category] {
+    fetchResultsController.fetchedObjects ?? []
+  }
+
+  func getCategory(at index: Int) -> Category? {
     guard let categories = fetchResultsController.fetchedObjects, index < categories.count else { return nil }
     return categories[index]
   }
 
-  public func moveCategory(from sourceIndex: Int, to destinationIndex: Int) {
+  func getHabit(at indexPath: IndexPath) -> Habit? {
+    guard let categories = fetchResultsController.fetchedObjects, indexPath.section < categories.count else { return nil }
+    let habits = categories[indexPath.section].habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
+    guard indexPath.item <= habits.count else { return nil }
+    return habits[indexPath.item - 1]
+  }
+}
+
+// MARK: - data changes
+extension HabitsListDataProvider {
+  func moveCategory(from sourceIndex: Int, to destinationIndex: Int) {
     guard let categories = fetchResultsController.fetchedObjects, !categories.isEmpty, sourceIndex < categories.count else { return }
 
     let category = categories[sourceIndex]
@@ -88,16 +105,11 @@ class HabitsListDataProvider: NSObject {
     }
     category.orderPriority = destinationIndex
 
-    do {
-      try context.save()
-    } catch {
-      let nserror = error as NSError
-      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-    }
+    saveContextChanges()
   }
 
   // indexPath is 1-based (0 item is category, first habit is item 1)
-  public func moveHabit(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+  func moveHabit(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
     guard let categories = fetchResultsController.fetchedObjects, !categories.isEmpty,
       sourceIndexPath.section < categories.count, destinationIndexPath.section < categories.count else { return }
 
@@ -107,7 +119,8 @@ class HabitsListDataProvider: NSObject {
       guard sourceIndexPath.item <= habits.count else { return }
       let sourceIndex = sourceIndexPath.item - 1
       let habit = habits[sourceIndex]
-      let destinationIndex = min(max(destinationIndexPath.item - 1, 0), habits.count - 1)
+      let expectedDestinationIndex = destinationIndexPath.item == 0 ? habits.count - 1 : destinationIndexPath.item - 1
+      let destinationIndex = min(max(expectedDestinationIndex, 0), habits.count - 1)
       if sourceIndex < destinationIndex {
         for index in (sourceIndex + 1)...destinationIndex {
           habits[index].orderPriority -= 1
@@ -130,7 +143,8 @@ class HabitsListDataProvider: NSObject {
 
       let destinationCategory = categories[destinationIndexPath.section]
       let destinationHabits = destinationCategory.habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
-      let startIndex = min(max(destinationIndexPath.item - 1, 0), destinationHabits.count)
+      let expectedStartIndex = destinationIndexPath.item == 0 ? destinationHabits.count : destinationIndexPath.item - 1
+      let startIndex = min(max(expectedStartIndex, 0), max(destinationHabits.count, 0))
       for index in startIndex..<destinationHabits.count {
         destinationHabits[index].orderPriority += 1
       }
@@ -138,15 +152,35 @@ class HabitsListDataProvider: NSObject {
       destinationCategory.addToHabits(habit)
     }
 
-    do {
-      try context.save()
-    } catch {
-      let nserror = error as NSError
-      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    saveContextChanges()
+  }
+
+  func deleteItem(at indexPath: IndexPath) {
+    guard let categories = fetchResultsController.fetchedObjects, !categories.isEmpty else { return }
+    let category = categories[indexPath.section]
+
+    if indexPath.item == 0 {
+      // delete category
+      for index in (indexPath.section + 1)..<categories.count {
+        categories[index].orderPriority -= 1
+      }
+      context.delete(category)
+    } else {
+      // delete habit
+      let habits = category.habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
+      guard indexPath.item - 1 < habits.count else { return }
+      let habit = habits[indexPath.item - 1]
+      for index in indexPath.item..<habits.count {
+        habits[index].orderPriority -= 1
+      }
+      context.delete(habit)
     }
+
+    saveContextChanges()
   }
 }
 
+// MARK: - frc delegate
 extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
     let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
@@ -157,6 +191,24 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
       guard let category = context.object(with: itemIdentifier) as? Category else { continue }
       newSnapshot.appendItems([ItemIdentifier.category(category.objectID)])
     }
+
+    var reloadIdentifiers = [ItemIdentifier]()
+    if #available(iOS 15.0, *) {
+      reloadIdentifiers.append(contentsOf: snapshot.reloadedItemIdentifiers.map { ItemIdentifier.category($0) })
+    } else {
+      let reloadItems: [ItemIdentifier] = snapshot.itemIdentifiers.compactMap { objectID in
+        let identifier = ItemIdentifier.category(objectID)
+        guard let fetchedIndex = snapshot.indexOfItem(objectID),
+              let currentIndex = dataSource.snapshot().sectionIdentifier(containingItem: identifier),
+              fetchedIndex == currentIndex else { return nil }
+
+        guard context.object(with: objectID).isUpdated else { return nil }
+        return identifier
+      }
+      reloadIdentifiers.append(contentsOf: reloadItems)
+    }
+
+    newSnapshot.reloadItems(reloadIdentifiers)
     dataSource.apply(newSnapshot)
 
     for index in 0..<snapshot.numberOfItems {
@@ -193,27 +245,7 @@ extension HabitsListDataProvider {
     }
   }
 
-  public func deleteItem(at indexPath: IndexPath) {
-    guard let categories = fetchResultsController.fetchedObjects, !categories.isEmpty else { return }
-    let category = categories[indexPath.section]
-
-    if indexPath.item == 0 {
-      // delete category
-      for index in (indexPath.section + 1)..<categories.count {
-        categories[index].orderPriority -= 1
-      }
-      context.delete(category)
-    } else {
-      // delete habit
-      let habits = category.habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
-      guard indexPath.item - 1 < habits.count else { return }
-      let habit = habits[indexPath.item - 1]
-      for index in indexPath.item..<habits.count {
-        habits[index].orderPriority -= 1
-      }
-      context.delete(habit)
-    }
-
+  private func saveContextChanges() {
     do {
       try context.save()
     } catch {

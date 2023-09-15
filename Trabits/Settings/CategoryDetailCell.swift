@@ -51,6 +51,13 @@ class CategoryDetailCell: UITableViewCell {
     super.prepareForReuse()
   }
 
+  deinit {
+    for subscription in subscriptions {
+      subscription.cancel()
+    }
+    subscriptions.removeAll()
+  }
+
   @objc func editButtonTapped() {
     self.delegate?.editCategory()
   }

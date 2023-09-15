@@ -11,9 +11,12 @@ import CoreData
 class HabitsListViewController: UIViewController {
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
 
-  private var safeArea: UILayoutGuide!
   private var dataSource: HabitsListDataProvider.DataSource!
   private var dataProvider: HabitsListDataProvider!
+
+  private var stackView = UIStackView()
+  private var newCategoryButton = ActionButton()
+  private var newHabitButton = ActionButton()
 
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
@@ -35,9 +38,9 @@ class HabitsListViewController: UIViewController {
 
 extension HabitsListViewController {
   private func editCategory(at indexPath: IndexPath) {
-    let addCategoryViewController = EditCategoryViewController()
-    let navigationViewController = UINavigationController(rootViewController: addCategoryViewController)
-    present(navigationViewController, animated: true)
+    guard let category = dataProvider.getCategory(at: indexPath.section) else { return }
+    let editCategoryViewController = UpdateCategoryViewController(category: category, categoriesCount: dataProvider.getCategoriesCount())
+    present(UINavigationController(rootViewController: editCategoryViewController), animated: true)
   }
 
   private func createLayout() -> UICollectionViewCompositionalLayout {
@@ -75,18 +78,14 @@ extension HabitsListViewController {
       [unowned self] (cell: CategoryListCell, indexPath: IndexPath, itemIdentifier: HabitsListDataProvider.ItemIdentifier) in
       guard case let HabitsListDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
-
-      cell.updateContent(with: category)
-      let options = UICellAccessory.OutlineDisclosureOptions(style: .header)
-      cell.accessories = [.outlineDisclosure(options: options)]
+      cell.category = category
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration {
       [unowned self] (cell: HabitListCell, indexPath: IndexPath, itemIdentifier: HabitsListDataProvider.ItemIdentifier) in
       guard case let HabitsListDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
-
-      cell.updateContent(with: habit)
+      cell.habit = habit
     }
 
     dataSource = HabitsListDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
@@ -108,37 +107,64 @@ extension HabitsListViewController {
   }
 
   private func setupViews() {
-    safeArea = view.safeAreaLayoutGuide
+    view.backgroundColor = .backgroundColor
+    view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
 
-    view.backgroundColor = .white
+    view.addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+    stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+    stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
     
-    view.addSubview(collectionView)
-    collectionView.translatesAutoresizingMaskIntoConstraints = false
-    collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    collectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
-    collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 0).isActive = true
-    collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 0).isActive = true
+    stackView.spacing = 16
+    stackView.axis = .horizontal
+    let hasLargeText = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+    stackView.distribution = hasLargeText ? .fillProportionally : .fillEqually
 
-    navigationItem.title = "Habits"
+    newCategoryButton.setTitle("Add category", for: .normal)
+    newCategoryButton.addTarget(self, action: #selector(addNewCategory), for: .touchUpInside)
+    stackView.addArrangedSubview(newCategoryButton)
 
+    newHabitButton.setTitle("Add habit", for: .normal)
+    newHabitButton.addTarget(self, action: #selector(addNewHabit), for: .touchUpInside)
+    stackView.addArrangedSubview(newHabitButton)
+
+    collectionView.delegate = self
     collectionView.dragDelegate = self
     collectionView.dropDelegate = self
     collectionView.dragInteractionEnabled = true
     collectionView.allowsSelection = true
-    collectionView.delegate = self
+
+    collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: hasLargeText ? 110 : 80, right: 0)
+
+    navigationItem.title = "Habits"
+  }
+
+  @objc private func addNewCategory() {
+    let addCategoryViewController = UpdateCategoryViewController(categoriesCount: dataProvider.getCategoriesCount())
+    present(UINavigationController(rootViewController: addCategoryViewController), animated: true)
+  }
+
+  @objc private func addNewHabit() {
+    let addHabitViewController = UpdateHabitViewController(categories: dataProvider.getCategories())
+    present(UINavigationController(rootViewController: addHabitViewController), animated: true)
+  }
+
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    let hasLargeText = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+    if hasLargeText != previousTraitCollection?.preferredContentSizeCategory.isAccessibilityCategory {
+      stackView.distribution = hasLargeText ? .fillProportionally : .fillEqually
+      collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: hasLargeText ? 110 : 80, right: 0)
+    }
   }
 }
 
 extension HabitsListViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//    let category = fetchResultsController.object(at: indexPath)
-//    let detailViewController = EditCategoryViewController()
-//    navigationController?.pushViewController(detailViewController, animated: true)
-
-
-    let addCategoryViewController = EditCategoryViewController()
-    let navigationViewController = UINavigationController(rootViewController: addCategoryViewController)
-    present(navigationViewController, animated: true)
+    if indexPath.item != 0, let habit = dataProvider.getHabit(at: indexPath) {
+      let editHabitViewController = UpdateHabitViewController(habit: habit, categories: dataProvider.getCategories())
+      present(UINavigationController(rootViewController: editHabitViewController), animated: true)
+    }
     collectionView.deselectItem(at: indexPath, animated: false)
   }
 }

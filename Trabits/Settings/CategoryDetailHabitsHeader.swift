@@ -47,6 +47,13 @@ class CategoryDetailHabitsHeader: UITableViewHeaderFooterView {
     
     super.prepareForReuse()
   }
+
+  deinit {
+    for subscription in subscriptions {
+      subscription.cancel()
+    }
+    subscriptions.removeAll()
+  }
 }
 
 extension CategoryDetailHabitsHeader {

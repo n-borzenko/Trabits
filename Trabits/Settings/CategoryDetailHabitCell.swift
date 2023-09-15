@@ -43,6 +43,13 @@ class CategoryDetailHabitCell: UITableViewCell {
       .assign(to: \.layer.borderColor, on: rectangleView)
       .store(in: &subscriptions)
   }
+
+  deinit {
+    for subscription in subscriptions {
+      subscription.cancel()
+    }
+    subscriptions.removeAll()
+  }
 }
 
 extension CategoryDetailHabitCell {
