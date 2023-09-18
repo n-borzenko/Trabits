@@ -113,6 +113,7 @@ extension UpdateCategoryViewController {
   }
 
   private func configureEditableCategory() {
+    editableCategory.color = ColorPalette.allCases.first?.color
     guard let category = category else { return }
     editableCategory.title = category.title
     editableCategory.color = category.color

@@ -51,9 +51,9 @@ extension HabitsListViewController {
     configuration.footerMode = .none
 
     configuration.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-      let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {[weak self] action, sourceView, actionPerformed in
+      let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] action, sourceView, completionHandler in
         self?.dataProvider.deleteItem(at: indexPath)
-        actionPerformed(true)
+        completionHandler(true)
       }
       deleteAction.image = UIImage(systemName: "trash")
       return UISwipeActionsConfiguration(actions: [deleteAction])
@@ -61,9 +61,9 @@ extension HabitsListViewController {
 
     configuration.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
       guard indexPath.item == 0 else { return nil }
-      let editCategoryAction = UIContextualAction(style: .normal, title: "Edit") {[weak self] action, sourceView, actionPerformed in
+      let editCategoryAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] action, sourceView, completionHandler in
         self?.editCategory(at: indexPath)
-        actionPerformed(true)
+        completionHandler(true)
       }
       editCategoryAction.backgroundColor = .green
       editCategoryAction.image = UIImage(systemName: "square.and.pencil")

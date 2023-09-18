@@ -119,6 +119,7 @@ extension UpdateHabitViewController {
   }
 
   private func configureEditableHabit() {
+    editableHabit.category = categories.first
     guard let habit = habit else { return }
     editableHabit.title = habit.title
     editableHabit.category = habit.category

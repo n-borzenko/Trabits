@@ -161,6 +161,7 @@ extension HabitsListDataProvider {
 
     if indexPath.item == 0 {
       // delete category
+      expandedCategories.remove(ItemIdentifier.category(category.objectID))
       for index in (indexPath.section + 1)..<categories.count {
         categories[index].orderPriority -= 1
       }
@@ -207,8 +208,6 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
       }
       reloadIdentifiers.append(contentsOf: reloadItems)
     }
-
-    newSnapshot.reloadItems(reloadIdentifiers)
     dataSource.apply(newSnapshot)
 
     for index in 0..<snapshot.numberOfItems {
@@ -225,6 +224,10 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
       }
       dataSource.apply(sectionSnapshot, to: index, animatingDifferences: false)
     }
+
+    var reconstructedSnapshot = dataSource.snapshot()
+    reconstructedSnapshot.reloadItems(reloadIdentifiers)
+    dataSource.apply(reconstructedSnapshot)
   }
 }
 
