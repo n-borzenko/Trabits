@@ -1,5 +1,5 @@
 //
-//  UpdateHabitViewController.swift
+//  EditHabitViewController.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 24/08/2023.
@@ -13,7 +13,7 @@ struct EditableHabit {
   var category: Category?
 }
 
-class UpdateHabitViewController: UIViewController {
+class EditHabitViewController: UIViewController {
   private enum Section: Int {
     case title
     case category
@@ -58,7 +58,7 @@ class UpdateHabitViewController: UIViewController {
   }
 }
 
-extension UpdateHabitViewController {
+extension EditHabitViewController {
   private func validate() {
     if let title = editableHabit.title, !title.isEmpty && editableHabit.category != nil {
       isValid = true
@@ -178,14 +178,14 @@ extension UpdateHabitViewController {
   }
 }
 
-extension UpdateHabitViewController: TextFieldListCellDelegate {
+extension EditHabitViewController: TextFieldListCellDelegate {
   func textValueChanged(_ text: String?) {
     editableHabit.title = text
     validate()
   }
 }
 
-extension UpdateHabitViewController: CategoryPickerListCellDelegate {
+extension EditHabitViewController: CategoryPickerListCellDelegate {
   func selectedCategoryIndexChanged(_ index: Int?) {
     if let index = index, index < categories.count {
       editableHabit.category = categories[index]

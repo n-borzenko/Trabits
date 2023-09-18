@@ -1,5 +1,5 @@
 //
-//  UpdateCategoryViewController.swift
+//  EditCategoryViewController.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 06/09/2023.
@@ -13,7 +13,7 @@ struct EditableCategory {
   var color: UIColor?
 }
 
-class UpdateCategoryViewController: UIViewController {
+class EditCategoryViewController: UIViewController {
   private enum Section: Int {
     case title
     case color
@@ -59,7 +59,7 @@ class UpdateCategoryViewController: UIViewController {
   }
 }
 
-extension UpdateCategoryViewController {
+extension EditCategoryViewController {
   private func validate() {
     if let title = editableCategory.title, !title.isEmpty && editableCategory.color != nil {
       isValid = true
@@ -171,14 +171,14 @@ extension UpdateCategoryViewController {
   }
 }
 
-extension UpdateCategoryViewController: TextFieldListCellDelegate {
+extension EditCategoryViewController: TextFieldListCellDelegate {
   func textValueChanged(_ text: String?) {
     editableCategory.title = text
     validate()
   }
 }
 
-extension UpdateCategoryViewController: ColorPickerListCellDelegate {
+extension EditCategoryViewController: ColorPickerListCellDelegate {
   func colorValueChanged(_ color: UIColor?) {
     editableCategory.color = color
     validate()

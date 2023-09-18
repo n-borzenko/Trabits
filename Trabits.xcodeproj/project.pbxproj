@@ -18,27 +18,19 @@
 		1942EC392AB50037000F70CC /* UIColor+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1942EC382AB50036000F70CC /* UIColor+ColorPalette.swift */; };
 		194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59C2A40F49900383B29 /* AppDelegate.swift */; };
 		194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59E2A40F49900383B29 /* SceneDelegate.swift */; };
-		194AC5A12A40F49900383B29 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC5A02A40F49900383B29 /* CategoriesViewController.swift */; };
 		194AC5A92A40F49B00383B29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5A82A40F49B00383B29 /* Assets.xcassets */; };
 		194AC5AC2A40F49B00383B29 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5AA2A40F49B00383B29 /* LaunchScreen.storyboard */; };
 		1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */; };
 		1960EF902A96D264002BD3BA /* TextFieldListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF8F2A96D264002BD3BA /* TextFieldListCell.swift */; };
-		1960EF922A96D4F1002BD3BA /* UpdateHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF912A96D4F1002BD3BA /* UpdateHabitViewController.swift */; };
+		1960EF922A96D4F1002BD3BA /* EditHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF912A96D4F1002BD3BA /* EditHabitViewController.swift */; };
 		1960EF942A9912A9002BD3BA /* CategoryPickerListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF932A9912A9002BD3BA /* CategoryPickerListCell.swift */; };
 		19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */; };
 		19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */; };
-		19801E4D2A4121BF0050C8C9 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E4C2A4121BF0050C8C9 /* CategoryCell.swift */; };
-		19801E532A450A150050C8C9 /* EditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E522A450A150050C8C9 /* EditCategoryViewController.swift */; };
 		19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E542A45F6410050C8C9 /* Category+CoreDataClass.swift */; };
 		19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E552A45F6410050C8C9 /* Category+CoreDataProperties.swift */; };
 		19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */; };
-		1998CECF2AA7FD8D00616D9A /* UpdateCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998CECE2AA7FD8D00616D9A /* UpdateCategoryViewController.swift */; };
+		1998CECF2AA7FD8D00616D9A /* EditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998CECE2AA7FD8D00616D9A /* EditCategoryViewController.swift */; };
 		19BB9BE42A6F16D000D328BD /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE32A6F16D000D328BD /* CoreDataStack.swift */; };
-		19BB9BE92A6F313100D328BD /* CategoryDetailHabitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE82A6F313100D328BD /* CategoryDetailHabitCell.swift */; };
-		19BB9BEB2A6F332300D328BD /* CategoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BEA2A6F332300D328BD /* CategoryDetailViewController.swift */; };
-		19C539332A76BD2F003D9C4C /* CategoryDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C539322A76BD2F003D9C4C /* CategoryDetailCell.swift */; };
-		19C539352A78078A003D9C4C /* CategoryDetailHabitsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C539342A78078A003D9C4C /* CategoryDetailHabitsHeader.swift */; };
-		19C539372A7C1EE4003D9C4C /* EditHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C539362A7C1EE4003D9C4C /* EditHabitViewController.swift */; };
 		19C539392A7D4E1B003D9C4C /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C539382A7D4E1B003D9C4C /* TodayViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,28 +47,20 @@
 		194AC5992A40F49900383B29 /* Trabits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trabits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194AC59C2A40F49900383B29 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		194AC59E2A40F49900383B29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		194AC5A02A40F49900383B29 /* CategoriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
 		194AC5A82A40F49B00383B29 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		194AC5AB2A40F49B00383B29 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		194AC5AD2A40F49B00383B29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+PinnedSubview.swift"; sourceTree = "<group>"; };
 		1960EF8F2A96D264002BD3BA /* TextFieldListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldListCell.swift; sourceTree = "<group>"; };
-		1960EF912A96D4F1002BD3BA /* UpdateHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateHabitViewController.swift; sourceTree = "<group>"; };
+		1960EF912A96D4F1002BD3BA /* EditHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditHabitViewController.swift; sourceTree = "<group>"; };
 		1960EF932A9912A9002BD3BA /* CategoryPickerListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerListCell.swift; sourceTree = "<group>"; };
 		19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataClass.swift"; sourceTree = "<group>"; };
 		19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		19801E4C2A4121BF0050C8C9 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
-		19801E522A450A150050C8C9 /* EditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewController.swift; sourceTree = "<group>"; };
 		19801E542A45F6410050C8C9 /* Category+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category+CoreDataClass.swift"; sourceTree = "<group>"; };
 		19801E552A45F6410050C8C9 /* Category+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorValueTransformer.swift; sourceTree = "<group>"; };
-		1998CECE2AA7FD8D00616D9A /* UpdateCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCategoryViewController.swift; sourceTree = "<group>"; };
+		1998CECE2AA7FD8D00616D9A /* EditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewController.swift; sourceTree = "<group>"; };
 		19BB9BE32A6F16D000D328BD /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
-		19BB9BE82A6F313100D328BD /* CategoryDetailHabitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailHabitCell.swift; sourceTree = "<group>"; };
-		19BB9BEA2A6F332300D328BD /* CategoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailViewController.swift; sourceTree = "<group>"; };
-		19C539322A76BD2F003D9C4C /* CategoryDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailCell.swift; sourceTree = "<group>"; };
-		19C539342A78078A003D9C4C /* CategoryDetailHabitsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailHabitsHeader.swift; sourceTree = "<group>"; };
-		19C539362A7C1EE4003D9C4C /* EditHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditHabitViewController.swift; sourceTree = "<group>"; };
 		19C539382A7D4E1B003D9C4C /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,8 +93,8 @@
 				1960EF8A2A966567002BD3BA /* EditingListCells */,
 				19020D052A83042600616BBE /* HabitsListViewController.swift */,
 				190961DF2A8FBB9B006C37DD /* HabitsListDataProvider.swift */,
-				1960EF912A96D4F1002BD3BA /* UpdateHabitViewController.swift */,
-				1998CECE2AA7FD8D00616D9A /* UpdateCategoryViewController.swift */,
+				1960EF912A96D4F1002BD3BA /* EditHabitViewController.swift */,
+				1998CECE2AA7FD8D00616D9A /* EditCategoryViewController.swift */,
 			);
 			path = Habits;
 			sourceTree = "<group>";
@@ -148,7 +132,6 @@
 				19BB9BE52A6F284600D328BD /* App */,
 				19BB9BE12A6F168900D328BD /* CoreData */,
 				19C5393C2A7D8761003D9C4C /* Today */,
-				19BB9BE72A6F287800D328BD /* Settings */,
 				19020D042A8303FE00616BBE /* Habits */,
 			);
 			path = Trabits;
@@ -203,21 +186,6 @@
 				194AC5A82A40F49B00383B29 /* Assets.xcassets */,
 			);
 			path = Assets;
-			sourceTree = "<group>";
-		};
-		19BB9BE72A6F287800D328BD /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				194AC5A02A40F49900383B29 /* CategoriesViewController.swift */,
-				19801E4C2A4121BF0050C8C9 /* CategoryCell.swift */,
-				19801E522A450A150050C8C9 /* EditCategoryViewController.swift */,
-				19BB9BEA2A6F332300D328BD /* CategoryDetailViewController.swift */,
-				19C539322A76BD2F003D9C4C /* CategoryDetailCell.swift */,
-				19C539342A78078A003D9C4C /* CategoryDetailHabitsHeader.swift */,
-				19BB9BE82A6F313100D328BD /* CategoryDetailHabitCell.swift */,
-				19C539362A7C1EE4003D9C4C /* EditHabitViewController.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		19C5393C2A7D8761003D9C4C /* Today */ = {
@@ -298,15 +266,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				19BB9BE92A6F313100D328BD /* CategoryDetailHabitCell.swift in Sources */,
 				1942EC392AB50037000F70CC /* UIColor+ColorPalette.swift in Sources */,
 				1942EC372AB49D8B000F70CC /* ColorPickerListCell.swift in Sources */,
-				194AC5A12A40F49900383B29 /* CategoriesViewController.swift in Sources */,
 				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
 				19C539392A7D4E1B003D9C4C /* TodayViewController.swift in Sources */,
-				19C539372A7C1EE4003D9C4C /* EditHabitViewController.swift in Sources */,
 				190961E22A8FD444006C37DD /* CategoryListCell.swift in Sources */,
-				19C539332A76BD2F003D9C4C /* CategoryDetailCell.swift in Sources */,
 				194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */,
 				19020D062A83042600616BBE /* HabitsListViewController.swift in Sources */,
 				19BB9BE42A6F16D000D328BD /* CoreDataStack.swift in Sources */,
@@ -315,19 +279,15 @@
 				190961E02A8FBB9B006C37DD /* HabitsListDataProvider.swift in Sources */,
 				1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */,
 				19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */,
-				1960EF922A96D4F1002BD3BA /* UpdateHabitViewController.swift in Sources */,
+				1960EF922A96D4F1002BD3BA /* EditHabitViewController.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,
 				19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */,
-				19801E532A450A150050C8C9 /* EditCategoryViewController.swift in Sources */,
 				190961E42A8FD46B006C37DD /* HabitListCell.swift in Sources */,
-				1998CECF2AA7FD8D00616D9A /* UpdateCategoryViewController.swift in Sources */,
+				1998CECF2AA7FD8D00616D9A /* EditCategoryViewController.swift in Sources */,
 				1960EF942A9912A9002BD3BA /* CategoryPickerListCell.swift in Sources */,
 				19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */,
 				19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */,
-				19801E4D2A4121BF0050C8C9 /* CategoryCell.swift in Sources */,
 				1960EF902A96D264002BD3BA /* TextFieldListCell.swift in Sources */,
-				19BB9BEB2A6F332300D328BD /* CategoryDetailViewController.swift in Sources */,
-				19C539352A78078A003D9C4C /* CategoryDetailHabitsHeader.swift in Sources */,
 				1937A0FF2AA22E2400AC1D22 /* ActionButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

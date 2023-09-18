@@ -22,7 +22,7 @@ extension Category {
 
   @NSManaged public var order: Int32
 
-  public var orderPriority: Int {
+  var orderPriority: Int {
     get { Int(order) }
     set { order = Int32(newValue) }
   }

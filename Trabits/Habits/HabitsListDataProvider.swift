@@ -8,6 +8,10 @@
 import UIKit
 import CoreData
 
+protocol HabitsListDataProviderDelegate {
+  func updateEmptyState(isEmpty: Bool)
+}
+
 class HabitsListDataProvider: NSObject {
   enum ItemIdentifier: Hashable {
     case category(NSManagedObjectID)
@@ -23,9 +27,12 @@ class HabitsListDataProvider: NSObject {
 
   var expandedCategories = Set<ItemIdentifier>()
 
-  init(dataSource: DataSource) {
+  var delegate: HabitsListDataProviderDelegate?
+
+  init(dataSource: DataSource, delegate: HabitsListDataProviderDelegate? = nil) {
     self.dataSource = dataSource
     super.init()
+    self.delegate = delegate
     configureFetchedResultsController()
     NotificationCenter.default.addObserver(self, selector: #selector(handleCoreDataChanges),
                                            name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: context)
@@ -208,6 +215,7 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
       }
       reloadIdentifiers.append(contentsOf: reloadItems)
     }
+    delegate?.updateEmptyState(isEmpty: newSnapshot.sectionIdentifiers.isEmpty)
     dataSource.apply(newSnapshot)
 
     for index in 0..<snapshot.numberOfItems {

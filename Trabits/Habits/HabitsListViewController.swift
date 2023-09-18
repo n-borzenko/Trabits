@@ -26,7 +26,7 @@ class HabitsListViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
-    dataProvider = HabitsListDataProvider(dataSource: dataSource)
+    dataProvider = HabitsListDataProvider(dataSource: dataSource, delegate: self)
     collectionView.dataSource = dataSource
   }
 
@@ -37,12 +37,6 @@ class HabitsListViewController: UIViewController {
 }
 
 extension HabitsListViewController {
-  private func editCategory(at indexPath: IndexPath) {
-    guard let category = dataProvider.getCategory(at: indexPath.section) else { return }
-    let editCategoryViewController = UpdateCategoryViewController(category: category, categoriesCount: dataProvider.getCategoriesCount())
-    present(UINavigationController(rootViewController: editCategoryViewController), animated: true)
-  }
-
   private func createLayout() -> UICollectionViewCompositionalLayout {
     var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
     configuration.headerMode = .none
@@ -128,6 +122,7 @@ extension HabitsListViewController {
     newHabitButton.setTitle("Add habit", for: .normal)
     newHabitButton.addTarget(self, action: #selector(addNewHabit), for: .touchUpInside)
     stackView.addArrangedSubview(newHabitButton)
+    newHabitButton.isHidden = true
 
     collectionView.delegate = self
     collectionView.dragDelegate = self
@@ -136,18 +131,26 @@ extension HabitsListViewController {
     collectionView.allowsSelection = true
 
     collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: hasLargeText ? 110 : 80, right: 0)
+    collectionView.backgroundView = EmptyStateView()
+    collectionView.backgroundView?.isHidden = true
 
     navigationItem.title = "Habits"
   }
 
   @objc private func addNewCategory() {
-    let addCategoryViewController = UpdateCategoryViewController(categoriesCount: dataProvider.getCategoriesCount())
+    let addCategoryViewController = EditCategoryViewController(categoriesCount: dataProvider.getCategoriesCount())
     present(UINavigationController(rootViewController: addCategoryViewController), animated: true)
   }
 
   @objc private func addNewHabit() {
-    let addHabitViewController = UpdateHabitViewController(categories: dataProvider.getCategories())
+    let addHabitViewController = EditHabitViewController(categories: dataProvider.getCategories())
     present(UINavigationController(rootViewController: addHabitViewController), animated: true)
+  }
+
+  private func editCategory(at indexPath: IndexPath) {
+    guard let category = dataProvider.getCategory(at: indexPath.section) else { return }
+    let editCategoryViewController = EditCategoryViewController(category: category, categoriesCount: dataProvider.getCategoriesCount())
+    present(UINavigationController(rootViewController: editCategoryViewController), animated: true)
   }
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -162,12 +165,26 @@ extension HabitsListViewController {
 extension HabitsListViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     if indexPath.item != 0, let habit = dataProvider.getHabit(at: indexPath) {
-      let editHabitViewController = UpdateHabitViewController(habit: habit, categories: dataProvider.getCategories())
+      let editHabitViewController = EditHabitViewController(habit: habit, categories: dataProvider.getCategories())
       present(UINavigationController(rootViewController: editHabitViewController), animated: true)
     }
     collectionView.deselectItem(at: indexPath, animated: false)
   }
 }
+
+extension HabitsListViewController: HabitsListDataProviderDelegate {
+  func updateEmptyState(isEmpty: Bool) {
+    if isEmpty {
+      newHabitButton.isHidden = true
+      collectionView.backgroundView?.isHidden = false
+    } else {
+      newHabitButton.isHidden = false
+      collectionView.backgroundView?.isHidden = true
+    }
+  }
+}
+
+// MARK: - Drag & Drop
 
 extension HabitsListViewController: UICollectionViewDragDelegate {
   func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {

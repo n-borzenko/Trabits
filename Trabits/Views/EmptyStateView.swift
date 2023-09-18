@@ -30,7 +30,8 @@ extension EmptyStateView {
     titleLabel.text = "List is empty"
     titleLabel.numberOfLines = 0
     titleLabel.textAlignment = .center
-    titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.adjustsFontForContentSizeCategory = true
 
     titleLabel.translatesAutoresizingMaskIntoConstraints = false
     addSubview(titleLabel)
