@@ -6,6 +6,10 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="habits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Habit" inverseName="category" inverseEntity="Habit"/>
     </entity>
+    <entity name="DayResult" representedClassName="DayResult" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="completedHabits" toMany="YES" deletionRule="Nullify" destinationEntity="Habit"/>
+    </entity>
     <entity name="Habit" representedClassName=".Habit" syncable="YES">
         <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>

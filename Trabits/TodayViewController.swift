@@ -8,11 +8,21 @@
 import UIKit
 
 class TodayViewController: UIViewController {
-  private var safeArea: UILayoutGuide!
+  private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
+
+  private var dataSource: TodayListDataProvider.DataSource!
+  private var dataProvider: TodayListDataProvider!
+
+  lazy private var collectionView: UICollectionView = {
+    UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
+  }()
 
   init() {
     super.init(nibName: nil, bundle: nil)
     setupViews()
+    configureDataSource()
+    dataProvider = TodayListDataProvider(dataSource: dataSource)
+    collectionView.dataSource = dataSource
   }
 
   @available(*, unavailable)
@@ -22,19 +32,75 @@ class TodayViewController: UIViewController {
 }
 
 extension TodayViewController {
+  private func createLayout() -> UICollectionViewCompositionalLayout {
+    var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+    configuration.headerMode = .none
+    configuration.showsSeparators = false
+    configuration.backgroundColor = .clear
+    configuration.footerMode = .none
+    return UICollectionViewCompositionalLayout.list(using: configuration)
+  }
+
+  private func configureDataSource() {
+    let categoryCellRegistration = UICollectionView.CellRegistration {
+      [unowned self] (cell: UICollectionViewListCell, indexPath: IndexPath, itemIdentifier: TodayListDataProvider.ItemIdentifier) in
+      guard case let TodayListDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
+      guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
+
+      var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
+      backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+      backgroundConfiguration.backgroundColor = category.color ?? .systemGray6
+      backgroundConfiguration.cornerRadius = 8
+      cell.backgroundConfiguration = backgroundConfiguration
+
+      var contentConfiguration = cell.defaultContentConfiguration()
+      contentConfiguration.text = category.title
+      var count = 0
+      if let habits = category.habits as? Set<Habit> {
+        count = habits.filter { dataProvider.completedHabitIds.contains($0.objectID) }
+          .count
+      }
+      contentConfiguration.secondaryText = "\(count) of \(category.habits?.count ?? 0)"
+      cell.contentConfiguration = contentConfiguration
+    }
+
+    let habitCellRegistration = UICollectionView.CellRegistration {
+      [unowned self] (cell: UICollectionViewListCell, indexPath: IndexPath, itemIdentifier: TodayListDataProvider.ItemIdentifier) in
+      guard case let TodayListDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
+      guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
+
+      var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
+      backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+      backgroundConfiguration.backgroundColor = habit.category?.color?.withAlphaComponent(0.7) ?? .systemGray6.withAlphaComponent(0.7)
+      backgroundConfiguration.cornerRadius = 8
+      cell.backgroundConfiguration = backgroundConfiguration
+
+      var contentConfiguration = cell.defaultContentConfiguration()
+      contentConfiguration.text = habit.title
+      let isCompleted = dataProvider.completedHabitIds.contains(habit.objectID)
+      contentConfiguration.image = UIImage(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+      cell.contentConfiguration = contentConfiguration
+    }
+
+    dataSource = TodayListDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+      switch itemIdentifier {
+      case .habit(_):
+        return collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
+      case .category(_):
+        return collectionView.dequeueConfiguredReusableCell(using: categoryCellRegistration, for: indexPath, item: itemIdentifier)
+      }
+    }
+  }
+}
+
+extension TodayViewController {
   private func setupViews() {
-    safeArea = view.safeAreaLayoutGuide
+    view.backgroundColor = .backgroundColor
+    view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
 
-    view.backgroundColor = .white
-
-    let label = UILabel()
-    label.text = "Today"
-
-    view.addSubview(label)
-    label.translatesAutoresizingMaskIntoConstraints = false
-    label.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 8).isActive = true
-    label.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -8).isActive = true
-    label.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 8).isActive = true
-    label.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8).isActive = true
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .medium
+    dateFormatter.timeStyle = .none
+    navigationItem.title = "Today, \(dateFormatter.string(from: Date.now))"
   }
 }

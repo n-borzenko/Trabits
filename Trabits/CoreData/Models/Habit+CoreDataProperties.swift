@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 extension Habit: Identifiable {
   @nonobjc public class func fetchRequest() -> NSFetchRequest<Habit> {
     return NSFetchRequest<Habit>(entityName: "Habit")

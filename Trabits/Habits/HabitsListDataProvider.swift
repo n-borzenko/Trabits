@@ -38,7 +38,7 @@ class HabitsListDataProvider: NSObject {
                                            name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: context)
   }
 
-  func configureFetchedResultsController() {
+  private func configureFetchedResultsController() {
     let fetchRequest = Category.fetchRequest()
     fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
     fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context,
@@ -200,21 +200,7 @@ extension HabitsListDataProvider: NSFetchedResultsControllerDelegate {
       newSnapshot.appendItems([ItemIdentifier.category(category.objectID)])
     }
 
-    var reloadIdentifiers = [ItemIdentifier]()
-    if #available(iOS 15.0, *) {
-      reloadIdentifiers.append(contentsOf: snapshot.reloadedItemIdentifiers.map { ItemIdentifier.category($0) })
-    } else {
-      let reloadItems: [ItemIdentifier] = snapshot.itemIdentifiers.compactMap { objectID in
-        let identifier = ItemIdentifier.category(objectID)
-        guard let fetchedIndex = snapshot.indexOfItem(objectID),
-              let currentIndex = dataSource.snapshot().sectionIdentifier(containingItem: identifier),
-              fetchedIndex == currentIndex else { return nil }
-
-        guard context.object(with: objectID).isUpdated else { return nil }
-        return identifier
-      }
-      reloadIdentifiers.append(contentsOf: reloadItems)
-    }
+    let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.category($0) }
     delegate?.updateEmptyState(isEmpty: newSnapshot.sectionIdentifiers.isEmpty)
     dataSource.apply(newSnapshot)
 

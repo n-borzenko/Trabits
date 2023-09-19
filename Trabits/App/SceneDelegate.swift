@@ -18,7 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let tabBarViewController = UITabBarController()
 
-    let todayViewController = TodayViewController()
+    let todayViewController = UINavigationController(rootViewController: TodayViewController())
+    todayViewController.navigationBar.prefersLargeTitles = true
     todayViewController.tabBarItem = UITabBarItem(title: "Today", image: UIImage(systemName: "calendar"), tag: 0)
     tabBarViewController.addChild(todayViewController)
 
