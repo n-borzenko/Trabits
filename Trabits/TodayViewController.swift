@@ -71,15 +71,30 @@ extension TodayViewController {
 
       var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
       backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-      backgroundConfiguration.backgroundColor = habit.category?.color?.withAlphaComponent(0.7) ?? .systemGray6.withAlphaComponent(0.7)
+//      backgroundConfiguration.backgroundColor = habit.category?.color?.withAlphaComponent(0.7) ?? .systemGray6.withAlphaComponent(0.7)
+      backgroundConfiguration.backgroundColor = .systemGray6.withAlphaComponent(0.7)
       backgroundConfiguration.cornerRadius = 8
       cell.backgroundConfiguration = backgroundConfiguration
 
       var contentConfiguration = cell.defaultContentConfiguration()
       contentConfiguration.text = habit.title
-      let isCompleted = dataProvider.completedHabitIds.contains(habit.objectID)
-      contentConfiguration.image = UIImage(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
       cell.contentConfiguration = contentConfiguration
+
+      var buttonConfiguration = UIButton.Configuration.plain()
+      let isCompleted = dataProvider.completedHabitIds.contains(habit.objectID)
+      buttonConfiguration.image = UIImage(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+      buttonConfiguration.baseForegroundColor = .contrastColor
+      buttonConfiguration.baseBackgroundColor = habit.category?.color?.withAlphaComponent(0.7)
+      buttonConfiguration.buttonSize = .large
+      let button = UIButton(configuration: buttonConfiguration, primaryAction: UIAction() { [weak self] _ in
+        guard let self else { return }
+        dataProvider.toggleCompletionFor(habit)
+      })
+
+      let accessoryConfiguration = UICellAccessory.CustomViewConfiguration(customView: button, placement: .trailing(displayed: .always))
+      cell.accessories = [
+        .customView(configuration: accessoryConfiguration)
+      ]
     }
 
     dataSource = TodayListDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
@@ -98,9 +113,11 @@ extension TodayViewController {
     view.backgroundColor = .backgroundColor
     view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
 
+    collectionView.allowsSelection = false
+
     let dateFormatter = DateFormatter()
     dateFormatter.dateStyle = .medium
     dateFormatter.timeStyle = .none
-    navigationItem.title = "Today, \(dateFormatter.string(from: Date.now))"
+    navigationItem.title = dateFormatter.string(from: Date.now)
   }
 }

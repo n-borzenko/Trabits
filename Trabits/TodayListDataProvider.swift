@@ -118,13 +118,41 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
       newSnapshot.reloadItems(reloadIdentifiers)
     } else if let habits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
       print("reload day result")
+      // reload habit cells and relative categories with progress bar
       let updatedHabitIds = Set(habits.map { $0.objectID } )
-      let reloadIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
+      let reloadHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
+      let reloadCategoryIdentifiers: [ItemIdentifier] = reloadHabitIdentifiers.compactMap { itemIdentifier in
+        guard case let ItemIdentifier.habit(habitId) = itemIdentifier,
+              let habit = context.object(with: habitId) as? Habit,
+              let category = habit.category else { return nil }
+        return ItemIdentifier.category(category.objectID)
+      }
       completedHabitIds = updatedHabitIds
+      let reloadIdentifiers = reloadHabitIdentifiers + Set(reloadCategoryIdentifiers)
       print(reloadIdentifiers)
       newSnapshot.reloadItems(reloadIdentifiers)
     }
 
     dataSource.apply(newSnapshot)
+  }
+}
+
+extension TodayListDataProvider {
+  func toggleCompletionFor(_ habit: Habit) {
+    var dayResults = dayResultFetchResultsController.fetchedObjects?.first
+    if dayResults == nil {
+      dayResults = DayResult(context: context)
+      dayResults?.date = Calendar.current.startOfDay(for: Date())
+      dayResults?.completedHabits = Set<Habit>() as NSSet
+    }
+
+    guard let dayResults else { return }
+    if let habits = dayResults.completedHabits, habits.contains(habit) {
+      dayResults.removeFromCompletedHabits(habit)
+    } else {
+      dayResults.addToCompletedHabits(habit)
+    }
+
+    saveContextChanges()
   }
 }
