@@ -105,20 +105,15 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
     }
 
     if controller == categoriesFetchResultsController {
-      print("reload categories")
       let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
       let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { SectionIdentifier.category($0) }
-      print(reloadIdentifiers)
       newSnapshot.reloadSections(reloadIdentifiers)
     } else if controller == habitsFetchResultsController {
-      print("reload habits")
       let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
       let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
-      print(reloadIdentifiers)
       newSnapshot.reloadItems(reloadIdentifiers)
     } else if let habits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
-      print("reload day result")
-      // reload habit cells and relative categories with progress bar
+      // reload habit cells and related categories with progress bar
       let updatedHabitIds = Set(habits.map { $0.objectID } )
       let reloadHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
       let reloadCategoryIdentifiers: [ItemIdentifier] = reloadHabitIdentifiers.compactMap { itemIdentifier in
@@ -129,11 +124,10 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
       }
       completedHabitIds = updatedHabitIds
       let reloadIdentifiers = reloadHabitIdentifiers + Set(reloadCategoryIdentifiers)
-      print(reloadIdentifiers)
       newSnapshot.reloadItems(reloadIdentifiers)
     }
 
-    dataSource.apply(newSnapshot)
+    dataSource.apply(newSnapshot, animatingDifferences: true)
   }
 }
 

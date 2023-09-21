@@ -19,6 +19,7 @@
 		1942EC3D2AB8AE91000F70CC /* TodayListDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1942EC3C2AB8AE91000F70CC /* TodayListDataProvider.swift */; };
 		1942EC402AB8B9D5000F70CC /* DayResult+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1942EC3E2AB8B9D5000F70CC /* DayResult+CoreDataClass.swift */; };
 		1942EC412AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1942EC3F2AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift */; };
+		194327322ABBBBD300C07B2B /* TodayCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194327312ABBBBD300C07B2B /* TodayCategoryListCell.swift */; };
 		194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59C2A40F49900383B29 /* AppDelegate.swift */; };
 		194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59E2A40F49900383B29 /* SceneDelegate.swift */; };
 		194AC5A92A40F49B00383B29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5A82A40F49B00383B29 /* Assets.xcassets */; };
@@ -50,6 +51,7 @@
 		1942EC3C2AB8AE91000F70CC /* TodayListDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListDataProvider.swift; sourceTree = "<group>"; };
 		1942EC3E2AB8B9D5000F70CC /* DayResult+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DayResult+CoreDataClass.swift"; sourceTree = "<group>"; };
 		1942EC3F2AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DayResult+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		194327312ABBBBD300C07B2B /* TodayCategoryListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCategoryListCell.swift; sourceTree = "<group>"; };
 		194AC5992A40F49900383B29 /* Trabits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trabits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194AC59C2A40F49900383B29 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		194AC59E2A40F49900383B29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 			children = (
 				19C539382A7D4E1B003D9C4C /* TodayViewController.swift */,
 				1942EC3C2AB8AE91000F70CC /* TodayListDataProvider.swift */,
+				194327312ABBBBD300C07B2B /* TodayCategoryListCell.swift */,
 			);
 			name = Today;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				190961E02A8FBB9B006C37DD /* HabitsListDataProvider.swift in Sources */,
 				1942EC402AB8B9D5000F70CC /* DayResult+CoreDataClass.swift in Sources */,
 				1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */,
+				194327322ABBBBD300C07B2B /* TodayCategoryListCell.swift in Sources */,
 				19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */,
 				1960EF922A96D4F1002BD3BA /* EditHabitViewController.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,

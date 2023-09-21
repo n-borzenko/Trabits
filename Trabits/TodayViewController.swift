@@ -7,6 +7,41 @@
 
 import UIKit
 
+final class GradientLayerView: UIView {
+  override class var layerClass: AnyClass {
+    return CAGradientLayer.self
+  }
+
+  private var gradientLayer: CAGradientLayer {
+    return self.layer as! CAGradientLayer
+  }
+
+  init(startColor: UIColor, endColor: UIColor) {
+    self.startColor = startColor
+    self.endColor = endColor
+    super.init(frame: .zero)
+
+    gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+    gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+    gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+  }
+  
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  private var startColor: UIColor
+  private var endColor: UIColor
+
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+      gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+      layoutIfNeeded()
+    }
+  }
+}
+
 class TodayViewController: UIViewController {
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
 
@@ -43,25 +78,16 @@ extension TodayViewController {
 
   private func configureDataSource() {
     let categoryCellRegistration = UICollectionView.CellRegistration {
-      [unowned self] (cell: UICollectionViewListCell, indexPath: IndexPath, itemIdentifier: TodayListDataProvider.ItemIdentifier) in
+      [unowned self] (cell: TodayCategoryListCell, indexPath: IndexPath, itemIdentifier: TodayListDataProvider.ItemIdentifier) in
       guard case let TodayListDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
 
-      var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
-      backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-      backgroundConfiguration.backgroundColor = category.color ?? .systemGray6
-      backgroundConfiguration.cornerRadius = 8
-      cell.backgroundConfiguration = backgroundConfiguration
-
-      var contentConfiguration = cell.defaultContentConfiguration()
-      contentConfiguration.text = category.title
-      var count = 0
+      var completedHabitsCount = 0
       if let habits = category.habits as? Set<Habit> {
-        count = habits.filter { dataProvider.completedHabitIds.contains($0.objectID) }
+        completedHabitsCount = habits.filter { dataProvider.completedHabitIds.contains($0.objectID) }
           .count
       }
-      contentConfiguration.secondaryText = "\(count) of \(category.habits?.count ?? 0)"
-      cell.contentConfiguration = contentConfiguration
+      cell.fill(category: category, completedHabitsCount: completedHabitsCount)
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration {
@@ -71,8 +97,10 @@ extension TodayViewController {
 
       var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell()
       backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-//      backgroundConfiguration.backgroundColor = habit.category?.color?.withAlphaComponent(0.7) ?? .systemGray6.withAlphaComponent(0.7)
-      backgroundConfiguration.backgroundColor = .systemGray6.withAlphaComponent(0.7)
+      let startColor = habit.category?.color ?? .systemGray6
+      let endColor = UIColor.systemGray6
+      let gradientView = GradientLayerView(startColor: startColor, endColor: endColor)
+      backgroundConfiguration.customView = gradientView
       backgroundConfiguration.cornerRadius = 8
       cell.backgroundConfiguration = backgroundConfiguration
 
@@ -80,12 +108,15 @@ extension TodayViewController {
       contentConfiguration.text = habit.title
       cell.contentConfiguration = contentConfiguration
 
-      var buttonConfiguration = UIButton.Configuration.plain()
+      var buttonConfiguration = UIButton.Configuration.bordered()
       let isCompleted = dataProvider.completedHabitIds.contains(habit.objectID)
-      buttonConfiguration.image = UIImage(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
-      buttonConfiguration.baseForegroundColor = .contrastColor
-      buttonConfiguration.baseBackgroundColor = habit.category?.color?.withAlphaComponent(0.7)
-      buttonConfiguration.buttonSize = .large
+      buttonConfiguration.image = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+      buttonConfiguration.baseForegroundColor = isCompleted ? .contrastColor : .backgroundColor
+      buttonConfiguration.baseBackgroundColor = isCompleted ? habit.category?.color : .backgroundColor
+      buttonConfiguration.background.strokeColor = .contrastColor
+      buttonConfiguration.background.strokeWidth = 2
+      buttonConfiguration.cornerStyle = .capsule
+      buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
       let button = UIButton(configuration: buttonConfiguration, primaryAction: UIAction() { [weak self] _ in
         guard let self else { return }
         dataProvider.toggleCompletionFor(habit)
