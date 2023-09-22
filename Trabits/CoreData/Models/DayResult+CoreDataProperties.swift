@@ -9,33 +9,41 @@
 import Foundation
 import CoreData
 
-extension DayResult {
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<DayResult> {
-    return NSFetchRequest<DayResult>(entityName: "DayResult")
-  }
-
-  @NSManaged public var date: Date?
-  @NSManaged public var completedHabits: NSSet?
-
+extension DayResult: Identifiable {
+  @NSManaged var date: Date?
+  @NSManaged var completedHabits: NSSet?
 }
 
 // MARK: Generated accessors for completedHabits
 extension DayResult {
-
   @objc(addCompletedHabitsObject:)
-  @NSManaged public func addToCompletedHabits(_ value: Habit)
+  @NSManaged func addToCompletedHabits(_ value: Habit)
 
   @objc(removeCompletedHabitsObject:)
-  @NSManaged public func removeFromCompletedHabits(_ value: Habit)
+  @NSManaged func removeFromCompletedHabits(_ value: Habit)
 
   @objc(addCompletedHabits:)
-  @NSManaged public func addToCompletedHabits(_ values: NSSet)
+  @NSManaged func addToCompletedHabits(_ values: NSSet)
 
   @objc(removeCompletedHabits:)
-  @NSManaged public func removeFromCompletedHabits(_ values: NSSet)
-
+  @NSManaged func removeFromCompletedHabits(_ values: NSSet)
 }
 
-extension DayResult : Identifiable {
+extension DayResult {
+  @nonobjc class func fetchRequest() -> NSFetchRequest<DayResult> {
+    return NSFetchRequest<DayResult>(entityName: "DayResult")
+  }
 
+  @nonobjc class func singleDayPredicate(date: Date = Date()) -> NSPredicate {
+    let interval = Calendar.current.dateInterval(of: .day, for: date)!
+    return NSPredicate(format: "date >= %@ AND date < %@", interval.start as NSDate, interval.end as NSDate)
+  }
+
+  @nonobjc class func singleDayFetchRequest(date: Date = Date()) -> NSFetchRequest<DayResult> {
+    let request = fetchRequest()
+    request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+    request.predicate = singleDayPredicate(date: date)
+    request.fetchLimit = 1
+    return request
+  }
 }

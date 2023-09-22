@@ -92,6 +92,7 @@ extension EditHabitViewController {
       habit.title = editableHabit.title
       habit.orderPriority = editableHabit.category?.habits?.count ?? 0
       habit.category = editableHabit.category
+      habit.dayResults = Set<DayResult>() as NSSet
       do {
         try context.obtainPermanentIDs(for: [habit])
       } catch {

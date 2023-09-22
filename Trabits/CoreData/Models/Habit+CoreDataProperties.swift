@@ -10,16 +10,40 @@ import Foundation
 import CoreData
 
 extension Habit: Identifiable {
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<Habit> {
+  @NSManaged var title: String?
+  @NSManaged var order: Int32
+  @NSManaged var category: Category?
+  @NSManaged var dayResults: NSSet?
+  
+  var orderPriority: Int {
+    get { Int(order) }
+    set { order = Int32(newValue) }
+  }
+}
+
+// MARK: Generated accessors for dayResults
+extension Habit {
+  @objc(addDayResultsObject:)
+  @NSManaged func addToDayResults(_ value: DayResult)
+  
+  @objc(removeDayResultsObject:)
+  @NSManaged func removeFromDayResults(_ value: DayResult)
+  
+  @objc(addDayResults:)
+  @NSManaged func addToDayResults(_ values: NSSet)
+  
+  @objc(removeDayResults:)
+  @NSManaged func removeFromDayResults(_ values: NSSet)
+}
+
+extension Habit {
+  @nonobjc class func fetchRequest() -> NSFetchRequest<Habit> {
     return NSFetchRequest<Habit>(entityName: "Habit")
   }
 
-  @NSManaged public var title: String?
-  @NSManaged public var order: Int32
-  @NSManaged public var category: Category?
-
-  public var orderPriority: Int {
-    get { Int(order) }
-    set { order = Int32(newValue) }
+  @nonobjc class func orderedHabitsFetchRequest() -> NSFetchRequest<Habit> {
+    let request = fetchRequest()
+    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    return request
   }
 }

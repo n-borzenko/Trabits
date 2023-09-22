@@ -36,24 +36,21 @@ class TodayCategoryContentView: UIView, UIContentView {
     let stackView = UIStackView()
     stackView.axis = .vertical
     stackView.distribution = .fill
-    stackView.spacing = 8
+    stackView.spacing = 4
     addPinnedSubview(stackView, insets: UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8), layoutGuide: safeAreaLayoutGuide, flexibleBottom: true)
 
-    titleLabel.translatesAutoresizingMaskIntoConstraints = false
     titleLabel.font = UIFont.preferredFont(forTextStyle: .title3)
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.numberOfLines = 0
     stackView.addArrangedSubview(titleLabel)
 
-    progressLabel.translatesAutoresizingMaskIntoConstraints = false
     progressLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
     progressLabel.adjustsFontForContentSizeCategory = true
     progressLabel.textColor = .secondaryLabel
     stackView.addArrangedSubview(progressLabel)
 
-    progressView.translatesAutoresizingMaskIntoConstraints = false
     progressView.heightAnchor.constraint(equalToConstant: 8).isActive = true
-    progressView.layer.sublayers?.last?.borderColor = UIColor.contrastColor.cgColor
+    progressView.layer.sublayers?.last?.borderColor = UIColor.secondaryLabel.cgColor
     progressView.layer.sublayers?.last?.borderWidth = 1
     progressView.layer.sublayers?.last?.cornerRadius = 4
     progressView.layer.sublayers?.first?.cornerRadius = 4
@@ -68,12 +65,12 @@ class TodayCategoryContentView: UIView, UIContentView {
     progressLabel.text = "\(configuration.progressCount) of \(configuration.totalCount)"
     progressView.progress = Float(configuration.progressCount) / Float(configuration.totalCount)
     progressView.progressTintColor = configuration.color
-    progressView.trackTintColor = configuration.color.withAlphaComponent(0.7)
+    progressView.trackTintColor = configuration.color.withAlphaComponent(0.5)
   }
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-      progressView.layer.sublayers?.last?.borderColor = UIColor.contrastColor.cgColor
+      progressView.layer.sublayers?.last?.borderColor = UIColor.secondaryLabel.cgColor
     }
   }
 }
@@ -100,7 +97,6 @@ class TodayCategoryListCell: UICollectionViewListCell {
   func fill(category: Category, completedHabitsCount: Int) {
     self.category = category
     self.completedHabitsCount = completedHabitsCount
-
     setNeedsUpdateConfiguration()
   }
 

@@ -9,17 +9,12 @@
 import UIKit
 import CoreData
 
-extension Category {
+extension Category: Identifiable {
+  @NSManaged var title: String?
+  @NSManaged var color: UIColor?
+  @NSManaged var habits: NSSet?
 
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<Category> {
-    return NSFetchRequest<Category>(entityName: "Category")
-  }
-
-  @NSManaged public var title: String?
-  @NSManaged public var color: UIColor?
-  @NSManaged public var habits: NSSet?
-
-  @NSManaged public var order: Int32
+  @NSManaged var order: Int32
 
   var orderPriority: Int {
     get { Int(order) }
@@ -29,21 +24,33 @@ extension Category {
 
 // MARK: Generated accessors for habits
 extension Category {
-
   @objc(addHabitsObject:)
-  @NSManaged public func addToHabits(_ value: Habit)
+  @NSManaged func addToHabits(_ value: Habit)
 
   @objc(removeHabitsObject:)
-  @NSManaged public func removeFromHabits(_ value: Habit)
+  @NSManaged func removeFromHabits(_ value: Habit)
 
   @objc(addHabits:)
-  @NSManaged public func addToHabits(_ values: NSSet)
+  @NSManaged func addToHabits(_ values: NSSet)
 
   @objc(removeHabits:)
-  @NSManaged public func removeFromHabits(_ values: NSSet)
-
+  @NSManaged func removeFromHabits(_ values: NSSet)
 }
 
-extension Category : Identifiable {
+extension Category {
+  @nonobjc class func fetchRequest() -> NSFetchRequest<Category> {
+    return NSFetchRequest<Category>(entityName: "Category")
+  }
 
+  @nonobjc class func orderedCategoriesFetchRequest() -> NSFetchRequest<Category> {
+    let request = fetchRequest()
+    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    return request
+  }
+
+  @nonobjc class func nonEmptyCategoriesFetchRequest() -> NSFetchRequest<Category> {
+    let request = orderedCategoriesFetchRequest()
+    request.predicate = NSPredicate(format: "habits.@count > 0")
+    return request
+  }
 }

@@ -32,6 +32,23 @@ class TodayListDataProvider: NSObject {
   private(set) var completedHabitIds: Set<NSManagedObjectID> = Set()
   
   var dataSource: DataSource!
+  var date = Date() {
+    didSet {
+      dayResultFetchResultsController.fetchRequest.predicate = DayResult.singleDayPredicate(date: date)
+      completedHabitIds = Set()
+
+      var snapshot = dataSource.snapshot()
+      snapshot.reloadSections(snapshot.sectionIdentifiers)
+      dataSource.apply(snapshot)
+
+      do {
+        try dayResultFetchResultsController.performFetch()
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
+    }
+  }
 
   init(dataSource: DataSource) {
     self.dataSource = dataSource
@@ -40,26 +57,14 @@ class TodayListDataProvider: NSObject {
   }
 
   func configureFetchedResultsControllers() {
-    let categoriesRequest = Category.fetchRequest()
-    categoriesRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-    categoriesRequest.predicate = NSPredicate(format: "habits.@count > 0")
-    categoriesFetchResultsController = NSFetchedResultsController(fetchRequest: categoriesRequest, managedObjectContext: context,
-                                                              sectionNameKeyPath: nil, cacheName: nil)
+    categoriesFetchResultsController = NSFetchedResultsController(fetchRequest: Category.nonEmptyCategoriesFetchRequest(),
+                                                                  managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+    habitsFetchResultsController = NSFetchedResultsController(fetchRequest: Habit.orderedHabitsFetchRequest(),
+                                                              managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+    dayResultFetchResultsController = NSFetchedResultsController(fetchRequest: DayResult.singleDayFetchRequest(date: date),
+                                                                 managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
     categoriesFetchResultsController.delegate = self
-
-    let habitsRequest = Habit.fetchRequest()
-    habitsRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-    habitsFetchResultsController = NSFetchedResultsController(fetchRequest: habitsRequest, managedObjectContext: context,
-                                                              sectionNameKeyPath: nil, cacheName: nil)
     habitsFetchResultsController.delegate = self
-
-    let dayResultRequest = DayResult.fetchRequest()
-    dayResultRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-    let interval = Calendar.current.dateInterval(of: .day, for: Date())!
-    dayResultRequest.predicate = NSPredicate(format: "date >= %@ AND date < %@", interval.start as NSDate, interval.end as NSDate)
-    dayResultRequest.fetchLimit = 1
-    dayResultFetchResultsController = NSFetchedResultsController(fetchRequest: dayResultRequest, managedObjectContext: context,
-                                                              sectionNameKeyPath: nil, cacheName: nil)
     dayResultFetchResultsController.delegate = self
 
     do {
@@ -110,11 +115,19 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
       newSnapshot.reloadSections(reloadIdentifiers)
     } else if controller == habitsFetchResultsController {
       let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
-      let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
+      let reloadIdentifiers: [ItemIdentifier] = snapshot.reloadedItemIdentifiers.compactMap { objectId in
+        guard let habit = context.object(with: objectId) as? Habit else { return nil }
+        // skip updates of dayResults
+        if habit.isUpdated, habit.changedValues().count == 1,
+           habit.changedValues()["dayResults"] != nil {
+          return nil
+        }
+        return ItemIdentifier.habit(objectId)
+      }
       newSnapshot.reloadItems(reloadIdentifiers)
-    } else if let habits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
+    } else if let fetchedHabits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
       // reload habit cells and related categories with progress bar
-      let updatedHabitIds = Set(habits.map { $0.objectID } )
+      let updatedHabitIds = Set(fetchedHabits.map { $0.objectID } )
       let reloadHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
       let reloadCategoryIdentifiers: [ItemIdentifier] = reloadHabitIdentifiers.compactMap { itemIdentifier in
         guard case let ItemIdentifier.habit(habitId) = itemIdentifier,

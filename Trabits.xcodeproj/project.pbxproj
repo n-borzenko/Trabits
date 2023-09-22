@@ -35,6 +35,7 @@
 		19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */; };
 		1998CECF2AA7FD8D00616D9A /* EditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998CECE2AA7FD8D00616D9A /* EditCategoryViewController.swift */; };
 		19BB9BE42A6F16D000D328BD /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE32A6F16D000D328BD /* CoreDataStack.swift */; };
+		19C138B42ABD1E1B00CDA2B1 /* TodayHabitListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C138B32ABD1E1B00CDA2B1 /* TodayHabitListCell.swift */; };
 		19C539392A7D4E1B003D9C4C /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C539382A7D4E1B003D9C4C /* TodayViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 		19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorValueTransformer.swift; sourceTree = "<group>"; };
 		1998CECE2AA7FD8D00616D9A /* EditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewController.swift; sourceTree = "<group>"; };
 		19BB9BE32A6F16D000D328BD /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		19C138B32ABD1E1B00CDA2B1 /* TodayHabitListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayHabitListCell.swift; sourceTree = "<group>"; };
 		19C539382A7D4E1B003D9C4C /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -204,6 +206,7 @@
 				19C539382A7D4E1B003D9C4C /* TodayViewController.swift */,
 				1942EC3C2AB8AE91000F70CC /* TodayListDataProvider.swift */,
 				194327312ABBBBD300C07B2B /* TodayCategoryListCell.swift */,
+				19C138B32ABD1E1B00CDA2B1 /* TodayHabitListCell.swift */,
 			);
 			name = Today;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 				194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */,
 				19020D062A83042600616BBE /* HabitsListViewController.swift in Sources */,
 				19BB9BE42A6F16D000D328BD /* CoreDataStack.swift in Sources */,
+				19C138B42ABD1E1B00CDA2B1 /* TodayHabitListCell.swift in Sources */,
 				194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */,
 				19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */,
 				190961E02A8FBB9B006C37DD /* HabitsListDataProvider.swift in Sources */,
