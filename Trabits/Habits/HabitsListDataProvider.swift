@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-protocol HabitsListDataProviderDelegate {
+protocol HabitsListDataProviderDelegate: AnyObject {
   func updateEmptyState(isEmpty: Bool)
 }
 
@@ -27,7 +27,7 @@ class HabitsListDataProvider: NSObject {
 
   var expandedCategories = Set<ItemIdentifier>()
 
-  var delegate: HabitsListDataProviderDelegate?
+  weak var delegate: HabitsListDataProviderDelegate?
 
   init(dataSource: DataSource, delegate: HabitsListDataProviderDelegate? = nil) {
     self.dataSource = dataSource

@@ -20,13 +20,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let todayViewController = UINavigationController(rootViewController: TodayViewController())
     todayViewController.navigationBar.prefersLargeTitles = true
-    todayViewController.tabBarItem = UITabBarItem(title: "Today", image: UIImage(systemName: "calendar"), tag: 0)
+    todayViewController.tabBarItem = UITabBarItem(title: "Today", image: UIImage(systemName: "checklist.unchecked"), tag: 0)
     tabBarViewController.addChild(todayViewController)
 
-    let habitsListViewController = UINavigationController(rootViewController: HabitsListViewController())
-    habitsListViewController.navigationBar.prefersLargeTitles = true
-    habitsListViewController.tabBarItem = UITabBarItem(title: "Habits", image: UIImage(systemName: "rectangle.stack.fill"), tag: 1)
-    tabBarViewController.addChild(habitsListViewController)
+    let settingsListViewController = UINavigationController(rootViewController: HabitsListViewController())
+    settingsListViewController.navigationBar.prefersLargeTitles = true
+    settingsListViewController.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "rectangle.stack.fill"), tag: 1)
+    tabBarViewController.addChild(settingsListViewController)
 
     window?.rootViewController = tabBarViewController
     window?.makeKeyAndVisible()

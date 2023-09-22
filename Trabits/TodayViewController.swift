@@ -13,6 +13,8 @@ class TodayViewController: UIViewController {
   private var dataSource: TodayListDataProvider.DataSource!
   private var dataProvider: TodayListDataProvider!
 
+  private var emptyStateView: EmptyStateView!
+
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
@@ -28,7 +30,7 @@ class TodayViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
-    dataProvider = TodayListDataProvider(dataSource: dataSource)
+    dataProvider = TodayListDataProvider(dataSource: dataSource, delegate: self)
     collectionView.dataSource = dataSource
   }
 
@@ -92,6 +94,13 @@ extension TodayViewController {
 
     navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Before", style: .plain, target: self, action: #selector(showDayBefore))
     navigationItem.rightBarButtonItem = UIBarButtonItem(title: "After", style: .plain, target: self, action: #selector(showDayAfter))
+
+    emptyStateView = EmptyStateView(
+      message: "List of habits is empty.\nPlease, fill it in Settings.",
+      image: UIImage(systemName: "clipboard")
+    )
+    view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)
+    emptyStateView.isHidden = true
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -107,5 +116,11 @@ extension TodayViewController {
   @objc private func showDayAfter() {
     dataProvider.date = Calendar.current.date(byAdding: .day, value: 1, to: dataProvider.date) ?? Date()
     navigationItem.title = dateFormatter.string(from: dataProvider.date)
+  }
+}
+
+extension TodayViewController: TodayListDataProviderDelegate {
+  func updateEmptyState(isEmpty: Bool) {
+    emptyStateView.isHidden = !isEmpty
   }
 }

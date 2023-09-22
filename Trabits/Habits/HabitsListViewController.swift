@@ -17,6 +17,7 @@ class HabitsListViewController: UIViewController {
   private var stackView = UIStackView()
   private var newCategoryButton = ActionButton()
   private var newHabitButton = ActionButton()
+  private var emptyStateView: EmptyStateView!
 
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
@@ -104,6 +105,13 @@ extension HabitsListViewController {
     view.backgroundColor = .backgroundColor
     view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
 
+    emptyStateView = EmptyStateView(
+      message: "List of categories is empty.\nPlease, create your first category.",
+      image: UIImage(systemName: "rectangle.stack")
+    )
+    view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)
+    emptyStateView.isHidden = true
+
     view.addSubview(stackView)
     stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
@@ -131,10 +139,7 @@ extension HabitsListViewController {
     collectionView.allowsSelection = true
 
     collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: hasLargeText ? 110 : 80, right: 0)
-    collectionView.backgroundView = EmptyStateView()
-    collectionView.backgroundView?.isHidden = true
-
-    navigationItem.title = "Habits"
+    navigationItem.title = "Settings"
   }
 
   @objc private func addNewCategory() {
@@ -176,10 +181,10 @@ extension HabitsListViewController: HabitsListDataProviderDelegate {
   func updateEmptyState(isEmpty: Bool) {
     if isEmpty {
       newHabitButton.isHidden = true
-      collectionView.backgroundView?.isHidden = false
+      emptyStateView.isHidden = false
     } else {
       newHabitButton.isHidden = false
-      collectionView.backgroundView?.isHidden = true
+      emptyStateView.isHidden = true
     }
   }
 }

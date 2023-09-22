@@ -9,7 +9,10 @@ import UIKit
 import CoreData
 
 // todo refresh date on midnight
-// todo empty state view and routing to habits creation
+
+protocol TodayListDataProviderDelegate: AnyObject {
+  func updateEmptyState(isEmpty: Bool)
+}
 
 class TodayListDataProvider: NSObject {
   enum SectionIdentifier: Hashable {
@@ -30,7 +33,9 @@ class TodayListDataProvider: NSObject {
   private var dayResultFetchResultsController: NSFetchedResultsController<DayResult>!
 
   private(set) var completedHabitIds: Set<NSManagedObjectID> = Set()
-  
+
+  weak var delegate: TodayListDataProviderDelegate?
+
   var dataSource: DataSource!
   var date = Date() {
     didSet {
@@ -50,9 +55,10 @@ class TodayListDataProvider: NSObject {
     }
   }
 
-  init(dataSource: DataSource) {
+  init(dataSource: DataSource, delegate: TodayListDataProviderDelegate? = nil) {
     self.dataSource = dataSource
     super.init()
+    self.delegate = delegate
     configureFetchedResultsControllers()
   }
 
@@ -90,10 +96,13 @@ class TodayListDataProvider: NSObject {
 extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
     var newSnapshot = Snapshot()
-    guard let categories = categoriesFetchResultsController.fetchedObjects, !categories.isEmpty else {
-      // todo: show empty state
-      return
+
+    defer {
+      dataSource.apply(newSnapshot, animatingDifferences: true)
+      delegate?.updateEmptyState(isEmpty: newSnapshot.sectionIdentifiers.isEmpty)
     }
+
+    guard let categories = categoriesFetchResultsController.fetchedObjects, !categories.isEmpty else { return }
 
     newSnapshot.appendSections(categories.map { SectionIdentifier.category($0.objectID) })
     categories.forEach {
@@ -139,8 +148,6 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
       let reloadIdentifiers = reloadHabitIdentifiers + Set(reloadCategoryIdentifiers)
       newSnapshot.reloadItems(reloadIdentifiers)
     }
-
-    dataSource.apply(newSnapshot, animatingDifferences: true)
   }
 }
 
@@ -149,7 +156,7 @@ extension TodayListDataProvider {
     var dayResults = dayResultFetchResultsController.fetchedObjects?.first
     if dayResults == nil {
       dayResults = DayResult(context: context)
-      dayResults?.date = Calendar.current.startOfDay(for: Date())
+      dayResults?.date = Calendar.current.startOfDay(for: date)
       dayResults?.completedHabits = Set<Habit>() as NSSet
     }
 
