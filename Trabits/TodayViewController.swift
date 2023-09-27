@@ -103,19 +103,37 @@ extension TodayViewController {
     emptyStateView.isHidden = true
   }
 
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    navigationItem.title = dateFormatter.string(from: dataProvider.date)
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    if !Calendar.current.isDate(Date(), inSameDayAs: dataProvider.date) {
+      dataProvider.date = Calendar.current.startOfDay(for: Date())
+    }
+    updateNavigationTitle()
   }
 
   @objc private func showDayBefore() {
-    dataProvider.date = Calendar.current.date(byAdding: .day, value: -1, to: dataProvider.date) ?? Date()
-    navigationItem.title = dateFormatter.string(from: dataProvider.date)
+    let date = Calendar.current.date(byAdding: .day, value: -1, to: dataProvider.date) ?? Date()
+    dataProvider.date = Calendar.current.startOfDay(for: date)
+    updateNavigationTitle()
   }
 
   @objc private func showDayAfter() {
-    dataProvider.date = Calendar.current.date(byAdding: .day, value: 1, to: dataProvider.date) ?? Date()
-    navigationItem.title = dateFormatter.string(from: dataProvider.date)
+    let date = Calendar.current.date(byAdding: .day, value: 1, to: dataProvider.date) ?? Date()
+    dataProvider.date = Calendar.current.startOfDay(for: date)
+    updateNavigationTitle()
+  }
+
+  private func updateNavigationTitle() {
+    if Calendar.current.isDateInToday(dataProvider.date) {
+      navigationItem.title = "Today"
+    } else if Calendar.current.isDateInYesterday(dataProvider.date) {
+      navigationItem.title = "Yesterday"
+    } else if Calendar.current.isDateInTomorrow(dataProvider.date) {
+      navigationItem.title = "Tomorrow"
+    } else {
+      navigationItem.title = dateFormatter.string(from: dataProvider.date)
+    }
   }
 }
 

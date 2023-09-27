@@ -8,8 +8,6 @@
 import UIKit
 import CoreData
 
-// todo refresh date on midnight
-
 protocol TodayListDataProviderDelegate: AnyObject {
   func updateEmptyState(isEmpty: Bool)
 }
@@ -37,7 +35,7 @@ class TodayListDataProvider: NSObject {
   weak var delegate: TodayListDataProviderDelegate?
 
   var dataSource: DataSource!
-  var date = Date() {
+  var date = Calendar.current.startOfDay(for: Date()) {
     didSet {
       dayResultFetchResultsController.fetchRequest.predicate = DayResult.singleDayPredicate(date: date)
       completedHabitIds = Set()
