@@ -10,6 +10,8 @@ import UIKit
 extension UIColor {
   static let contrastColor = UIColor(named: "ContrastColor")!
   static let backgroundColor = UIColor(named: "BackgroundColor")!
+  
+  static let themeColor = UIColor.purple
 }
 
 enum ColorPalette: String, CaseIterable {
