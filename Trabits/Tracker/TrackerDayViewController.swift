@@ -1,16 +1,19 @@
 //
-//  TrackerListViewController.swift
+//  TrackerDayViewController.swift
 //  Trabits
 //
-//  Created by Natalia Borzenko on 01/10/2023.
+//  Created by Natalia Borzenko on 07/10/2023.
 //
 
 import UIKit
 
-class TrackerListViewController: UIViewController {
-  public private(set) var date: Date
+class TrackerDayViewController: UIViewController {
+  private let dataProvider: TrackerDataProvider
   
-  init(date: Date) {
+  let date: Date
+  
+  init(dataProvider: TrackerDataProvider, date: Date) {
+    self.dataProvider = dataProvider
     self.date = date
     super.init(nibName: nil, bundle: nil)
     setupViews()
@@ -22,7 +25,7 @@ class TrackerListViewController: UIViewController {
   }
 }
 
-extension TrackerListViewController {
+extension TrackerDayViewController {
   private func setupViews() {
     view.backgroundColor = .yellow
     view.layer.cornerRadius = 44

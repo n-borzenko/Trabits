@@ -1,13 +1,13 @@
 //
-//  TrackerViewController.swift
+//  TrackerViewController2.swift
 //  Trabits
 //
-//  Created by Natalia Borzenko on 28/09/2023.
+//  Created by Natalia Borzenko on 05/10/2023.
 //
 
 import UIKit
 
-class TrackerViewController: UIViewController {
+class TrackerViewController2: UIViewController {
   
   enum SectionIdentifier: Hashable {
     case date
@@ -44,15 +44,17 @@ class TrackerViewController: UIViewController {
   
   private var isInitialScrollCompleted = false
   private var isScrollApplied = false
-  private var panGestureDirection = PanGestureDirection.none
+//  private var panGestureDirection = PanGestureDirection.none
   
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
   
   private var containerView = UIView()
-  private var child1CenterXConstraint: NSLayoutConstraint!
-  private var child2CenterXConstraint: NSLayoutConstraint?
+//  private var child1CenterXConstraint: NSLayoutConstraint!
+//  private var child2CenterXConstraint: NSLayoutConstraint?
+  
+  private var pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
   
   init() {
     super.init(nibName: nil, bundle: nil)
@@ -85,7 +87,7 @@ class TrackerViewController: UIViewController {
   }
 }
 
-extension TrackerViewController {
+extension TrackerViewController2 {
   private func createLayout() -> UICollectionViewCompositionalLayout {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/7), heightDimension: .fractionalHeight(1))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -121,9 +123,10 @@ extension TrackerViewController {
     
     guard let startOfTheWeek = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: middleDate)) else { return }
     
+    let adjustedStartOfTheWeek = Calendar.current.startOfDay(for: startOfTheWeek)
     var days: [ItemIdentifier] = []
     for i in -7..<14 {
-      guard let day = Calendar.current.date(byAdding: .day, value: i, to: startOfTheWeek) else { continue }
+      guard let day = Calendar.current.date(byAdding: .day, value: i, to: adjustedStartOfTheWeek) else { continue }
       days.append(ItemIdentifier.day(day))
     }
     
@@ -132,7 +135,7 @@ extension TrackerViewController {
   }
 }
 
-extension TrackerViewController {
+extension TrackerViewController2 {
   private func setupViews() {
     view.backgroundColor = .backgroundColor
     
@@ -168,163 +171,32 @@ extension TrackerViewController {
     leadingBorderView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
     leadingBorderView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     
-    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureHandler))
-    containerView.addGestureRecognizer(panGestureRecognizer)
-    
-//    let leftSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(leftSwipeGestureHandler))
-//    leftSwipeGestureRecognizer.direction = .left
-//    containerView.addGestureRecognizer(leftSwipeGestureRecognizer)
-//    
-//    let rightSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(rightSwipeGestureHandler))
-//    rightSwipeGestureRecognizer.direction = .right
-//    containerView.addGestureRecognizer(rightSwipeGestureRecognizer)
-    
     navigationItem.largeTitleDisplayMode = .never
     collectionView.alwaysBounceVertical = false
     
-    addChildViewController(date: selectedDate, childCenterXConstraint: &child1CenterXConstraint)
-  }
-  
-  private func addChildViewController(date: Date, childCenterXConstraint: inout NSLayoutConstraint!) {
-    let childController = TrackerListViewController(date: date)
-    addChild(childController)
-    containerView.addSubview(childController.view)
-    childController.view.translatesAutoresizingMaskIntoConstraints = false
-    childController.view.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-    childController.view.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
-    childController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-    childCenterXConstraint = childController.view.centerXAnchor.constraint(equalTo: containerView.centerXAnchor, constant: 0)
-    childCenterXConstraint.isActive = true
-    childController.didMove(toParent: self)
-  }
-  
-  private func removeChildViewController(at index: Int = 0) {
-    guard index < children.count else { return }
     
-    let childController = children[index]
-    childController.willMove(toParent: nil)
-    childController.view.removeFromSuperview()
-    childController.removeFromParent()
-  }
-  
-//  @objc private func leftSwipeGestureHandler(_ sender: UISwipeGestureRecognizer) {
-//    guard let newDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return }
-//    
-//    addChildViewController(date: newDate, childCenterXConstraint: &child2CenterXConstraint)
-//    child2CenterXConstraint?.constant = containerView.frame.width
-//    
-//    Task {
-//      await MainActor.run {
-//        UIView.animate(withDuration: 1, delay: 0.25, animations: { [weak self] in
-//          guard let self else { return }
-//          child1CenterXConstraint.constant = -containerView.frame.width
-//          child2CenterXConstraint?.constant = 0
-//        }, completion: { [weak self] _ in
-//          guard let self else { return }
-//          removeChildViewController(at: 0)
-//          child1CenterXConstraint = child2CenterXConstraint
-//          selectedDate = newDate
-//          child2CenterXConstraint = nil
-//          panGestureDirection = .none
-//        })
-//      }
-//    }
-//  }
-//  
-//  @objc private func rightSwipeGestureHandler(_ sender: UISwipeGestureRecognizer) {
-//    
-//  }
-  
-  @objc private func panGestureHandler(_ sender: UIPanGestureRecognizer) {
-    switch sender.state {
-    case .began:
-      let velocity = sender.velocity(in: containerView)
-      let point = sender.translation(in: containerView)
-//      guard abs(point.x) > abs(point.y) else {
-//        panGestureDirection = .none
-//        return
-//      }
+    pageViewController.delegate = self
+    pageViewController.dataSource = self
+    
+    addChild(pageViewController)
+    containerView.addPinnedSubview(pageViewController.view)
 
-      panGestureDirection = velocity.x > 0 ? .previous : .next
-      print(panGestureDirection == .previous)
-      let dayOffset = panGestureDirection == .previous ? -1 : 1
-      guard let newDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: selectedDate) else {
-        panGestureDirection = .none
-        return
-      }
-      
-      addChildViewController(date: newDate, childCenterXConstraint: &child2CenterXConstraint)
-      child1CenterXConstraint.constant = point.x
-      if panGestureDirection == .previous {
-        child2CenterXConstraint?.constant = -containerView.frame.width + point.x
-      } else {
-        child2CenterXConstraint?.constant = containerView.frame.width + point.x
-      }
-    case .changed:
-      guard panGestureDirection != .none else { return }
-      let x = sender.translation(in: containerView).x
-      child1CenterXConstraint.constant = x
-      if panGestureDirection == .previous {
-        child2CenterXConstraint?.constant = -containerView.frame.width + x
-      } else {
-        child2CenterXConstraint?.constant = containerView.frame.width + x
-      }
-    case .ended:
-      guard panGestureDirection != .none else { return }
-      let x = sender.translation(in: containerView).x
-      let containerWidth = containerView.frame.width
-      let velocity = sender.velocity(in: containerView).x
-      let isHalfScreenPassed = (containerWidth / 2) <= abs(x)
-      
-      let isGestureCompleted =
-        isHalfScreenPassed && panGestureDirection == .next ||
-        !isHalfScreenPassed && velocity < -500 && panGestureDirection == .next ||
-        isHalfScreenPassed && panGestureDirection == .previous ||
-        !isHalfScreenPassed && velocity > 500 && panGestureDirection == .previous
-      
-      print(isHalfScreenPassed, velocity, isGestureCompleted)
-        
-      if isGestureCompleted {
-        child1CenterXConstraint.constant = panGestureDirection == .previous ? containerWidth : -containerWidth
-        child2CenterXConstraint?.constant = 0
-      } else {
-        child1CenterXConstraint.constant = 0
-        if panGestureDirection == .previous {
-          child2CenterXConstraint?.constant = -containerWidth
-        } else {
-          child2CenterXConstraint?.constant = containerWidth
-        }
-      }
-      
-      UIView.animate(withDuration: 0.25, animations: { [weak self] in
-        guard let self else { return }
-        containerView.layoutIfNeeded()
-      }, completion: { [weak self] _ in
-        guard let self else { return }
-        if isGestureCompleted {
-          removeChildViewController(at: 0)
-          child1CenterXConstraint = child2CenterXConstraint
-          
-          let dayOffset = panGestureDirection == .previous ? -1 : 1
-          selectedDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: selectedDate)
-        } else {
-          removeChildViewController(at: 1)
-        }
-        child2CenterXConstraint = nil
-        panGestureDirection = .none
-      })
-    default:
-      return
-    }
+    let initialListController = TrackerListViewController(date: selectedDate)
+    pageViewController.setViewControllers([initialListController], direction: .forward, animated: false)
+    
+    pageViewController.didMove(toParent: self)
   }
 }
 
-extension TrackerViewController: UICollectionViewDelegate {
+extension TrackerViewController2: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath),
           case let .day(date) = itemIdentifier else { return }
     
+    let direction: UIPageViewController.NavigationDirection = date > selectedDate ? .forward : .reverse
     selectedDate = date
+    let currentListController = TrackerListViewController(date: selectedDate)
+    pageViewController.setViewControllers([currentListController], direction: direction, animated: true)
   }
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -336,10 +208,54 @@ extension TrackerViewController: UICollectionViewDelegate {
     guard let date = Calendar.current.date(byAdding: .day, value: adjustment, to: selectedDate) else { return }
     isScrollApplied = true
     selectedDate = date
-    applySnapshot(middleDate: selectedDate)
+    applySnapshot(middleDate: date)
+    print(selectedDate)
+    
+    if let controller = pageViewController.viewControllers?.first as? TrackerListViewController,
+       controller.date != selectedDate {
+      let currentListController = TrackerListViewController(date: selectedDate)
+      pageViewController.setViewControllers([currentListController], direction: adjustment > 0 ? .forward : .reverse, animated: true)
+    }
     
     let selectedIndexPath = dataSource.indexPath(for: ItemIdentifier.day(selectedDate))
     collectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: .centeredHorizontally)
     isScrollApplied = false
+  }
+}
+
+extension TrackerViewController2: UIPageViewControllerDelegate {
+  func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    guard let controller = pageViewController.viewControllers?.first as? TrackerListViewController,
+          completed else { return }
+    
+    guard let indexPath = dataSource.indexPath(for: ItemIdentifier.day(controller.date)) else { return }
+    
+    if indexPath.item >= 7 && indexPath.item < 14 {
+      selectedDate = controller.date
+      collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+    } else if indexPath.item < 7 {
+      selectedDate = Calendar.current.date(byAdding: .day, value: 7, to: controller.date)
+      collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+//      collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+    } else {
+      selectedDate = Calendar.current.date(byAdding: .day, value: -7, to: controller.date)
+      collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+    }
+  }
+}
+
+extension TrackerViewController2: UIPageViewControllerDataSource {
+  func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    guard let newDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) else {
+      return nil
+    }
+    return TrackerListViewController(date: newDate)
+  }
+  
+  func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    guard let newDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else {
+      return nil
+    }
+    return TrackerListViewController(date: newDate)
   }
 }
