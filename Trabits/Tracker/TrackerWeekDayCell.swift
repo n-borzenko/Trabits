@@ -1,5 +1,5 @@
 //
-//  TrackerDayCell.swift
+//  TrackerWeekDayCell.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 28/09/2023.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-class TrackerDayContentView: UIView, UIContentView {
-  private var currentConfiguration: TrackerDayContentConfiguration!
+class TrackerWeekDayContentView: UIView, UIContentView {
+  private var currentConfiguration: TrackerWeekDayContentConfiguration!
   var configuration: UIContentConfiguration {
     get { currentConfiguration }
     set {
-      guard let newConfiguration = newValue as? TrackerDayContentConfiguration else { return }
+      guard let newConfiguration = newValue as? TrackerWeekDayContentConfiguration else { return }
       apply(configuration: newConfiguration)
     }
   }
@@ -32,7 +32,7 @@ class TrackerDayContentView: UIView, UIContentView {
     return formatter
   }()
 
-  init(configuration: TrackerDayContentConfiguration) {
+  init(configuration: TrackerWeekDayContentConfiguration) {
     super.init(frame: .zero)
     setupViews()
     apply(configuration: configuration)
@@ -68,12 +68,12 @@ class TrackerDayContentView: UIView, UIContentView {
     dayLabel.layer.cornerRadius = (bounds.height * 0.6) / 2
   }
 
-  func apply(configuration: TrackerDayContentConfiguration) {
+  func apply(configuration: TrackerWeekDayContentConfiguration) {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
     
-    dayLabel.text = TrackerDayContentView.dayFormatter.string(from: configuration.date)
-    weekdayLabel.text = TrackerDayContentView.weekdayFormatter.string(from: configuration.date)
+    dayLabel.text = TrackerWeekDayContentView.dayFormatter.string(from: configuration.date)
+    weekdayLabel.text = TrackerWeekDayContentView.weekdayFormatter.string(from: configuration.date)
     
     weekdayLabel.textColor = .contrastColor
     
@@ -102,16 +102,16 @@ class TrackerDayContentView: UIView, UIContentView {
   }
 }
 
-struct TrackerDayContentConfiguration: UIContentConfiguration, Hashable {
+struct TrackerWeekDayContentConfiguration: UIContentConfiguration, Hashable {
   var date = Date()
   var isSelected: Bool = false
   var isToday: Bool = false
 
   func makeContentView() -> UIView & UIContentView {
-    return TrackerDayContentView(configuration: self)
+    return TrackerWeekDayContentView(configuration: self)
   }
 
-  func updated(for state: UIConfigurationState) -> TrackerDayContentConfiguration {
+  func updated(for state: UIConfigurationState) -> TrackerWeekDayContentConfiguration {
     guard let state = state as? UICellConfigurationState else { return self }
     
     var configuration = self
@@ -120,7 +120,7 @@ struct TrackerDayContentConfiguration: UIContentConfiguration, Hashable {
   }
 }
 
-class TrackerDayCell: UICollectionViewListCell {
+class TrackerWeekDayCell: UICollectionViewCell {
   private var date = Date()
 
   func fill(date: Date) {
@@ -129,7 +129,7 @@ class TrackerDayCell: UICollectionViewListCell {
   }
 
   override func updateConfiguration(using state: UICellConfigurationState) {
-    var newConfiguration = TrackerDayContentConfiguration().updated(for: state)
+    var newConfiguration = TrackerWeekDayContentConfiguration().updated(for: state)
 
     newConfiguration.date = date
     newConfiguration.isToday = Calendar.current.isDateInToday(date)

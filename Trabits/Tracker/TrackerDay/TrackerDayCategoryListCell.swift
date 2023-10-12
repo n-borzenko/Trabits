@@ -1,5 +1,5 @@
 //
-//  TodayCategoryListCell.swift
+//  TrackerDayCategoryListCell.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 21/09/2023.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-class TodayCategoryContentView: UIView, UIContentView {
-  private var currentConfiguration: TodayCategoryContentConfiguration!
+class TrackerDayCategoryContentView: UIView, UIContentView {
+  private var currentConfiguration: TrackerDayCategoryContentConfiguration!
   var configuration: UIContentConfiguration {
     get { currentConfiguration }
     set {
-      guard let newConfiguration = newValue as? TodayCategoryContentConfiguration else { return }
+      guard let newConfiguration = newValue as? TrackerDayCategoryContentConfiguration else { return }
       apply(configuration: newConfiguration)
     }
   }
@@ -21,7 +21,7 @@ class TodayCategoryContentView: UIView, UIContentView {
   private let progressLabel = UILabel()
   private let progressView = UIProgressView()
 
-  init(configuration: TodayCategoryContentConfiguration) {
+  init(configuration: TrackerDayCategoryContentConfiguration) {
     super.init(frame: .zero)
     setupViews()
     apply(configuration: configuration)
@@ -57,7 +57,7 @@ class TodayCategoryContentView: UIView, UIContentView {
     stackView.addArrangedSubview(progressView)
   }
 
-  func apply(configuration: TodayCategoryContentConfiguration) {
+  func apply(configuration: TrackerDayCategoryContentConfiguration) {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
 
@@ -75,22 +75,22 @@ class TodayCategoryContentView: UIView, UIContentView {
   }
 }
 
-struct TodayCategoryContentConfiguration: UIContentConfiguration, Hashable {
+struct TrackerDayCategoryContentConfiguration: UIContentConfiguration, Hashable {
   var title: String = ""
   var progressCount: Int = 0
   var totalCount: Int = 0
   var color: UIColor = .clear
 
   func makeContentView() -> UIView & UIContentView {
-    return TodayCategoryContentView(configuration: self)
+    return TrackerDayCategoryContentView(configuration: self)
   }
 
-  func updated(for state: UIConfigurationState) -> TodayCategoryContentConfiguration {
+  func updated(for state: UIConfigurationState) -> TrackerDayCategoryContentConfiguration {
     return self
   }
 }
 
-class TodayCategoryListCell: UICollectionViewListCell {
+class TrackerDayCategoryListCell: UICollectionViewListCell {
   private var category: Category?
   private var completedHabitsCount: Int = 0
 
@@ -101,7 +101,7 @@ class TodayCategoryListCell: UICollectionViewListCell {
   }
 
   override func updateConfiguration(using state: UICellConfigurationState) {
-    var newConfiguration = TodayCategoryContentConfiguration().updated(for: state)
+    var newConfiguration = TrackerDayCategoryContentConfiguration().updated(for: state)
 
     newConfiguration.title = category?.title ?? ""
     newConfiguration.totalCount = category?.habits?.count ?? 0

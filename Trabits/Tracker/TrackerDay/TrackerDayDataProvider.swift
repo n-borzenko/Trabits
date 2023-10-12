@@ -1,18 +1,14 @@
 //
-//  TodayListDataProvider.swift
+//  TrackerDayDataProvider.swift
 //  Trabits
 //
-//  Created by Natalia Borzenko on 18/09/2023.
+//  Created by Natalia Borzenko on 12/10/2023.
 //
 
 import UIKit
 import CoreData
 
-protocol TodayListDataProviderDelegate: AnyObject {
-  func updateEmptyState(isEmpty: Bool)
-}
-
-class TodayListDataProvider: NSObject {
+class TrackerDayDataProvider: NSObject, ObservableObject {
   enum SectionIdentifier: Hashable {
     case category(NSManagedObjectID)
   }
@@ -32,31 +28,16 @@ class TodayListDataProvider: NSObject {
 
   private(set) var completedHabitIds: Set<NSManagedObjectID> = Set()
 
-  weak var delegate: TodayListDataProviderDelegate?
-
   var dataSource: DataSource!
-  var date = Calendar.current.startOfDay(for: Date()) {
-    didSet {
-      dayResultFetchResultsController.fetchRequest.predicate = DayResult.singleDayPredicate(date: date)
-      completedHabitIds = Set()
+  
+  private let date: Date
+  
+  @Published var isListEmpty = false
 
-      var snapshot = dataSource.snapshot()
-      snapshot.reloadSections(snapshot.sectionIdentifiers)
-      dataSource.apply(snapshot)
-
-      do {
-        try dayResultFetchResultsController.performFetch()
-      } catch {
-        let nserror = error as NSError
-        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-      }
-    }
-  }
-
-  init(dataSource: DataSource, delegate: TodayListDataProviderDelegate? = nil) {
+  init(dataSource: DataSource, date: Date = Calendar.current.startOfDay(for: Date())) {
+    self.date = date
     self.dataSource = dataSource
     super.init()
-    self.delegate = delegate
     configureFetchedResultsControllers()
   }
 
@@ -91,13 +72,13 @@ class TodayListDataProvider: NSObject {
   }
 }
 
-extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
+extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
     var newSnapshot = Snapshot()
 
     defer {
       dataSource.apply(newSnapshot, animatingDifferences: true)
-      delegate?.updateEmptyState(isEmpty: newSnapshot.sectionIdentifiers.isEmpty)
+      isListEmpty = newSnapshot.sectionIdentifiers.isEmpty
     }
 
     guard let categories = categoriesFetchResultsController.fetchedObjects, !categories.isEmpty else { return }
@@ -149,7 +130,7 @@ extension TodayListDataProvider: NSFetchedResultsControllerDelegate {
   }
 }
 
-extension TodayListDataProvider {
+extension TrackerDayDataProvider {
   func toggleCompletionFor(_ habit: Habit) {
     var dayResults = dayResultFetchResultsController.fetchedObjects?.first
     if dayResults == nil {

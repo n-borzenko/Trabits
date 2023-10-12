@@ -18,17 +18,17 @@ class TrackerWeekViewController: UIViewController {
   private var dataSource: DataSource!
   private let dataProvider: TrackerDataProvider
   
+  private var startOfTheWeek: Date
+  
   private var cancellable: AnyCancellable?
   
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
   
-  let startOfTheWeek: Date
-  
-  init(dataProvider: TrackerDataProvider, startOfTheWeek: Date) {
+  init(dataProvider: TrackerDataProvider) {
     self.dataProvider = dataProvider
-    self.startOfTheWeek = startOfTheWeek
+    self.startOfTheWeek = dataProvider.getStartOfTheWeek(for: dataProvider.selectedDate) ?? dataProvider.selectedDate
     super.init(nibName: nil, bundle: nil)
     setupViews()
     
@@ -47,9 +47,11 @@ class TrackerWeekViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    selectedDateUpdateHandler(selectedDate: dataProvider.selectedDate)
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    guard let indexPath = dataSource.indexPath(for: dataProvider.selectedDate) else { return }
+    collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
   }
   
   deinit {
@@ -74,7 +76,7 @@ extension TrackerWeekViewController {
   }
 
   private func configureDataSource() {
-    let dayCellRegistration = UICollectionView.CellRegistration<TrackerDayCell, Date> { cell, indexPath, date in
+    let dayCellRegistration = UICollectionView.CellRegistration<TrackerWeekDayCell, Date> { cell, indexPath, date in
       cell.fill(date: date)
     }
 
@@ -86,7 +88,7 @@ extension TrackerWeekViewController {
   private func applySnapshot() {
     var snapshot = Snapshot()
     snapshot.appendSections([.main])
-    let days = (0..<7).compactMap { Calendar.current.date(byAdding: .day, value: $0, to: startOfTheWeek) }
+    let days = (-7..<14).compactMap { Calendar.current.date(byAdding: .day, value: $0, to: startOfTheWeek) }
     snapshot.appendItems(days)
     dataSource.apply(snapshot, animatingDifferences: false)
   }
@@ -99,15 +101,54 @@ extension TrackerWeekViewController: UICollectionViewDelegate {
   }
 }
 
+extension TrackerWeekViewController: UIScrollViewDelegate {
+  func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    if !decelerate {
+      updateWeekSelection()
+    }
+  }
+  
+  func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    updateWeekSelection()
+  }
+  
+  func updateWeekSelection() {
+    var offset = 0
+    if collectionView.contentOffset.x < collectionView.frame.width {
+      offset = -7
+    } else if collectionView.contentOffset.x >= collectionView.frame.width * 2 {
+      offset = 7
+    }
+    let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate)
+    
+    guard offset != 0, let date else { return }
+    dataProvider.selectedDate = date
+  }
+}
+
 extension TrackerWeekViewController {
   private func setupViews() {
     view.addPinnedSubview(collectionView)
-    collectionView.alwaysBounceVertical = false
+    collectionView.isPagingEnabled = true
+    collectionView.delegate = self
+    collectionView.showsHorizontalScrollIndicator = false
+  }
+  
+  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
+    
+    coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+      guard let self, let indexPath = dataSource.indexPath(for: dataProvider.selectedDate) else { return }
+      collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+    }
   }
 }
 
 extension TrackerWeekViewController {
   func selectedDateUpdateHandler(selectedDate: Date) {
+    startOfTheWeek = dataProvider.getStartOfTheWeek(for: selectedDate) ?? selectedDate
+    applySnapshot()
+    
     guard let indexPath = dataSource.indexPath(for: selectedDate) else { return }
     collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
   }

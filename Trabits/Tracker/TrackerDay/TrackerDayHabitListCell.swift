@@ -1,5 +1,5 @@
 //
-//  TodayHabitListCell.swift
+//  TrackerDayHabitListCell.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 22/09/2023.
@@ -42,7 +42,7 @@ final class GradientLayerView: UIView {
   }
 }
 
-class TodayHabitListCell: UICollectionViewListCell {
+class TrackerDayHabitListCell: UICollectionViewListCell {
   private var habit: Habit?
   private var isCompleted: Bool = false
   private var completionAction: UIAction?

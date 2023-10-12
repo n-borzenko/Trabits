@@ -11,7 +11,7 @@ import Combine
 class TrackerContainerViewController: UIViewController {
   private let dataProvider = TrackerDataProvider()
   
-  private var weekPageViewController: UIPageViewController!
+  private var weekViewController: TrackerWeekViewController!
   private var dayPageViewController: UIPageViewController!
   
   private var areCompletedHabitsHidden: Bool = false
@@ -57,19 +57,10 @@ extension TrackerContainerViewController {
     weekContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     weekContainerView.heightAnchor.constraint(equalToConstant: 60).isActive = true
     
-    weekPageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-    weekPageViewController.delegate = self
-    weekPageViewController.dataSource = self
-    
-    addChild(weekPageViewController)
-    weekContainerView.addPinnedSubview(weekPageViewController.view)
-    var weekPageViewInitialControllers: [UIViewController] = []
-    if let startOfTheWeek = dataProvider.getStartOfTheWeek(for: dataProvider.selectedDate) {
-      let trackerWeekController = TrackerWeekViewController(dataProvider: dataProvider, startOfTheWeek: startOfTheWeek)
-      weekPageViewInitialControllers.append(trackerWeekController)
-    }
-    weekPageViewController.setViewControllers(weekPageViewInitialControllers, direction: .forward, animated: false)
-    weekPageViewController.didMove(toParent: self)
+    weekViewController = TrackerWeekViewController(dataProvider: dataProvider)
+    addChild(weekViewController)
+    weekContainerView.addPinnedSubview(weekViewController.view)
+    weekViewController.didMove(toParent: self)
     
     let dayContainerView = UIView()
     view.addSubview(dayContainerView)
@@ -85,9 +76,7 @@ extension TrackerContainerViewController {
     
     addChild(dayPageViewController)
     dayContainerView.addPinnedSubview(dayPageViewController.view)
-    let dayPageViewInitialControllers = [
-      TrackerDayViewController(dataProvider: dataProvider, date: dataProvider.selectedDate)
-    ]
+    let dayPageViewInitialControllers = [TrackerDayViewController(date: dataProvider.selectedDate)]
     dayPageViewController.setViewControllers(dayPageViewInitialControllers, direction: .forward, animated: false)
     dayPageViewController.didMove(toParent: self)
     
@@ -160,52 +149,27 @@ extension TrackerContainerViewController: DatePickerViewControllerDelegate {
 
 extension TrackerContainerViewController: UIPageViewControllerDelegate {
   func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-    guard completed else { return }
-    
-    if pageViewController == weekPageViewController {
-      guard let controller = pageViewController.viewControllers?.first as? TrackerWeekViewController else { return }
-      let dayOffset = Calendar.current.component(.weekday, from: dataProvider.selectedDate)
-      let newSelectedDate = Calendar.current.date(bySetting: .weekday, value: dayOffset, of: controller.startOfTheWeek)
-      guard let newSelectedDate else { return }
-      dataProvider.selectedDate = newSelectedDate
-    } else {
-      guard let controller = pageViewController.viewControllers?.first as? TrackerDayViewController else { return }
-      dataProvider.selectedDate = controller.date
-    }
+    guard completed,
+          let controller = pageViewController.viewControllers?.first as? TrackerDayViewController else { return }
+    dataProvider.selectedDate = controller.date
   }
 }
 
 extension TrackerContainerViewController: UIPageViewControllerDataSource {
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-    if pageViewController == weekPageViewController {
-      guard let controller = viewController as? TrackerWeekViewController,
-            let newDate = Calendar.current.date(byAdding: .day, value: -7, to: controller.startOfTheWeek) else {
-        return nil
-      }
-      return TrackerWeekViewController(dataProvider: dataProvider, startOfTheWeek: newDate)
-    } else {
-      guard let controller = viewController as? TrackerDayViewController,
-            let newDate = Calendar.current.date(byAdding: .day, value: -1, to: controller.date) else {
-        return nil
-      }
-      return TrackerDayViewController(dataProvider: dataProvider, date: newDate)
+    guard let controller = viewController as? TrackerDayViewController,
+          let newDate = Calendar.current.date(byAdding: .day, value: -1, to: controller.date) else {
+      return nil
     }
+    return TrackerDayViewController(date: newDate)
   }
  
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-    if pageViewController == weekPageViewController {
-      guard let controller = viewController as? TrackerWeekViewController,
-            let newDate = Calendar.current.date(byAdding: .day, value: 7, to: controller.startOfTheWeek) else {
-        return nil
-      }
-      return TrackerWeekViewController(dataProvider: dataProvider, startOfTheWeek: newDate)
-    } else {
-      guard let controller = viewController as? TrackerDayViewController,
-            let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {
-        return nil
-      }
-      return TrackerDayViewController(dataProvider: dataProvider, date: newDate)
+    guard let controller = viewController as? TrackerDayViewController,
+          let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {
+      return nil
     }
+    return TrackerDayViewController(date: newDate)
   }
 }
 
@@ -213,23 +177,10 @@ extension TrackerContainerViewController {
   func selectedDateUpdateHandler(selectedDate: Date) {
     navigationItem.title = dateFormatter.string(from: selectedDate)
     
-    if let weekController = weekPageViewController.viewControllers?.first as? TrackerWeekViewController,
-       let newStartOfTheWeek = dataProvider.getStartOfTheWeek(for: selectedDate),
-       newStartOfTheWeek != weekController.startOfTheWeek {
-      
-      let direction: UIPageViewController.NavigationDirection =
-        newStartOfTheWeek > weekController.startOfTheWeek ? .forward : .reverse
-      let newWeekController = TrackerWeekViewController(
-        dataProvider: dataProvider, startOfTheWeek: newStartOfTheWeek
-      )
-      weekPageViewController.setViewControllers([newWeekController], direction: direction, animated: true)
-    }
-    
     if let dayController = dayPageViewController.viewControllers?.first as? TrackerDayViewController,
        selectedDate != dayController.date {
-      
       let direction: UIPageViewController.NavigationDirection = selectedDate > dayController.date ? .forward : .reverse
-      let newDayController = TrackerDayViewController(dataProvider: dataProvider, date: selectedDate)
+      let newDayController = TrackerDayViewController(date: selectedDate)
       dayPageViewController.setViewControllers([newDayController], direction: direction, animated: true)
     }
   }
