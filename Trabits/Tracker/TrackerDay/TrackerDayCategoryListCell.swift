@@ -43,6 +43,7 @@ class TrackerDayCategoryContentView: UIView, UIContentView {
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.numberOfLines = 0
     stackView.addArrangedSubview(titleLabel)
+    titleLabel.accessibilityTraits = [.header]
 
     progressLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
     progressLabel.adjustsFontForContentSizeCategory = true
@@ -91,23 +92,12 @@ struct TrackerDayCategoryContentConfiguration: UIContentConfiguration, Hashable 
 }
 
 class TrackerDayCategoryListCell: UICollectionViewListCell {
-  private var category: Category?
-  private var completedHabitsCount: Int = 0
-
-  func fill(category: Category, completedHabitsCount: Int) {
-    self.category = category
-    self.completedHabitsCount = completedHabitsCount
-    setNeedsUpdateConfiguration()
-  }
-
-  override func updateConfiguration(using state: UICellConfigurationState) {
-    var newConfiguration = TrackerDayCategoryContentConfiguration().updated(for: state)
-
-    newConfiguration.title = category?.title ?? ""
-    newConfiguration.totalCount = category?.habits?.count ?? 0
+  func createConfiguration(category: Category, completedHabitsCount: Int = 0) {
+    var newConfiguration = TrackerDayCategoryContentConfiguration()
+    newConfiguration.title = category.title ?? ""
+    newConfiguration.totalCount = category.habits?.count ?? 0
     newConfiguration.progressCount = completedHabitsCount
-    newConfiguration.color = category?.color ?? .systemGray6
-
+    newConfiguration.color = category.color ?? .systemGray6
     contentConfiguration = newConfiguration
   }
 }

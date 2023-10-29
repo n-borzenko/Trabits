@@ -36,7 +36,7 @@ class TrackerWeekViewController: UIViewController {
     collectionView.delegate = self
     collectionView.dataSource = dataSource
     applySnapshot()
-    
+
     cancellable = dataProvider.$selectedDate.sink { [weak self] newSelectedDate in
       self?.selectedDateUpdateHandler(selectedDate: newSelectedDate)
     }
@@ -49,14 +49,33 @@ class TrackerWeekViewController: UIViewController {
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
     guard let indexPath = dataSource.indexPath(for: dataProvider.selectedDate) else { return }
     collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+    UIAccessibility.post(notification: .layoutChanged, argument: nil)
   }
   
   deinit {
     cancellable?.cancel()
     cancellable = nil
+  }
+  
+  override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
+    var offset = 0
+    switch direction {
+    case .left:
+      offset = 7
+    case .right:
+      offset = -7
+    default:
+      return false
+    }
+    let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate)
+    
+    guard let date else { return false }
+    selectedDateUpdateHandler(selectedDate: date)
+    UIAccessibility.post(notification: .pageScrolled, argument: "\(direction == .left ? "Next" : "Previous") week")
+    dataProvider.selectedDate = date
+    return true
   }
 }
 

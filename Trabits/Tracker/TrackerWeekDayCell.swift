@@ -78,8 +78,8 @@ class TrackerWeekDayContentView: UIView, UIContentView {
     weekdayLabel.textColor = .contrastColor
     
     if configuration.isToday {
-      dayLabel.textColor = configuration.isSelected ? .background : .themeColor
-      dayLabel.layer.backgroundColor = configuration.isSelected ? UIColor.themeColor.cgColor : UIColor.secondarySystemBackground.cgColor
+      dayLabel.textColor = configuration.isSelected ? .background : .accent
+      dayLabel.layer.backgroundColor = configuration.isSelected ? UIColor.accent.cgColor : UIColor.secondarySystemBackground.cgColor
     } else {
       dayLabel.textColor = configuration.isSelected ? .background : .contrastColor
       dayLabel.layer.backgroundColor = configuration.isSelected ? UIColor.contrastColor.cgColor : UIColor.secondarySystemBackground.cgColor
@@ -89,7 +89,7 @@ class TrackerWeekDayContentView: UIView, UIContentView {
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
       if currentConfiguration.isToday {
-        dayLabel.layer.backgroundColor = currentConfiguration.isSelected ? UIColor.themeColor.cgColor : UIColor.secondarySystemBackground.cgColor
+        dayLabel.layer.backgroundColor = currentConfiguration.isSelected ? UIColor.accent.cgColor : UIColor.secondarySystemBackground.cgColor
       } else {
         dayLabel.layer.backgroundColor = currentConfiguration.isSelected ? UIColor.contrastColor.cgColor : UIColor.secondarySystemBackground.cgColor
       }

@@ -61,15 +61,17 @@ class CategoryListCell: UICollectionViewListCell {
     indentationLevel = 0
 
     guard let category = category else { return }
+    let habitsCount = category.habits?.count ?? 0
     var contentConfiguration = self.defaultContentConfiguration()
     contentConfiguration.text = category.title
-    contentConfiguration.secondaryText = "\(category.habits?.count ?? 0)"
-    contentConfiguration.prefersSideBySideTextAndSecondaryText = true
+    contentConfiguration.secondaryText = "\(habitsCount) habit\(habitsCount != 1 ? "s" : "")"
+    contentConfiguration.secondaryTextProperties.color = .secondaryLabel
+    contentConfiguration.prefersSideBySideTextAndSecondaryText = false
     self.contentConfiguration = contentConfiguration
 
     var options = UICellAccessory.OutlineDisclosureOptions(style: .header)
     options.tintColor = .contrastColor
-    options.isHidden = (category.habits?.count ?? 0) == 0
+    options.isHidden = habitsCount == 0
     accessories = [.outlineDisclosure(options: options)]
   }
 }

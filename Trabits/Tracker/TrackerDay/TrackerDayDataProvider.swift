@@ -116,16 +116,16 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
     } else if let fetchedHabits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
       // reload habit cells and related categories with progress bar
       let updatedHabitIds = Set(fetchedHabits.map { $0.objectID } )
-      let reloadHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
-      let reloadCategoryIdentifiers: [ItemIdentifier] = reloadHabitIdentifiers.compactMap { itemIdentifier in
+      let reconfigureHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).map { ItemIdentifier.habit($0) }
+      let reconfigureCategoryIdentifiers: [ItemIdentifier] = reconfigureHabitIdentifiers.compactMap { itemIdentifier in
         guard case let ItemIdentifier.habit(habitId) = itemIdentifier,
               let habit = context.object(with: habitId) as? Habit,
               let category = habit.category else { return nil }
         return ItemIdentifier.category(category.objectID)
       }
       completedHabitIds = updatedHabitIds
-      let reloadIdentifiers = reloadHabitIdentifiers + Set(reloadCategoryIdentifiers)
-      newSnapshot.reloadItems(reloadIdentifiers)
+      let reconfigureItems = reconfigureHabitIdentifiers + Set(reconfigureCategoryIdentifiers)
+      newSnapshot.reconfigureItems(reconfigureItems)
     }
   }
 }

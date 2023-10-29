@@ -63,23 +63,21 @@ extension TrackerDayViewController {
     let categoryCellRegistration = UICollectionView.CellRegistration<TrackerDayCategoryListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
-
       var completedHabitsCount = 0
       if let habits = category.habits as? Set<Habit> {
         completedHabitsCount = habits.filter { dataProvider.completedHabitIds.contains($0.objectID) }
           .count
       }
-      cell.fill(category: category, completedHabitsCount: completedHabitsCount)
+      cell.createConfiguration(category: category, completedHabitsCount: completedHabitsCount)
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
-
-      cell.fill(habit: habit, isCompleted: dataProvider.completedHabitIds.contains(habit.objectID), completionAction: UIAction() { [weak self] _ in
+      cell.createConfiguration(habit: habit, isCompleted: dataProvider.completedHabitIds.contains(habit.objectID)) { [weak self] in
         guard let self else { return }
         dataProvider.toggleCompletionFor(habit)
-      })
+      }
     }
 
     dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in

@@ -29,7 +29,7 @@ class DatePickerViewController: UIViewController {
 
 extension DatePickerViewController {
   private func setupViews(date: Date) {
-    view.backgroundColor = .background
+    view.backgroundColor = .tertiarySystemBackground
     
     datePicker.date = Calendar.current.startOfDay(for: date)
     datePicker.preferredDatePickerStyle = .inline

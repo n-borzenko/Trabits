@@ -14,29 +14,27 @@ extension UIColor {
   static let themeColor = UIColor.purple
 }
 
-enum ColorPalette: String, CaseIterable {
-  case quartz = "QuartzColor"
-  case blush = "BlushColor"
-  case peach = "PeachColor"
-  case apricot = "ApricotColor"
-  case caramel = "CaramelColor"
-  case wheatfield = "WheatfieldColor"
-  case meadow = "MeadowColor"
-  case sage = "SageColor"
-  case mint = "MintColor"
-  case seaglass = "SeaglassColor"
-  case aqua = "AquaColor"
-  case lagoon = "LagoonColor"
-  case wave = "WaveColor"
-  case azure = "AzureColor"
-  case skyline = "SkylineColor"
-  case periwinkle = "PeriwinkleColor"
-  case lavender = "LavenderColor"
-  case amethyst = "AmethystColor"
-  case lilac = "LilacColor"
-  case marshmallow = "MarshmallowColor"
-
-  var color: UIColor {
-    UIColor(named: self.rawValue) ?? .clear
-  }
+enum ColorPalette {
+  static let colors: [UIColor] = [
+    .marshmallow,
+    .quartz,
+    .blush,
+    .peach,
+    .apricot,
+    .caramel,
+    .wheatfield,
+    .meadow,
+    .sage,
+    .spearmint,
+    .seaglass,
+    .aqua,
+    .lagoon,
+    .wave,
+    .azure,
+    .skyline,
+    .periwinkle,
+    .lavender,
+    .amethyst,
+    .lilac
+  ]
 }

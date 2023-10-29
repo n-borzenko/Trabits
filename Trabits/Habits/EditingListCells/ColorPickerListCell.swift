@@ -33,21 +33,22 @@ class ColorPickerListCell: UICollectionViewListCell {
     let buttonHeight = 44.0
     contentView.addPinnedSubview(scrollView, layoutGuide: contentView.layoutMarginsGuide, flexibleBottom: true)
     scrollView.heightAnchor.constraint(equalToConstant: buttonHeight + 2 * verticalInset).isActive = true
+    scrollView.showsHorizontalScrollIndicator = false
 
     stackView.axis = .horizontal
     stackView.spacing = 16
     stackView.distribution = .fillEqually
     scrollView.addPinnedSubview(stackView, insets: UIEdgeInsets(top: verticalInset, left: 0, bottom: verticalInset, right: 0))
 
-    for (index, item) in ColorPalette.allCases.enumerated() {
+    for (index, item) in ColorPalette.colors.enumerated() {
       let button = UIButton()
       button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
       button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
 
-      button.accessibilityLabel = "\(item.rawValue)"
-      button.accessibilityHint = "Select \(item.rawValue)"
+      button.accessibilityLabel = "\(item.accessibilityName)"
+      button.accessibilityHint = "Select \(item.accessibilityName)"
 
-      button.backgroundColor = item.color
+      button.backgroundColor = item
       button.tintColor = .contrastColor
 
       button.layer.cornerRadius = buttonHeight / 2
@@ -56,7 +57,7 @@ class ColorPickerListCell: UICollectionViewListCell {
       if index == selectedIndex {
         button.layer.borderWidth = 3
         button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        button.accessibilityLabel = "\(item.rawValue) - selected"
+        button.accessibilityLabel = "\(item.accessibilityName) - selected"
       }
 
       button.tag = index
@@ -67,7 +68,7 @@ class ColorPickerListCell: UICollectionViewListCell {
 
   func fill(selectedColor: UIColor?) {
     if let selectedColor = selectedColor,
-       let index = ColorPalette.allCases.firstIndex(where: { $0.color == selectedColor }) {
+       let index = ColorPalette.colors.firstIndex(where: { $0 == selectedColor }) {
       selectItem(at: index, isScrollingActive: true)
     }
   }
@@ -76,7 +77,7 @@ class ColorPickerListCell: UICollectionViewListCell {
     let index = button.tag
     deselectItem()
     selectItem(at: index)
-    delegate?.colorValueChanged(ColorPalette.allCases[index].color)
+    delegate?.colorValueChanged(ColorPalette.colors[index])
   }
 
   private func selectItem(at index: Int, isScrollingActive: Bool = false) {
@@ -84,7 +85,7 @@ class ColorPickerListCell: UICollectionViewListCell {
       selectedIndex = index
       button.layer.borderWidth = 3
       button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-      button.accessibilityLabel = "\(ColorPalette.allCases[index].rawValue) - selected"
+      button.accessibilityLabel = "\(ColorPalette.colors[index].accessibilityName) - selected"
 
       if isScrollingActive {
         Task {
@@ -101,7 +102,7 @@ class ColorPickerListCell: UICollectionViewListCell {
        let button = stackView.arrangedSubviews[index] as? UIButton {
       button.layer.borderWidth = 1
       button.setImage(nil, for: .normal)
-      button.accessibilityLabel = "\(ColorPalette.allCases[index].rawValue)"
+      button.accessibilityLabel = "\(ColorPalette.colors[index].accessibilityName)"
     }
     selectedIndex = nil
   }
