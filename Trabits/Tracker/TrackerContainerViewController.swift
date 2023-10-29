@@ -106,44 +106,23 @@ extension TrackerContainerViewController {
     navigationItem.largeTitleDisplayMode = .never
     
     navigationItem.leftBarButtonItem = UIBarButtonItem(
+      image: UIImage(systemName: "house"),
+      style: .plain,
+      target: self,
+      action: #selector(chooseToday)
+    )
+    navigationItem.leftBarButtonItem?.accessibilityLabel = "Choose today"
+    
+    navigationItem.rightBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "calendar"),
       style: .plain,
       target: self,
-      action: #selector(selectDate)
+      action: #selector(chooseDate)
     )
-    
-    navigationItem.rightBarButtonItem = UIBarButtonItem(
-      image: UIImage(systemName: "line.3.horizontal.decrease"),
-      menu: generateFilteringMenu()
-    )
+    navigationItem.rightBarButtonItem?.accessibilityLabel = "Choose date"
   }
   
-  private func generateFilteringMenu() -> UIMenu {
-    let showHabitsAction = UIAction(
-      title: "Show all habits",
-      image: UIImage(systemName: "checklist"),
-      state: areCompletedHabitsHidden ? .off : .on,
-      handler: { [weak self] _ in
-        self?.toggleCompletedHabitsVisibility(areHidden: false)
-      }
-    )
-    
-    let hideHabitsAction = UIAction(
-      title: "Hide completed habits",
-      image: UIImage(systemName: "checkmark.circle.badge.xmark"),
-      state: areCompletedHabitsHidden ? .on : .off,
-      handler: { [weak self] _ in
-        self?.toggleCompletedHabitsVisibility(areHidden: true)
-      }
-    )
-    
-    return UIMenu(
-      image: UIImage(systemName: "line.3.horizontal.decrease"),
-      children: [showHabitsAction, hideHabitsAction]
-    )
-  }
-  
-  @objc private func selectDate() {
+  @objc private func chooseDate() {
     let datePickerController = DatePickerViewController(date: dataProvider.selectedDate)
     datePickerController.delegate = self
     let containerController = UINavigationController(rootViewController: datePickerController)
@@ -157,16 +136,16 @@ extension TrackerContainerViewController {
     present(containerController, animated: true)
   }
   
-  @objc private func toggleCompletedHabitsVisibility(areHidden: Bool) {
-    areCompletedHabitsHidden = areHidden
-    guard let filteringBarButton = navigationItem.rightBarButtonItem else { return }
-    filteringBarButton.menu = generateFilteringMenu()
+  @objc private func chooseToday() {
+    dataProvider.selectedDate = Calendar.current.startOfDay(for: Date())
+    UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
   }
 }
 
 extension TrackerContainerViewController: DatePickerViewControllerDelegate {
   func dateSelectionHandler(date: Date) {
     dataProvider.selectedDate = date
+    UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
   }
 }
 
@@ -204,9 +183,9 @@ extension TrackerContainerViewController: AccessibilityDayPageScrollDelegate {
     }
     updateDayPageViewController(newDate: newDate) { [weak self] _ in
       guard let self else { return }
-      UIAccessibility.post(notification: .pageScrolled, argument: "Selected date, \(dateFormatter.string(from: newDate))")
+      dataProvider.selectedDate = newDate
+      UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
     }
-    dataProvider.selectedDate = newDate
     return true
   }
 }

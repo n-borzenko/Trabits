@@ -43,7 +43,7 @@ class TrackerDayCategoryContentView: UIView, UIContentView {
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.numberOfLines = 0
     stackView.addArrangedSubview(titleLabel)
-    titleLabel.accessibilityTraits = [.header]
+    titleLabel.accessibilityTraits = titleLabel.accessibilityTraits.union(.header)
 
     progressLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
     progressLabel.adjustsFontForContentSizeCategory = true

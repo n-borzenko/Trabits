@@ -8,6 +8,69 @@
 import UIKit
 import Combine
 
+class TrackerWeekAccessibilityContainerView: UIView {
+  private let dataProvider: TrackerDataProvider
+  private let collectionView: UICollectionView
+  
+  init(dataProvider: TrackerDataProvider, collectionView: UICollectionView) {
+    self.dataProvider = dataProvider
+    self.collectionView = collectionView
+    super.init(frame: .zero)
+    setupViews()
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  private func setupViews() {
+    addPinnedSubview(collectionView)
+    isAccessibilityElement = true
+    accessibilityTraits = .adjustable
+    accessibilityLabel = "Day selector"
+    accessibilityHint = "Swipe left or right with three fingers to choose different week"
+  }
+  
+  override var accessibilityValue: String? {
+    get { dataProvider.generateSelectedDateDescription() }
+    set { super.accessibilityLabel = newValue }
+  }
+  
+  override var accessibilityFrame: CGRect {
+    get { UIAccessibility.convertToScreenCoordinates(bounds.inset(by: UIEdgeInsets(top: -4, left: -4, bottom: -4, right: -4)), in: self) }
+    set { super.accessibilityFrame = newValue }
+  }
+  
+  override func accessibilityIncrement() {
+    guard let date = Calendar.current.date(byAdding: .day, value: 1, to: dataProvider.selectedDate) else { return }
+    dataProvider.selectedDate = date
+  }
+  
+  override func accessibilityDecrement() {
+    guard let date = Calendar.current.date(byAdding: .day, value: -1, to: dataProvider.selectedDate) else { return }
+    dataProvider.selectedDate = date
+  }
+  
+  override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
+    var offset = 0
+    switch direction {
+    case .left:
+      offset = 7
+    case .right:
+      offset = -7
+    default:
+      return false
+    }
+    
+    guard let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate) else { return false }
+    dataProvider.selectedDate = date
+    let announcement = "\(direction == .left ? "Next" : "Previous") week, \(dataProvider.generateSelectedDateDescription()) is selected"
+    UIAccessibility.post(notification: .pageScrolled, argument: announcement)
+    return true
+  }
+}
+
 class TrackerWeekViewController: UIViewController {
   private enum SectionIdentifier {
     case main
@@ -21,6 +84,8 @@ class TrackerWeekViewController: UIViewController {
   private var startOfTheWeek: Date
   
   private var cancellable: AnyCancellable?
+  
+  private var accessibilityContainerView: TrackerWeekAccessibilityContainerView!
   
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
@@ -51,31 +116,11 @@ class TrackerWeekViewController: UIViewController {
     super.viewDidAppear(animated)
     guard let indexPath = dataSource.indexPath(for: dataProvider.selectedDate) else { return }
     collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-    UIAccessibility.post(notification: .layoutChanged, argument: nil)
   }
   
   deinit {
     cancellable?.cancel()
     cancellable = nil
-  }
-  
-  override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
-    var offset = 0
-    switch direction {
-    case .left:
-      offset = 7
-    case .right:
-      offset = -7
-    default:
-      return false
-    }
-    let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate)
-    
-    guard let date else { return false }
-    selectedDateUpdateHandler(selectedDate: date)
-    UIAccessibility.post(notification: .pageScrolled, argument: "\(direction == .left ? "Next" : "Previous") week")
-    dataProvider.selectedDate = date
-    return true
   }
 }
 
@@ -96,6 +141,7 @@ extension TrackerWeekViewController {
 
   private func configureDataSource() {
     let dayCellRegistration = UICollectionView.CellRegistration<TrackerWeekDayCell, Date> { cell, indexPath, date in
+    
       cell.fill(date: date)
     }
 
@@ -147,7 +193,8 @@ extension TrackerWeekViewController: UIScrollViewDelegate {
 
 extension TrackerWeekViewController {
   private func setupViews() {
-    view.addPinnedSubview(collectionView)
+    accessibilityContainerView = TrackerWeekAccessibilityContainerView(dataProvider: dataProvider, collectionView: collectionView)
+    view.addPinnedSubview(accessibilityContainerView)
     collectionView.isPagingEnabled = true
     collectionView.delegate = self
     collectionView.showsHorizontalScrollIndicator = false
