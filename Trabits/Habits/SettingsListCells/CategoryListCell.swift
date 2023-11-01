@@ -48,12 +48,12 @@ class CategoryListCell: UICollectionViewListCell {
     }
 
     if state.cellDropState == .targeted {
-      backgroundConfiguration.strokeColor = .contrastColor
+      backgroundConfiguration.strokeColor = .contrast
       backgroundConfiguration.strokeWidth = 3
     }
 
     if state.cellDragState == .lifting {
-      backgroundConfiguration.strokeColor = .contrastColor
+      backgroundConfiguration.strokeColor = .contrast
       backgroundConfiguration.strokeWidth = 1
     }
 
@@ -70,7 +70,7 @@ class CategoryListCell: UICollectionViewListCell {
     self.contentConfiguration = contentConfiguration
 
     var options = UICellAccessory.OutlineDisclosureOptions(style: .header)
-    options.tintColor = .contrastColor
+    options.tintColor = .contrast
     options.isHidden = habitsCount == 0
     accessories = [.outlineDisclosure(options: options)]
   }

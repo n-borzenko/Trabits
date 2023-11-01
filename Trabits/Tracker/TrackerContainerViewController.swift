@@ -69,7 +69,7 @@ class TrackerContainerViewController: UIViewController {
 
 extension TrackerContainerViewController {
   private func setupViews() {
-    view.backgroundColor = .backgroundColor
+    view.backgroundColor = .systemBackground
     
     let weekContainerView = UIView()
     view.addSubview(weekContainerView)
@@ -111,7 +111,7 @@ extension TrackerContainerViewController {
       target: self,
       action: #selector(chooseToday)
     )
-    navigationItem.leftBarButtonItem?.accessibilityLabel = "Choose today"
+    navigationItem.leftBarButtonItem?.title = "Choose today"
     
     navigationItem.rightBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "calendar"),
@@ -119,7 +119,7 @@ extension TrackerContainerViewController {
       target: self,
       action: #selector(chooseDate)
     )
-    navigationItem.rightBarButtonItem?.accessibilityLabel = "Choose date"
+    navigationItem.rightBarButtonItem?.title = "Choose date"
   }
   
   @objc private func chooseDate() {

@@ -93,8 +93,6 @@ extension TrackerDayViewController {
 
 extension TrackerDayViewController {
   private func setupViews() {
-    view.layer.cornerRadius = 44
-    view.backgroundColor = .backgroundColor
     view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
     collectionView.allowsSelection = false
 

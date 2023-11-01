@@ -24,7 +24,7 @@ class CategoryPickerRowView: UIView {
   func fill(with category: Category, isSelected: Bool) {
     label.text = category.title
     backgroundView.backgroundColor = category.color ?? .clear
-    backgroundView.layer.borderColor = isSelected ? UIColor.contrastColor.cgColor : UIColor.clear.cgColor
+    backgroundView.layer.borderColor = isSelected ? UIColor.contrast.cgColor : UIColor.clear.cgColor
   }
 
   private func setupViews() {

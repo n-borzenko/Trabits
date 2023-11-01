@@ -51,7 +51,7 @@ class TrackerDayCategoryContentView: UIView, UIContentView {
     stackView.addArrangedSubview(progressLabel)
 
     progressView.heightAnchor.constraint(equalToConstant: 8).isActive = true
-    progressView.layer.sublayers?.last?.borderColor = UIColor.secondaryLabel.cgColor
+    progressView.layer.sublayers?.last?.borderColor = UIColor.neutral80.cgColor
     progressView.layer.sublayers?.last?.borderWidth = 1
     progressView.layer.sublayers?.last?.cornerRadius = 4
     progressView.layer.sublayers?.first?.cornerRadius = 4
@@ -71,7 +71,7 @@ class TrackerDayCategoryContentView: UIView, UIContentView {
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-      progressView.layer.sublayers?.last?.borderColor = UIColor.secondaryLabel.cgColor
+      progressView.layer.sublayers?.last?.borderColor = UIColor.neutral80.cgColor
     }
   }
 }
@@ -97,7 +97,7 @@ class TrackerDayCategoryListCell: UICollectionViewListCell {
     newConfiguration.title = category.title ?? ""
     newConfiguration.totalCount = category.habits?.count ?? 0
     newConfiguration.progressCount = completedHabitsCount
-    newConfiguration.color = category.color ?? .systemGray6
+    newConfiguration.color = category.color ?? .neutral5
     contentConfiguration = newConfiguration
   }
 }

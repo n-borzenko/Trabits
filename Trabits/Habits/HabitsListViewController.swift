@@ -102,7 +102,7 @@ extension HabitsListViewController {
   }
 
   private func setupViews() {
-    view.backgroundColor = .backgroundColor
+    view.backgroundColor = .systemBackground
     view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
 
     emptyStateView = EmptyStateView(

@@ -25,8 +25,8 @@ class ActionButton: UIButton {
 
   private func setupViews() {
     backgroundColor = .systemGray5
-    setTitleColor(.contrastColor, for: .normal)
-    setTitleColor(.contrastColor.withAlphaComponent(0.6), for: .highlighted)
+    setTitleColor(.contrast, for: .normal)
+    setTitleColor(.contrast.withAlphaComponent(0.6), for: .highlighted)
     layer.shadowOpacity = 0.2
     layer.shadowRadius = 6
     layer.shadowOffset = CGSize(width: 2, height: 4)

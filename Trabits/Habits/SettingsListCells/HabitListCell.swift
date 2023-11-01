@@ -49,7 +49,7 @@ class HabitListCell: UICollectionViewListCell {
     }
 
     if state.cellDragState == .lifting {
-      backgroundConfiguration.strokeColor = .contrastColor
+      backgroundConfiguration.strokeColor = .contrast
       backgroundConfiguration.strokeWidth = 1
     }
 

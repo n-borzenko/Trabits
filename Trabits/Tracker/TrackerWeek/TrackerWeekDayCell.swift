@@ -31,6 +31,12 @@ class TrackerWeekDayContentView: UIView, UIContentView {
     formatter.dateFormat = "EEEEEE"
     return formatter
   }()
+  
+  static let fullDayFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .full
+    return formatter
+  }()
 
   init(configuration: TrackerWeekDayContentConfiguration) {
     super.init(frame: .zero)
@@ -52,46 +58,53 @@ class TrackerWeekDayContentView: UIView, UIContentView {
 
     weekdayLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
     weekdayLabel.adjustsFontForContentSizeCategory = true
+    weekdayLabel.maximumContentSizeCategory = .extraExtraExtraLarge
     weekdayLabel.textColor = .secondaryLabel
     weekdayLabel.textAlignment = .center
     stackView.addArrangedSubview(weekdayLabel)
 
     dayLabel.font = UIFont.preferredFont(forTextStyle: .headline)
     dayLabel.adjustsFontForContentSizeCategory = true
+    dayLabel.maximumContentSizeCategory = .extraExtraExtraLarge
     dayLabel.textAlignment = .center
+    dayLabel.layer.masksToBounds = true
+    dayLabel.layer.borderWidth = 1
     stackView.addArrangedSubview(dayLabel)
+    
     dayLabel.heightAnchor.constraint(equalTo: stackView.heightAnchor, multiplier: 0.6).isActive = true
     let widthConstraint = dayLabel.widthAnchor.constraint(equalTo: dayLabel.heightAnchor, multiplier: 1.0)
     widthConstraint.priority = .defaultHigh
     widthConstraint.isActive = true
-
-    dayLabel.layer.cornerRadius = (bounds.height * 0.6) / 2
+    
+    showsLargeContentViewer = true
   }
 
   func apply(configuration: TrackerWeekDayContentConfiguration) {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
-    
+        
+    largeContentTitle = TrackerWeekDayContentView.fullDayFormatter.string(from: configuration.date)
     dayLabel.text = TrackerWeekDayContentView.dayFormatter.string(from: configuration.date)
     weekdayLabel.text = TrackerWeekDayContentView.weekdayFormatter.string(from: configuration.date)
-    
-    weekdayLabel.textColor = .contrastColor
-    
+
+    dayLabel.textColor = configuration.isSelected ? .inverted : .label
     if configuration.isToday {
-      dayLabel.textColor = configuration.isSelected ? .background : .accent
-      dayLabel.layer.backgroundColor = configuration.isSelected ? UIColor.accent.cgColor : UIColor.secondarySystemBackground.cgColor
+      dayLabel.backgroundColor = configuration.isSelected ? .contrast : .neutral5
+      dayLabel.layer.borderColor = UIColor.contrast.cgColor
     } else {
-      dayLabel.textColor = configuration.isSelected ? .background : .contrastColor
-      dayLabel.layer.backgroundColor = configuration.isSelected ? UIColor.contrastColor.cgColor : UIColor.secondarySystemBackground.cgColor
+      dayLabel.backgroundColor = configuration.isSelected ? .neutral60 : .neutral5
+      dayLabel.layer.borderColor = UIColor.clear.cgColor
     }
   }
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
       if currentConfiguration.isToday {
-        dayLabel.layer.backgroundColor = currentConfiguration.isSelected ? UIColor.accent.cgColor : UIColor.secondarySystemBackground.cgColor
+        dayLabel.backgroundColor = currentConfiguration.isSelected ? .contrast : .neutral5
+        dayLabel.layer.borderColor = UIColor.contrast.cgColor
       } else {
-        dayLabel.layer.backgroundColor = currentConfiguration.isSelected ? UIColor.contrastColor.cgColor : UIColor.secondarySystemBackground.cgColor
+        dayLabel.backgroundColor = currentConfiguration.isSelected ? .neutral60 : .neutral5
+        dayLabel.layer.borderColor = UIColor.clear.cgColor
       }
     }
   }

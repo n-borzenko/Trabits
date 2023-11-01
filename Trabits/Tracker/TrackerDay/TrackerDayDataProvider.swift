@@ -42,12 +42,18 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
   }
 
   func configureFetchedResultsControllers() {
-    categoriesFetchResultsController = NSFetchedResultsController(fetchRequest: Category.nonEmptyCategoriesFetchRequest(),
-                                                                  managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-    habitsFetchResultsController = NSFetchedResultsController(fetchRequest: Habit.orderedHabitsFetchRequest(),
-                                                              managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-    dayResultFetchResultsController = NSFetchedResultsController(fetchRequest: DayResult.singleDayFetchRequest(date: date),
-                                                                 managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+    categoriesFetchResultsController = NSFetchedResultsController(
+      fetchRequest: Category.nonEmptyCategoriesFetchRequest(),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
+    habitsFetchResultsController = NSFetchedResultsController(
+      fetchRequest: Habit.orderedHabitsFetchRequest(),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
+    dayResultFetchResultsController = NSFetchedResultsController(
+      fetchRequest: DayResult.singleDayFetchRequest(date: date),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
     categoriesFetchResultsController.delegate = self
     habitsFetchResultsController.delegate = self
     dayResultFetchResultsController.delegate = self

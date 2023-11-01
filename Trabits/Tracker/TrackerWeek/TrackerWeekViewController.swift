@@ -53,17 +53,13 @@ class TrackerWeekAccessibilityContainerView: UIView {
   }
   
   override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
-    var offset = 0
-    switch direction {
-    case .left:
-      offset = 7
-    case .right:
-      offset = -7
-    default:
-      return false
+    let offset = switch direction {
+    case .left: 7
+    case .right: -7
+    default: 0
     }
     
-    guard let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate) else { return false }
+    guard offset != 0, let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate) else { return false }
     dataProvider.selectedDate = date
     let announcement = "\(direction == .left ? "Next" : "Previous") week, \(dataProvider.generateSelectedDateDescription()) is selected"
     UIAccessibility.post(notification: .pageScrolled, argument: announcement)
@@ -198,6 +194,8 @@ extension TrackerWeekViewController {
     collectionView.isPagingEnabled = true
     collectionView.delegate = self
     collectionView.showsHorizontalScrollIndicator = false
+    
+    collectionView.addInteraction(UILargeContentViewerInteraction(delegate: self))
   }
   
   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -217,5 +215,13 @@ extension TrackerWeekViewController {
     
     guard let indexPath = dataSource.indexPath(for: selectedDate) else { return }
     collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+  }
+}
+
+extension TrackerWeekViewController: UILargeContentViewerInteractionDelegate{
+  func largeContentViewerInteraction(_ interaction: UILargeContentViewerInteraction, didEndOn item: UILargeContentViewerItem?, at point: CGPoint) {
+    guard let indexPath = collectionView.indexPathForItem(at: point),
+          let date = dataSource.itemIdentifier(for: indexPath) else { return }
+    dataProvider.selectedDate = date
   }
 }

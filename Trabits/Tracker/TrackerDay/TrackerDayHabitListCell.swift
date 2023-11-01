@@ -96,26 +96,17 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     completionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 36).isActive = true
     
     var buttonConfiguration = UIButton.Configuration.bordered()
-    buttonConfiguration.background.strokeColor = .contrastColor
+    buttonConfiguration.background.strokeColor = .contrast
     buttonConfiguration.background.strokeWidth = 2
     buttonConfiguration.cornerStyle = .capsule
-    buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
+    buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
     buttonConfiguration.image = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
-    completionButton.configuration = buttonConfiguration
-    
-    completionButton.configurationUpdateHandler = { [weak self] button in
-      guard let self else { return }
-      var buttonConfiguration = button.configuration
-      buttonConfiguration?.baseBackgroundColor = currentConfiguration.isCompleted ? currentConfiguration.color : .backgroundColor
-      buttonConfiguration?.imageColorTransformer = UIConfigurationColorTransformer { [weak self] _ in
-        guard let self, self.currentConfiguration.isCompleted else { return .clear }
-        return .contrastColor
-      }
-      buttonConfiguration?.baseForegroundColor = currentConfiguration.isCompleted ? .contrastColor : .clear
-      UIView.performWithoutAnimation {
-        button.configuration = buttonConfiguration
-      }
+    // transformer allows to avoid default gray image color when button is disabled
+    buttonConfiguration.imageColorTransformer = UIConfigurationColorTransformer { [weak self] color in
+      guard let self, let currentConfiguration, currentConfiguration.isCompleted else { return .clear }
+      return .contrast
     }
+    completionButton.configuration = buttonConfiguration
     
     isAccessibilityElement = true
     accessibilityTraits = .button
@@ -127,9 +118,14 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     currentConfiguration = configuration
 
     titleLabel.text = configuration.title
-    backgroundView.updateColors(startColor: configuration.color, endColor: UIColor.systemGray6)
+    backgroundView.updateColors(startColor: configuration.color, endColor: .neutral5)
 
-    completionButton.setNeedsUpdateConfiguration()
+    var buttonConfiguration = completionButton.configuration
+    buttonConfiguration?.baseBackgroundColor = configuration.isCompleted ? configuration.color : .systemBackground
+    // remove delayed animation of image color change
+    UIView.performWithoutAnimation {
+      completionButton.configuration = buttonConfiguration
+    }
     
     accessibilityLabel = "\(configuration.title), \(configuration.isCompleted ? "" : "not ") completed"
   }
@@ -173,7 +169,7 @@ class TrackerDayHabitListCell: UICollectionViewListCell {
   func createConfiguration(habit: Habit, isCompleted: Bool, completion: @escaping () -> Void) {
     var newConfiguration = TrackerDayHabitContentConfiguration()
     newConfiguration.title = habit.title ?? ""
-    newConfiguration.color = habit.category?.color ?? .systemGray6
+    newConfiguration.color = habit.category?.color ?? .neutral5
     newConfiguration.isCompleted = isCompleted
     newConfiguration.completion = completion
     contentConfiguration = newConfiguration

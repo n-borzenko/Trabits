@@ -1,5 +1,5 @@
 //
-//  UIColor+ColorPalette.swift
+//  UIColor+PastelPalette.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 15/09/2023.
@@ -7,14 +7,7 @@
 
 import UIKit
 
-extension UIColor {
-  static let contrastColor = UIColor(named: "ContrastColor")!
-  static let backgroundColor = UIColor(named: "BackgroundColor")!
-  
-  static let themeColor = UIColor.purple
-}
-
-enum ColorPalette {
+enum PastelPalette {
   static let colors: [UIColor] = [
     .marshmallow,
     .quartz,

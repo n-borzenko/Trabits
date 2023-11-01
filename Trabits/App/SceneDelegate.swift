@@ -20,12 +20,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     let trackerContainerViewController = UINavigationController(rootViewController: TrackerContainerViewController())
     trackerContainerViewController.navigationBar.prefersLargeTitles = false
-    trackerContainerViewController.tabBarItem = UITabBarItem(title: "Tracker", image: UIImage(systemName: "checklist.unchecked"), tag: 0)
+    trackerContainerViewController.tabBarItem = UITabBarItem(title: "Tracker", image: UIImage(systemName: "checklist"), tag: 0)
     tabBarViewController.addChild(trackerContainerViewController)
 
     let settingsListViewController = UINavigationController(rootViewController: HabitsListViewController())
     settingsListViewController.navigationBar.prefersLargeTitles = true
-    settingsListViewController.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "rectangle.stack.fill"), tag: 1)
+    settingsListViewController.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 1)
     tabBarViewController.addChild(settingsListViewController)
 
     window?.rootViewController = tabBarViewController
