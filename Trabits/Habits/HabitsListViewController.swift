@@ -18,6 +18,9 @@ class HabitsListViewController: UIViewController {
   private var newCategoryButton = ActionButton()
   private var newHabitButton = ActionButton()
   private var emptyStateView: EmptyStateView!
+  
+  private var startEditingBarButtonItem: UIBarButtonItem!
+  private var endEditingBarButtonItem: UIBarButtonItem!
 
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
@@ -74,6 +77,10 @@ extension HabitsListViewController {
       guard case let HabitsListDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
       cell.category = category
+      
+      cell.accessibilityDropPointDescriptors = [
+        UIAccessibilityLocationDescriptor(name: "Drop at the end of the category \(category.title ?? "")", view: cell)
+      ]
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration {
@@ -137,9 +144,26 @@ extension HabitsListViewController {
     collectionView.dropDelegate = self
     collectionView.dragInteractionEnabled = true
     collectionView.allowsSelection = true
+    collectionView.allowsMultipleSelection = false
+    collectionView.allowsMultipleSelectionDuringEditing = false
 
     collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: hasLargeText ? 110 : 80, right: 0)
     navigationItem.title = "Settings"
+  
+    startEditingBarButtonItem = UIBarButtonItem(
+      image: UIImage(systemName: "square.and.pencil"),
+      style: .plain,
+      target: self,
+      action: #selector(toggleEditMode)
+    )
+    startEditingBarButtonItem.title = "Activate editing mode"
+    endEditingBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(toggleEditMode))
+    navigationItem.rightBarButtonItem = collectionView.isEditing ? endEditingBarButtonItem : startEditingBarButtonItem
+  }
+  
+  @objc private func toggleEditMode() {
+    collectionView.isEditing.toggle()
+    navigationItem.rightBarButtonItem = collectionView.isEditing ? endEditingBarButtonItem : startEditingBarButtonItem
   }
 
   @objc private func addNewCategory() {

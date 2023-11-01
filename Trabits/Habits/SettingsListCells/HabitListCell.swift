@@ -48,11 +48,6 @@ class HabitListCell: UICollectionViewListCell {
       backgroundConfiguration.backgroundColor = habit?.category?.color?.withAlphaComponent(0.5) ?? .systemGray6.withAlphaComponent(0.5)
     }
 
-    if state.cellDragState == .lifting {
-      backgroundConfiguration.strokeColor = .contrast
-      backgroundConfiguration.strokeWidth = 1
-    }
-
     self.backgroundConfiguration = backgroundConfiguration
     indentationLevel = 1
 
@@ -60,5 +55,9 @@ class HabitListCell: UICollectionViewListCell {
     var contentConfiguration = self.defaultContentConfiguration().updated(for: state)
     contentConfiguration.text = habit.title
     self.contentConfiguration = contentConfiguration
+    
+    var reorderOptions = UICellAccessory.ReorderOptions()
+    reorderOptions.showsVerticalSeparator = false
+    accessories = [.delete(), .reorder(options: reorderOptions)]
   }
 }
