@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import Combine
 
 class HabitsListViewController: UIViewController {
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
@@ -25,18 +26,31 @@ class HabitsListViewController: UIViewController {
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
+  
+  private var cancellable: AnyCancellable?
 
   init() {
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
-    dataProvider = HabitsListDataProvider(dataSource: dataSource, delegate: self)
+    
+    dataProvider = HabitsListDataProvider(dataSource: dataSource)
+    cancellable = dataProvider.$isListEmpty.sink { [weak self] isEmpty in
+      self?.emptyStateView.isHidden = !isEmpty
+      self?.newHabitButton.isHidden = isEmpty
+    }
+    
     collectionView.dataSource = dataSource
   }
 
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  deinit {
+    cancellable?.cancel()
+    cancellable = nil
   }
 }
 
@@ -81,6 +95,7 @@ extension HabitsListViewController {
       cell.accessibilityDropPointDescriptors = [
         UIAccessibilityLocationDescriptor(name: "Drop at the end of the category \(category.title ?? "")", view: cell)
       ]
+      print("reload \(indexPath) category \(category.title ?? "")")
     }
 
     let habitCellRegistration = UICollectionView.CellRegistration {
@@ -88,6 +103,7 @@ extension HabitsListViewController {
       guard case let HabitsListDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
       cell.habit = habit
+      print("reload \(indexPath) habit \(habit.title ?? "")")
     }
 
     dataSource = HabitsListDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
@@ -201,18 +217,6 @@ extension HabitsListViewController: UICollectionViewDelegate {
   }
 }
 
-extension HabitsListViewController: HabitsListDataProviderDelegate {
-  func updateEmptyState(isEmpty: Bool) {
-    if isEmpty {
-      newHabitButton.isHidden = true
-      emptyStateView.isHidden = false
-    } else {
-      newHabitButton.isHidden = false
-      emptyStateView.isHidden = true
-    }
-  }
-}
-
 // MARK: - Drag & Drop
 
 extension HabitsListViewController: UICollectionViewDragDelegate {
@@ -230,6 +234,7 @@ extension HabitsListViewController: UICollectionViewDragDelegate {
 
 extension HabitsListViewController: UICollectionViewDropDelegate {
   func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+ print("test end drop")
     guard coordinator.proposal.operation == .move,
           let item = coordinator.items.first,
           let sourceIndexPath = item.sourceIndexPath else {
@@ -237,7 +242,7 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
     }
 
     var dropIndexPath: IndexPath
-
+    print("fvjn.wekjv.w from \(sourceIndexPath) to \(coordinator.destinationIndexPath)")
     if sourceIndexPath.item == 0 {
       // category replacement
       var destinationIndex: Int
@@ -272,7 +277,7 @@ extension HabitsListViewController: UICollectionViewDropDelegate {
     collectionView.performUsingPresentationValues {
       actualDestinationIndexPath = collectionView.indexPathForItem(at: location)
     }
-
+    print("eher from \(sourceIndexPath) to", actualDestinationIndexPath, " via ", destinationIndexPath)
     // category should be always the first item in a section
     if sourceIndexPath.item == 0 {
       // replacement to the end of the list is allowed (actualDestinationIndexPath == nil)

@@ -6,36 +6,37 @@
 //
 
 import UIKit
-import Combine
+//import Combine
 
 class HabitListCell: UICollectionViewListCell {
-  private var subscriptions: Set<AnyCancellable> = []
+//  private var subscriptions: Set<AnyCancellable> = []
 
-  var habit: Habit? {
-    didSet {
-      guard let habit = habit else { return }
-      habit.publisher(for: \.title)
-        .sink { [unowned self] _ in
-          self.setNeedsUpdateConfiguration()
-        }
-        .store(in: &subscriptions)
-    }
-  }
-
-  override func prepareForReuse() {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
-    subscriptions.removeAll()
-    super.prepareForReuse()
-  }
-
-  deinit {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
-    subscriptions.removeAll()
-  }
+  var habit: Habit? 
+//  {
+//    didSet {
+//      guard let habit = habit else { return }
+//      habit.publisher(for: \.title)
+//        .sink { [unowned self] _ in
+//          self.setNeedsUpdateConfiguration()
+//        }
+//        .store(in: &subscriptions)
+//    }
+//  }
+//
+//  override func prepareForReuse() {
+//    for subscription in subscriptions {
+//      subscription.cancel()
+//    }
+//    subscriptions.removeAll()
+//    super.prepareForReuse()
+//  }
+//
+//  deinit {
+//    for subscription in subscriptions {
+//      subscription.cancel()
+//    }
+//    subscriptions.removeAll()
+//  }
 
   override func updateConfiguration(using state: UICellConfigurationState) {
     super.updateConfiguration(using: state)

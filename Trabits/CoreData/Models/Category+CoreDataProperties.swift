@@ -35,6 +35,10 @@ extension Category {
 
   @objc(removeHabits:)
   @NSManaged func removeFromHabits(_ values: NSSet)
+  
+  func getSortedHabits() -> [Habit] {
+    return habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
+  }
 }
 
 extension Category {

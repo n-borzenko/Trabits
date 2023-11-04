@@ -6,35 +6,36 @@
 //
 
 import UIKit
-import Combine
+//import Combine
 
 class CategoryListCell: UICollectionViewListCell {
-  private var subscriptions: Set<AnyCancellable> = []
-  var category: Category? {
-    didSet {
-      guard let category = category else { return }
-      category.publisher(for: \.title)
-        .sink { [unowned self] _ in
-          self.setNeedsUpdateConfiguration()
-        }
-        .store(in: &subscriptions)
-    }
-  }
+//  private var subscriptions: Set<AnyCancellable> = []
+  var category: Category?
+//  {
+//    didSet {
+//      guard let category = category else { return }
+//      category.publisher(for: \.title)
+//        .sink { [unowned self] _ in
+//          self.setNeedsUpdateConfiguration()
+//        }
+//        .store(in: &subscriptions)
+//    }
+//  }
 
-  override func prepareForReuse() {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
-    subscriptions.removeAll()
-    super.prepareForReuse()
-  }
-
-  deinit {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
-    subscriptions.removeAll()
-  }
+//  override func prepareForReuse() {
+//    for subscription in subscriptions {
+//      subscription.cancel()
+//    }
+//    subscriptions.removeAll()
+//    super.prepareForReuse()
+//  }
+//
+//  deinit {
+//    for subscription in subscriptions {
+//      subscription.cancel()
+//    }
+//    subscriptions.removeAll()
+//  }
 
   override func updateConfiguration(using state: UICellConfigurationState) {
     super.updateConfiguration(using: state)
