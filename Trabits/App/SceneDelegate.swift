@@ -18,15 +18,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let tabBarViewController = UITabBarController()
     
-//    let trackerContainerViewController = UINavigationController(rootViewController: TrackerContainerViewController())
-//    trackerContainerViewController.navigationBar.prefersLargeTitles = false
-//    trackerContainerViewController.tabBarItem = UITabBarItem(title: "Tracker", image: UIImage(systemName: "checklist"), tag: 0)
-//    tabBarViewController.addChild(trackerContainerViewController)
+    let trackerContainerViewController = UINavigationController(rootViewController: TrackerContainerViewController())
+    trackerContainerViewController.navigationBar.prefersLargeTitles = false
+    trackerContainerViewController.tabBarItem = UITabBarItem(title: "Tracker", image: UIImage(systemName: "checklist"), tag: 0)
+    tabBarViewController.addChild(trackerContainerViewController)
 
-    let settingsListViewController = UINavigationController(rootViewController: HabitsListViewController())
-    settingsListViewController.navigationBar.prefersLargeTitles = true
-    settingsListViewController.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 1)
-    tabBarViewController.addChild(settingsListViewController)
+    let structureViewController = UINavigationController(rootViewController: StructureViewController())
+    structureViewController.navigationBar.prefersLargeTitles = false
+    structureViewController.tabBarItem = UITabBarItem(title: "Structure", image: UIImage(systemName: "gearshape.fill"), tag: 1)
+    tabBarViewController.addChild(structureViewController)
+    
+    let lineBorderView = UIView()
+    lineBorderView.backgroundColor = .neutral30
+    lineBorderView.translatesAutoresizingMaskIntoConstraints = false
+    tabBarViewController.tabBar.addSubview(lineBorderView)
+    
+    lineBorderView.topAnchor.constraint(equalTo: tabBarViewController.tabBar.topAnchor).isActive = true
+    lineBorderView.leadingAnchor.constraint(equalTo: tabBarViewController.tabBar.leadingAnchor).isActive = true
+    lineBorderView.trailingAnchor.constraint(equalTo: tabBarViewController.tabBar.trailingAnchor).isActive = true
+    lineBorderView.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
     window?.rootViewController = tabBarViewController
     window?.makeKeyAndVisible()

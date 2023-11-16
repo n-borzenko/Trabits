@@ -92,7 +92,7 @@ class TrackerWeekDayContentView: UIView, UIContentView {
       dayLabel.backgroundColor = configuration.isSelected ? .contrast : .neutral5
       dayLabel.layer.borderColor = UIColor.contrast.cgColor
     } else {
-      dayLabel.backgroundColor = configuration.isSelected ? .neutral60 : .neutral5
+      dayLabel.backgroundColor = configuration.isSelected ? .neutral70 : .neutral5
       dayLabel.layer.borderColor = UIColor.clear.cgColor
     }
   }
@@ -103,7 +103,7 @@ class TrackerWeekDayContentView: UIView, UIContentView {
         dayLabel.backgroundColor = currentConfiguration.isSelected ? .contrast : .neutral5
         dayLabel.layer.borderColor = UIColor.contrast.cgColor
       } else {
-        dayLabel.backgroundColor = currentConfiguration.isSelected ? .neutral60 : .neutral5
+        dayLabel.backgroundColor = currentConfiguration.isSelected ? .neutral70 : .neutral5
         dayLabel.layer.borderColor = UIColor.clear.cgColor
       }
     }

@@ -8,6 +8,10 @@
 import UIKit
 import Combine
 
+protocol TrackerDayScrollDelegate: AnyObject {
+  func scrollOffsetUpdated(offset: Double) -> Void
+}
+
 class TrackerDayViewController: UIViewController {
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
   
@@ -23,6 +27,8 @@ class TrackerDayViewController: UIViewController {
   private var cancellable: AnyCancellable?
   
   let date: Date
+  
+  weak var delegate: TrackerDayScrollDelegate?
   
   init(date: Date) {
     self.date = date
@@ -91,10 +97,17 @@ extension TrackerDayViewController {
   }
 }
 
+extension TrackerDayViewController: UICollectionViewDelegate {
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    delegate?.scrollOffsetUpdated(offset: scrollView.contentOffset.y)
+  }
+}
+
 extension TrackerDayViewController {
   private func setupViews() {
     view.addPinnedSubview(collectionView, layoutGuide: view.safeAreaLayoutGuide)
     collectionView.allowsSelection = false
+    collectionView.delegate = self
 
     emptyStateView = EmptyStateView(
       message: "List of habits is empty.\nPlease, fill it in Settings.",

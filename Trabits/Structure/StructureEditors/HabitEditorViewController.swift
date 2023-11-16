@@ -1,19 +1,19 @@
 //
-//  EditHabitViewController.swift
+//  HabitEditorViewController.swift
 //  Trabits
 //
-//  Created by Natalia Borzenko on 24/08/2023.
+//  Created by Natalia Borzenko on 15/11/2023.
 //
 
 import UIKit
 import CoreData
 
-struct EditableHabit {
+struct HabitDraft {
   var title: String?
   var category: Category?
 }
 
-class EditHabitViewController: UIViewController {
+class HabitEditorViewController: UIViewController {
   private enum Section: Int {
     case title
     case category
@@ -33,7 +33,7 @@ class EditHabitViewController: UIViewController {
   private var saveBarButton: UIBarButtonItem!
 
   private var habit: Habit?
-  private var editableHabit = EditableHabit()
+  private var habitDraft = HabitDraft()
   private var categories: [Category]
   private var isValid = false
 
@@ -46,7 +46,7 @@ class EditHabitViewController: UIViewController {
     self.categories = categories
     super.init(nibName: nil, bundle: nil)
 
-    configureEditableHabit()
+    configureHabitDraft()
     setupViews()
     configureDataSource()
     applySnapshot()
@@ -58,9 +58,9 @@ class EditHabitViewController: UIViewController {
   }
 }
 
-extension EditHabitViewController {
+extension HabitEditorViewController {
   private func validate() {
-    if let title = editableHabit.title, !title.isEmpty && editableHabit.category != nil {
+    if let title = habitDraft.title, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && habitDraft.category != nil {
       isValid = true
     } else {
       isValid = false
@@ -77,21 +77,21 @@ extension EditHabitViewController {
     guard isValid else { return }
 
     if let habit = habit {
-      habit.title = editableHabit.title
-      if habit.category != editableHabit.category {
+      habit.title = habitDraft.title?.trimmingCharacters(in: .whitespacesAndNewlines)
+      if habit.category != habitDraft.category {
         let sourceHabits = habit.category?.habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
         for i in habit.orderPriority..<sourceHabits.count {
           sourceHabits[i].orderPriority -= 1
         }
-        let destinationHabitsCount = editableHabit.category?.habits?.count ?? 0
-        habit.category = editableHabit.category
+        let destinationHabitsCount = habitDraft.category?.habits?.count ?? 0
+        habit.category = habitDraft.category
         habit.orderPriority = destinationHabitsCount
       }
     } else {
       let habit = Habit(context: context)
-      habit.title = editableHabit.title
-      habit.orderPriority = editableHabit.category?.habits?.count ?? 0
-      habit.category = editableHabit.category
+      habit.title = habitDraft.title?.trimmingCharacters(in: .whitespacesAndNewlines)
+      habit.orderPriority = habitDraft.category?.habits?.count ?? 0
+      habit.category = habitDraft.category
       habit.dayResults = Set<DayResult>() as NSSet
       do {
         try context.obtainPermanentIDs(for: [habit])
@@ -119,22 +119,22 @@ extension EditHabitViewController {
     return UICollectionViewCompositionalLayout.list(using: configuration)
   }
 
-  private func configureEditableHabit() {
-    editableHabit.category = categories.first
+  private func configureHabitDraft() {
+    habitDraft.category = categories.first
     guard let habit = habit else { return }
-    editableHabit.title = habit.title
-    editableHabit.category = habit.category
+    habitDraft.title = habit.title
+    habitDraft.category = habit.category
   }
 
   private func configureDataSource() {
     let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, Item> { [unowned self] cell, indexPath, item in
-      cell.textField.text = editableHabit.title
+      cell.textField.text = habitDraft.title
       cell.delegate = self
     }
 
     let categoryPickerCellRegistration = UICollectionView.CellRegistration<CategoryPickerListCell, Item> { [unowned self] cell, indexPath, item in
       cell.delegate = self
-      let index = editableHabit.category != nil ? categories.firstIndex(of: editableHabit.category!) as Int? : nil
+      let index = habitDraft.category != nil ? categories.firstIndex(of: habitDraft.category!) as Int? : nil
       cell.fill(with: categories, selectedIndex: index)
     }
 
@@ -179,19 +179,19 @@ extension EditHabitViewController {
   }
 }
 
-extension EditHabitViewController: TextFieldListCellDelegate {
+extension HabitEditorViewController: TextFieldListCellDelegate {
   func textValueChanged(_ text: String?) {
-    editableHabit.title = text
+    habitDraft.title = text
     validate()
   }
 }
 
-extension EditHabitViewController: CategoryPickerListCellDelegate {
+extension HabitEditorViewController: CategoryPickerListCellDelegate {
   func selectedCategoryIndexChanged(_ index: Int?) {
     if let index = index, index < categories.count {
-      editableHabit.category = categories[index]
+      habitDraft.category = categories[index]
     } else {
-      editableHabit.category = nil
+      habitDraft.category = nil
     }
     validate()
   }

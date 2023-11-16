@@ -1,19 +1,19 @@
 //
-//  EditCategoryViewController.swift
+//  CategoryEditorViewController.swift
 //  Trabits
 //
-//  Created by Natalia Borzenko on 06/09/2023.
+//  Created by Natalia Borzenko on 15/11/2023.
 //
 
 import UIKit
 import CoreData
 
-struct EditableCategory {
+struct CategoryDraft {
   var title: String?
   var color: UIColor?
 }
 
-class EditCategoryViewController: UIViewController {
+class CategoryEditorViewController: UIViewController {
   private enum Section: Int {
     case title
     case color
@@ -33,8 +33,7 @@ class EditCategoryViewController: UIViewController {
   private var saveBarButton: UIBarButtonItem!
 
   private var category: Category?
-  private var editableCategory = EditableCategory()
-  private var categoriesCount: Int
+  private var categoryDraft = CategoryDraft()
   private var colors: [UIColor] = []
   private var isValid = false
 
@@ -42,12 +41,11 @@ class EditCategoryViewController: UIViewController {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
 
-  init(category: Category? = nil, categoriesCount: Int) {
+  init(category: Category? = nil) {
     self.category = category
-    self.categoriesCount = categoriesCount
     super.init(nibName: nil, bundle: nil)
 
-    configureEditableCategory()
+    configureCategoryDraft()
     setupViews()
     configureDataSource()
     applySnapshot()
@@ -59,9 +57,9 @@ class EditCategoryViewController: UIViewController {
   }
 }
 
-extension EditCategoryViewController {
+extension CategoryEditorViewController {
   private func validate() {
-    if let title = editableCategory.title, !title.isEmpty && editableCategory.color != nil {
+    if let title = categoryDraft.title, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && categoryDraft.color != nil {
       isValid = true
     } else {
       isValid = false
@@ -78,12 +76,22 @@ extension EditCategoryViewController {
     guard isValid else { return }
 
     if let category = category {
-      category.title = editableCategory.title
-      category.color = editableCategory.color
+      category.title = categoryDraft.title?.trimmingCharacters(in: .whitespacesAndNewlines)
+      category.color = categoryDraft.color
     } else {
+      var categoriesCount = 0
+      do {
+        let fetchRequest = Category.orderedCategoriesFetchRequest()
+        fetchRequest.includesSubentities = false
+        categoriesCount = try context.count(for: fetchRequest)
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
+      
       let category = Category(context: context)
-      category.title = editableCategory.title
-      category.color = editableCategory.color
+      category.title = categoryDraft.title?.trimmingCharacters(in: .whitespacesAndNewlines)
+      category.color = categoryDraft.color
       category.orderPriority = categoriesCount
       category.habits = Set<Habit>() as NSSet
       do {
@@ -112,21 +120,21 @@ extension EditCategoryViewController {
     return UICollectionViewCompositionalLayout.list(using: configuration)
   }
 
-  private func configureEditableCategory() {
-    editableCategory.color = PastelPalette.colors.first
+  private func configureCategoryDraft() {
+    categoryDraft.color = PastelPalette.colors.first
     guard let category = category else { return }
-    editableCategory.title = category.title
-    editableCategory.color = category.color
+    categoryDraft.title = category.title
+    categoryDraft.color = category.color
   }
 
   private func configureDataSource() {
     let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, Item> { [unowned self] cell, indexPath, item in
-      cell.textField.text = editableCategory.title
+      cell.textField.text = categoryDraft.title
       cell.delegate = self
     }
 
     let colorPickerCellRegistration = UICollectionView.CellRegistration<ColorPickerListCell, Item> { [unowned self] cell, indexPath, item in
-      cell.fill(selectedColor: editableCategory.color)
+      cell.fill(selectedColor: categoryDraft.color)
       cell.delegate = self
     }
 
@@ -171,16 +179,16 @@ extension EditCategoryViewController {
   }
 }
 
-extension EditCategoryViewController: TextFieldListCellDelegate {
+extension CategoryEditorViewController: TextFieldListCellDelegate {
   func textValueChanged(_ text: String?) {
-    editableCategory.title = text
+    categoryDraft.title = text
     validate()
   }
 }
 
-extension EditCategoryViewController: ColorPickerListCellDelegate {
+extension CategoryEditorViewController: ColorPickerListCellDelegate {
   func colorValueChanged(_ color: UIColor?) {
-    editableCategory.color = color
+    categoryDraft.color = color
     validate()
   }
 }

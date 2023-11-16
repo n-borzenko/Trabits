@@ -137,7 +137,6 @@ extension TrackerWeekViewController {
 
   private func configureDataSource() {
     let dayCellRegistration = UICollectionView.CellRegistration<TrackerWeekDayCell, Date> { cell, indexPath, date in
-    
       cell.fill(date: date)
     }
 

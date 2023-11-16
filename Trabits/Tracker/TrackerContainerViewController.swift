@@ -36,6 +36,14 @@ class TrackerContainerViewController: UIViewController {
   private var weekViewController: TrackerWeekViewController!
   private var dayPageViewController: DayPageViewController!
   
+  private let underlinedContainerView = UnderlinedContainerView()
+  
+  private var isNegativeCollectionScrollOffset = true {
+    didSet {
+      underlinedContainerView.isLineVisible = !isNegativeCollectionScrollOffset
+    }
+  }
+  
   private var areCompletedHabitsHidden: Bool = false
   
   private var cancellable: AnyCancellable?
@@ -71,23 +79,23 @@ extension TrackerContainerViewController {
   private func setupViews() {
     view.backgroundColor = .systemBackground
     
-    let weekContainerView = UIView()
-    view.addSubview(weekContainerView)
-    weekContainerView.translatesAutoresizingMaskIntoConstraints = false
-    weekContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-    weekContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-    weekContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-    weekContainerView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+    view.addSubview(underlinedContainerView)
+    underlinedContainerView.translatesAutoresizingMaskIntoConstraints = false
+    underlinedContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+    underlinedContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+    underlinedContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    underlinedContainerView.heightAnchor.constraint(equalToConstant: 69).isActive = true
     
     weekViewController = TrackerWeekViewController(dataProvider: dataProvider)
     addChild(weekViewController)
-    weekContainerView.addPinnedSubview(weekViewController.view)
+    weekViewController.view.translatesAutoresizingMaskIntoConstraints = false
+    underlinedContainerView.appendSubview(weekViewController.view)
     weekViewController.didMove(toParent: self)
     
     let dayContainerView = UIView()
     view.addSubview(dayContainerView)
     dayContainerView.translatesAutoresizingMaskIntoConstraints = false
-    dayContainerView.topAnchor.constraint(equalTo: weekContainerView.bottomAnchor, constant: 10).isActive = true
+    dayContainerView.topAnchor.constraint(equalTo: underlinedContainerView.bottomAnchor).isActive = true
     dayContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
     dayContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     dayContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -99,7 +107,9 @@ extension TrackerContainerViewController {
     
     addChild(dayPageViewController)
     dayContainerView.addPinnedSubview(dayPageViewController.view)
-    let dayPageViewInitialControllers = [TrackerDayViewController(date: dataProvider.selectedDate)]
+    let dayViewController = TrackerDayViewController(date: dataProvider.selectedDate)
+    dayViewController.delegate = self
+    let dayPageViewInitialControllers = [dayViewController]
     dayPageViewController.setViewControllers(dayPageViewInitialControllers, direction: .forward, animated: false)
     dayPageViewController.didMove(toParent: self)
     
@@ -163,7 +173,9 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
           let newDate = Calendar.current.date(byAdding: .day, value: -1, to: controller.date) else {
       return nil
     }
-    return TrackerDayViewController(date: newDate)
+    let dayViewController = TrackerDayViewController(date: newDate)
+    dayViewController.delegate = self
+    return dayViewController
   }
  
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
@@ -171,7 +183,9 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
           let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {
       return nil
     }
-    return TrackerDayViewController(date: newDate)
+    let dayViewController = TrackerDayViewController(date: newDate)
+    dayViewController.delegate = self
+    return dayViewController
   }
 }
 
@@ -196,6 +210,7 @@ extension TrackerContainerViewController {
        newDate != dayController.date {
       let direction: UIPageViewController.NavigationDirection = newDate > dayController.date ? .forward : .reverse
       let newDayController = TrackerDayViewController(date: newDate)
+      newDayController.delegate = self
       dayPageViewController.setViewControllers([newDayController], direction: direction, animated: true, completion: completion)
     }
   }
@@ -203,5 +218,15 @@ extension TrackerContainerViewController {
   func selectedDateUpdateHandler(selectedDate: Date) {
     navigationItem.title = dateFormatter.string(from: selectedDate)
     updateDayPageViewController(newDate: selectedDate)
+  }
+}
+
+extension TrackerContainerViewController: TrackerDayScrollDelegate {
+  func scrollOffsetUpdated(offset: Double) {
+    if offset > 0 && isNegativeCollectionScrollOffset {
+      isNegativeCollectionScrollOffset = false
+    } else if offset <= 0 && !isNegativeCollectionScrollOffset {
+      isNegativeCollectionScrollOffset = true
+    }
   }
 }

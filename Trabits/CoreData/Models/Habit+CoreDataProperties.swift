@@ -46,4 +46,11 @@ extension Habit {
     request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
     return request
   }
+  
+  @nonobjc class func categoryOrderedHabitsFetchRequest(categoryObjectID: NSManagedObjectID) -> NSFetchRequest<Habit> {
+    let request = fetchRequest()
+    request.predicate = NSPredicate(format: "self.category == %@", categoryObjectID)
+    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    return request
+  }
 }

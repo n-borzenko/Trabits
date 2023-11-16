@@ -45,6 +45,13 @@ extension Category {
   @nonobjc class func fetchRequest() -> NSFetchRequest<Category> {
     return NSFetchRequest<Category>(entityName: "Category")
   }
+  
+  @nonobjc class func singleCategoryFetchRequest(objectID: NSManagedObjectID) -> NSFetchRequest<Category> {
+    let request = fetchRequest()
+    request.predicate = NSPredicate(format: "self == %@", objectID)
+    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    return request
+  }
 
   @nonobjc class func orderedCategoriesFetchRequest() -> NSFetchRequest<Category> {
     let request = fetchRequest()
