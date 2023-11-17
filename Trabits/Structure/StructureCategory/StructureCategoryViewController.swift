@@ -138,6 +138,7 @@ extension StructureCategoryViewController {
     titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
     titleLabel.textAlignment = .center
     underlinedContainerView.appendSubview(titleLabel)
+    titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
     
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(collectionView)
@@ -147,11 +148,13 @@ extension StructureCategoryViewController {
     collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
 
-    emptyStateView = EmptyStateView(
-      message: "List is empty.\nPlease, create your first habit in this category.",
-      image: UIImage(systemName: "rectangle.stack")
-    )
-    view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)
+    emptyStateView = EmptyStateView(message: "List is empty.\nPlease, create your first habit in this category.")
+    emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(emptyStateView)
+    emptyStateView.topAnchor.constraint(equalTo: underlinedContainerView.bottomAnchor).isActive = true
+    emptyStateView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+    emptyStateView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+    emptyStateView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     emptyStateView.isHidden = true
     
     collectionView.delegate = self

@@ -54,7 +54,7 @@ extension UnderlinedContainerView {
     lineBorderView.heightAnchor.constraint(equalToConstant: 1).isActive = true
     
     let internalConstraint = lineBorderView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 8)
-    internalConstraint.priority = .defaultHigh
+    internalConstraint.priority = UILayoutPriority(rawValue: 999)
     internalConstraint.isActive = true
   }
 }

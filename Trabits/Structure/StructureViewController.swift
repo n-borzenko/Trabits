@@ -75,7 +75,7 @@ extension StructureViewController {
         editCategory(categoryIndex: indexPath.item)
         completion(true)
       }
-      editCategoryAction.backgroundColor = .green
+      editCategoryAction.backgroundColor = .neutral50
       editCategoryAction.image = UIImage(systemName: "square.and.pencil")
       return UISwipeActionsConfiguration(actions: [editCategoryAction])
     }
@@ -198,6 +198,7 @@ extension StructureViewController {
     ], for: .selected)
     underlinedContainerView.appendSubview(scopeControl)
     scopeControl.addTarget(self, action: #selector(segmentSelectionChanged), for: .valueChanged)
+    scopeControl.setContentCompressionResistancePriority(.required, for: .vertical)
     
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(collectionView)
@@ -207,10 +208,7 @@ extension StructureViewController {
     collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
 
-    emptyStateView = EmptyStateView(
-      message: "List is empty.\nPlease, create your first category\nand add a habit.",
-      image: UIImage(systemName: "rectangle.stack")
-    )
+    emptyStateView = EmptyStateView(message: "List is empty.\nPlease, create your first category\nand add a habit.")
     emptyStateView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(emptyStateView)
     emptyStateView.topAnchor.constraint(equalTo: underlinedContainerView.bottomAnchor).isActive = true

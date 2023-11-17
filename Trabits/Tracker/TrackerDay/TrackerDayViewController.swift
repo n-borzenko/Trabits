@@ -109,10 +109,7 @@ extension TrackerDayViewController {
     collectionView.allowsSelection = false
     collectionView.delegate = self
 
-    emptyStateView = EmptyStateView(
-      message: "List of habits is empty.\nPlease, fill it in Settings.",
-      image: UIImage(systemName: "clipboard")
-    )
+    emptyStateView = EmptyStateView(message: "List of habits is empty.\nPlease, fill it in Settings.")
     view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)
     emptyStateView.isHidden = true
   }

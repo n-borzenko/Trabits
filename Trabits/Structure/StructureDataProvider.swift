@@ -16,7 +16,7 @@ class StructureDataProvider: NSObject, ObservableObject {
     var title: String {
       switch self {
       case .category: return "Categories"
-      case .habit: return "All Habits"
+      case .habit: return "Habits"
       }
     }
   }
