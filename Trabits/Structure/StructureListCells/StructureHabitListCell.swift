@@ -15,11 +15,11 @@ class StructureHabitListCell: UICollectionViewListCell {
     super.updateConfiguration(using: state)
     var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
     backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: isSublevel ? 16 : 8, bottom: 4, trailing: 8)
-    backgroundConfiguration.backgroundColor = habit?.category?.color?.withAlphaComponent(0.7) ?? .systemGray6.withAlphaComponent(0.7)
+    backgroundConfiguration.backgroundColor = habit?.category?.color?.withAlphaComponent(0.7) ?? .neutral5.withAlphaComponent(0.7)
     backgroundConfiguration.cornerRadius = 8
 
     if state.isHighlighted || state.isSelected {
-      backgroundConfiguration.backgroundColor = habit?.category?.color?.withAlphaComponent(0.5) ?? .systemGray6.withAlphaComponent(0.5)
+      backgroundConfiguration.backgroundColor = habit?.category?.color?.withAlphaComponent(0.5) ?? .neutral5.withAlphaComponent(0.5)
     }
 
     self.backgroundConfiguration = backgroundConfiguration

@@ -38,8 +38,8 @@ extension DatePickerViewController {
 
     datePicker.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(datePicker)
-    datePicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    datePicker.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+    datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+    datePicker.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
     
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       barButtonSystemItem: .cancel,

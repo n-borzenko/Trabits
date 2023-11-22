@@ -138,7 +138,7 @@ extension TrackerContainerViewController {
     let containerController = UINavigationController(rootViewController: datePickerController)
     containerController.isModalInPresentation = true
     if let sheetController = containerController.sheetPresentationController {
-      sheetController.detents = [.medium()]
+      sheetController.detents = [.medium(), .large()]
       sheetController.preferredCornerRadius = 24
     }
 

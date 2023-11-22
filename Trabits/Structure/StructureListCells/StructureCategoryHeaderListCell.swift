@@ -14,11 +14,11 @@ class StructureCategoryHeaderListCell: UICollectionViewListCell {
     super.updateConfiguration(using: state)
     var backgroundConfiguration = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
     backgroundConfiguration.backgroundInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
-    backgroundConfiguration.backgroundColor = category?.color ?? .systemGray6
+    backgroundConfiguration.backgroundColor = category?.color ?? .neutral5
     backgroundConfiguration.cornerRadius = 8
     
     if state.isHighlighted || state.isSelected {
-      backgroundConfiguration.backgroundColor = category?.color?.withAlphaComponent(0.8) ?? .systemGray6.withAlphaComponent(0.8)
+      backgroundConfiguration.backgroundColor = category?.color?.withAlphaComponent(0.8) ?? .neutral5.withAlphaComponent(0.8)
     }
     
     self.backgroundConfiguration = backgroundConfiguration
