@@ -14,19 +14,19 @@ struct CategoryDraft {
 }
 
 class CategoryEditorViewController: UIViewController {
-  private enum Section: Int {
+  private enum SectionIdentifier: Int {
     case title
     case color
   }
 
-  private enum Item: Hashable {
+  private enum ItemIdentifier: Hashable {
     case header(String)
     case title
     case color
   }
 
-  private typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
-  private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
+  private typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
+  private typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
 
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
   private var dataSource: DataSource!
@@ -49,6 +49,7 @@ class CategoryEditorViewController: UIViewController {
     setupViews()
     configureDataSource()
     applySnapshot()
+    validate()
   }
 
   @available(*, unavailable)
@@ -65,7 +66,6 @@ extension CategoryEditorViewController {
       isValid = false
     }
     saveBarButton.isEnabled = isValid
-    applySnapshot()
   }
 
   @objc private func cancel() {
@@ -128,17 +128,17 @@ extension CategoryEditorViewController {
   }
 
   private func configureDataSource() {
-    let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, Item> { [unowned self] cell, indexPath, item in
+    let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, ItemIdentifier> { [unowned self] cell, indexPath, item in
       cell.textField.text = categoryDraft.title
       cell.delegate = self
     }
 
-    let colorPickerCellRegistration = UICollectionView.CellRegistration<ColorPickerListCell, Item> { [unowned self] cell, indexPath, item in
+    let colorPickerCellRegistration = UICollectionView.CellRegistration<ColorPickerListCell, ItemIdentifier> { [unowned self] cell, indexPath, item in
       cell.fill(selectedColor: categoryDraft.color)
       cell.delegate = self
     }
 
-    let headerCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { cell, indexPath, item in
+    let headerCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ItemIdentifier> { cell, indexPath, item in
       guard case let .header(text) = item else { return }
       var contentConfiguration = cell.defaultContentConfiguration()
       contentConfiguration.text = text

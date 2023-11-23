@@ -11,11 +11,62 @@ protocol ColorPickerListCellDelegate: AnyObject {
   func colorValueChanged(_ color: UIColor?)
 }
 
-class ColorPickerListCell: UICollectionViewListCell {
+protocol ColorPickerAccessibilityContainerDelegate: AnyObject {
+  var totalItemsCount: Int { get }
+  var selectedIndex: Int? { get }
+  var selectedValue: String? { get }
+  func adjustSelection(to index: Int) -> Void
+}
+
+class ColorPickerAccessibilityContainerView: UIView {
+  weak var delegate: ColorPickerAccessibilityContainerDelegate?
+  
+  init() {
+    super.init(frame: .zero)
+    isAccessibilityElement = true
+    accessibilityTraits = .adjustable
+    accessibilityLabel = "Color selector"
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  override var accessibilityValue: String? {
+    get { delegate?.selectedValue }
+    set { super.accessibilityValue = newValue }
+  }
+  
+  override var accessibilityFrame: CGRect {
+    get {
+      UIAccessibility.convertToScreenCoordinates(
+        bounds.inset(by: UIEdgeInsets(top: -4, left: -4, bottom: -4, right: -4)),
+        in: self
+      )
+    }
+    set { super.accessibilityFrame = newValue }
+  }
+  
+  override func accessibilityIncrement() {
+    guard let delegate, let selectedIndex = delegate.selectedIndex,
+              selectedIndex < (delegate.totalItemsCount - 1) else { return }
+    delegate.adjustSelection(to: selectedIndex + 1)
+  }
+  
+  override func accessibilityDecrement() {
+    guard let delegate, let selectedIndex = delegate.selectedIndex, selectedIndex > 0 else { return }
+    delegate.adjustSelection(to: selectedIndex - 1)
+  }
+}
+
+class ColorPickerListCell: UICollectionViewListCell, ColorPickerAccessibilityContainerDelegate {
   private let scrollView = UIScrollView()
   private let stackView = UIStackView()
-  private var selectedIndex: Int?
+  internal var selectedIndex: Int?
 
+  private var accessibilityContainerView: ColorPickerAccessibilityContainerView!
+  
   weak var delegate: ColorPickerListCellDelegate?
 
   override init(frame: CGRect) {
@@ -29,6 +80,10 @@ class ColorPickerListCell: UICollectionViewListCell {
   }
 
   private func setupViews() {
+    accessibilityContainerView = ColorPickerAccessibilityContainerView()
+    accessibilityContainerView.delegate = self
+    contentView.addPinnedSubview(accessibilityContainerView)
+    
     let verticalInset = 8.0
     let buttonHeight = 44.0
     contentView.addPinnedSubview(scrollView, layoutGuide: contentView.layoutMarginsGuide, flexibleBottom: true)
@@ -45,9 +100,6 @@ class ColorPickerListCell: UICollectionViewListCell {
       button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
       button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
 
-      button.accessibilityLabel = "\(item.accessibilityName)"
-      button.accessibilityHint = "Select \(item.accessibilityName)"
-
       button.backgroundColor = item
       button.tintColor = .contrast
 
@@ -57,10 +109,10 @@ class ColorPickerListCell: UICollectionViewListCell {
       if index == selectedIndex {
         button.layer.borderWidth = 3
         button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        button.accessibilityLabel = "\(item.accessibilityName) - selected"
       }
 
       button.tag = index
+      button.isAccessibilityElement = false
       button.addTarget(self, action: #selector(selectColorHandler), for: .touchUpInside)
       stackView.addArrangedSubview(button)
     }
@@ -85,7 +137,6 @@ class ColorPickerListCell: UICollectionViewListCell {
       selectedIndex = index
       button.layer.borderWidth = 3
       button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-      button.accessibilityLabel = "\(PastelPalette.colors[index].accessibilityName) - selected"
 
       if isScrollingActive {
         Task {
@@ -102,7 +153,6 @@ class ColorPickerListCell: UICollectionViewListCell {
        let button = stackView.arrangedSubviews[index] as? UIButton {
       button.layer.borderWidth = 1
       button.setImage(nil, for: .normal)
-      button.accessibilityLabel = "\(PastelPalette.colors[index].accessibilityName)"
     }
     selectedIndex = nil
   }
@@ -118,5 +168,24 @@ class ColorPickerListCell: UICollectionViewListCell {
         view.layer.borderColor = UIColor.contrast.cgColor
       }
     }
+  }
+}
+
+extension ColorPickerListCell {
+  var totalItemsCount: Int {
+    get { PastelPalette.colors.count }
+  }
+  
+  var selectedValue: String? {
+    get {
+      guard let selectedIndex else { return nil }
+      return PastelPalette.colorTitles[selectedIndex]
+    }
+  }
+  
+  func adjustSelection(to index: Int) {
+    deselectItem()
+    selectItem(at: index, isScrollingActive: true)
+    delegate?.colorValueChanged(PastelPalette.colors[index])
   }
 }

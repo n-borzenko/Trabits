@@ -27,5 +27,8 @@ class StructureCategoryHeaderListCell: UICollectionViewListCell {
     var contentConfiguration = self.defaultContentConfiguration()
     contentConfiguration.text = category.title
     self.contentConfiguration = contentConfiguration
+    
+    accessibilityLabel = "\(category.title ?? ""), category"
+    accessibilityTraits.insert(.header)
   }
 }

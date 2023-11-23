@@ -35,6 +35,11 @@ extension DatePickerViewController {
     datePicker.preferredDatePickerStyle = .inline
     datePicker.datePickerMode = .date
     datePicker.calendar = Calendar.current
+    if #unavailable(iOS 17) {
+      // gray neutral color is set for the dark appearance
+      // as white was not supported before by the native date picker
+      datePicker.tintColor = .datePickerTint
+    }
 
     datePicker.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(datePicker)

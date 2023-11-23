@@ -137,6 +137,7 @@ extension StructureCategoryViewController {
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
     titleLabel.textAlignment = .center
+    titleLabel.accessibilityTraits.insert(.header)
     underlinedContainerView.appendSubview(titleLabel)
     titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
     

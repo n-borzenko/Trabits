@@ -288,21 +288,36 @@ extension StructureViewController: UICollectionViewDelegate {
   
   func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveOfItemFromOriginalIndexPath originalIndexPath: IndexPath, atCurrentIndexPath currentIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
     guard dataProvider.selectedSegment == .habit else { return proposedIndexPath }
-    guard proposedIndexPath.item == 0 else { return proposedIndexPath }
+    guard proposedIndexPath.item == 0 else {
+      makeHabitReorderingAnnouncement(currentIndexPath: currentIndexPath, targetIndexPath: proposedIndexPath)
+      return proposedIndexPath
+    }
     
+    var targetIndexPath: IndexPath
     if currentIndexPath.section == proposedIndexPath.section {
       // moving habit down avoiding section header
       if proposedIndexPath.section == 0 {
-        return IndexPath(item: 1, section: proposedIndexPath.section)
+        targetIndexPath = IndexPath(item: 1, section: proposedIndexPath.section)
       } else {
         let count = dataSource.snapshot().numberOfItems(inSection: dataSource.snapshot().sectionIdentifiers[proposedIndexPath.section - 1])
         let offset = originalIndexPath.section == proposedIndexPath.section - 1 ? -1 : 0
-        return IndexPath(item: count + offset, section: proposedIndexPath.section - 1)
+        targetIndexPath = IndexPath(item: count + offset, section: proposedIndexPath.section - 1)
       }
     } else {
       // moving habit down avoiding section header
-      return IndexPath(item: 1, section: proposedIndexPath.section)
+      targetIndexPath = IndexPath(item: 1, section: proposedIndexPath.section)
     }
+    
+    makeHabitReorderingAnnouncement(currentIndexPath: currentIndexPath, targetIndexPath: targetIndexPath)
+    return targetIndexPath
+  }
+  
+  func makeHabitReorderingAnnouncement(currentIndexPath: IndexPath, targetIndexPath: IndexPath) {
+    guard currentIndexPath.section != targetIndexPath.section,
+          let category = dataProvider.getCategory(categoryIndex: targetIndexPath.section) else { return }
+
+    let announcement = "Insert into category \(category.title ?? "")"
+    UIAccessibility.post(notification: .announcement, argument: announcement)
   }
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

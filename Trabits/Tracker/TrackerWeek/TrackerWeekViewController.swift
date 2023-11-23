@@ -34,7 +34,7 @@ class TrackerWeekAccessibilityContainerView: UIView {
   
   override var accessibilityValue: String? {
     get { dataProvider.generateSelectedDateDescription() }
-    set { super.accessibilityLabel = newValue }
+    set { super.accessibilityValue = newValue }
   }
   
   override var accessibilityFrame: CGRect {

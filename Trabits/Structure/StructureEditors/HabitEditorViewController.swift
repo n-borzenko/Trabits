@@ -14,19 +14,19 @@ struct HabitDraft {
 }
 
 class HabitEditorViewController: UIViewController {
-  private enum Section: Int {
+  private enum SectionIdentifier: Int {
     case title
     case category
   }
 
-  private enum Item: Hashable {
+  private enum ItemIdentifier: Hashable {
     case header(String)
     case title
     case category
   }
 
-  private typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
-  private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
+  private typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
+  private typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
 
   private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
   private var dataSource: DataSource!
@@ -50,6 +50,7 @@ class HabitEditorViewController: UIViewController {
     setupViews()
     configureDataSource()
     applySnapshot()
+    validate()
   }
 
   @available(*, unavailable)
@@ -66,7 +67,6 @@ extension HabitEditorViewController {
       isValid = false
     }
     saveBarButton.isEnabled = isValid
-    applySnapshot()
   }
 
   @objc private func cancel() {
@@ -127,18 +127,18 @@ extension HabitEditorViewController {
   }
 
   private func configureDataSource() {
-    let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, Item> { [unowned self] cell, indexPath, item in
+    let textCellRegistration = UICollectionView.CellRegistration<TextFieldListCell, ItemIdentifier> { [unowned self] cell, indexPath, item in
       cell.textField.text = habitDraft.title
       cell.delegate = self
     }
 
-    let categoryPickerCellRegistration = UICollectionView.CellRegistration<CategoryPickerListCell, Item> { [unowned self] cell, indexPath, item in
+    let categoryPickerCellRegistration = UICollectionView.CellRegistration<CategoryPickerListCell, ItemIdentifier> { [unowned self] cell, indexPath, item in
       cell.delegate = self
       let index = habitDraft.category != nil ? categories.firstIndex(of: habitDraft.category!) as Int? : nil
       cell.fill(with: categories, selectedIndex: index)
     }
 
-    let headerCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item> { cell, indexPath, item in
+    let headerCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ItemIdentifier> { cell, indexPath, item in
       guard case let .header(text) = item else { return }
       var contentConfiguration = cell.defaultContentConfiguration()
       contentConfiguration.text = text

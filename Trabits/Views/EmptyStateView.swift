@@ -45,6 +45,7 @@ extension EmptyStateView {
     let imageView = UIImageView(image: image ?? UIImage.emptyState)
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .tertiaryLabel
+    imageView.isAccessibilityElement = false
     stackView.addArrangedSubview(imageView)
     
     imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
