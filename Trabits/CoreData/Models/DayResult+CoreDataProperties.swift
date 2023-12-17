@@ -11,22 +11,8 @@ import CoreData
 
 extension DayResult: Identifiable {
   @NSManaged var date: Date?
-  @NSManaged var completedHabits: NSSet?
-}
-
-// MARK: Generated accessors for completedHabits
-extension DayResult {
-  @objc(addCompletedHabitsObject:)
-  @NSManaged func addToCompletedHabits(_ value: Habit)
-
-  @objc(removeCompletedHabitsObject:)
-  @NSManaged func removeFromCompletedHabits(_ value: Habit)
-
-  @objc(addCompletedHabits:)
-  @NSManaged func addToCompletedHabits(_ values: NSSet)
-
-  @objc(removeCompletedHabits:)
-  @NSManaged func removeFromCompletedHabits(_ values: NSSet)
+  @NSManaged var completionCount: Int32
+  @NSManaged var habit: Habit?
 }
 
 extension DayResult {
