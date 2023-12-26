@@ -13,7 +13,7 @@ protocol TrackerDayScrollDelegate: AnyObject {
 }
 
 class TrackerDayViewController: UIViewController {
-  private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
+  private let context = PersistenceController.shared.container.viewContext
   
   private var dataSource: TrackerDayDataProvider.DataSource!
   private var dataProvider: TrackerDayDataProvider!

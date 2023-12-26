@@ -9,10 +9,18 @@ import UIKit
 
 class EmptyStateView: UIView {
   private var centerYConstraint: NSLayoutConstraint!
+  private let titleLabel = UILabel()
+  
+  var message: String {
+    didSet {
+      titleLabel.text = message
+    }
+  }
   
   init(message: String = "List is empty", image: UIImage? = nil) {
+    self.message = message
     super.init(frame: .zero)
-    setupViews(message: message, image: image)
+    setupViews(image: image)
   }
 
   @available(*, unavailable)
@@ -26,7 +34,7 @@ class EmptyStateView: UIView {
 }
 
 extension EmptyStateView {
-  private func setupViews(message: String, image: UIImage?) {
+  private func setupViews(image: UIImage?) {
     let stackView = UIStackView()
     stackView.axis = .vertical
     stackView.alignment = .center
@@ -56,7 +64,6 @@ extension EmptyStateView {
     imageHeightConstraint.priority = .defaultHigh
     imageHeightConstraint.isActive = true
     
-    let titleLabel = UILabel()
     titleLabel.text = message
     titleLabel.numberOfLines = 0
     titleLabel.textAlignment = .center

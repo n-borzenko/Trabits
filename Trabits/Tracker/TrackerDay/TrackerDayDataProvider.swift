@@ -21,7 +21,7 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
   typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
   private typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
 
-  private let context = (UIApplication.shared.delegate as! AppDelegate).coreDataStack.persistentContainer.viewContext
+  private let context = PersistenceController.shared.container.viewContext
   private var categoriesFetchResultsController: NSFetchedResultsController<Category>!
   private var habitsFetchResultsController: NSFetchedResultsController<Habit>!
   private var dayResultFetchResultsController: NSFetchedResultsController<DayResult>!
@@ -119,41 +119,42 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
         return ItemIdentifier.habit(objectId)
       }
       newSnapshot.reloadItems(reloadIdentifiers)
-    } else if let fetchedHabits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
-      // reload habit cells and related categories with progress bar
-      let updatedHabitIds = Set(fetchedHabits.map { $0.objectID } )
-      let reconfigureHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).compactMap {
-        context.object(with: $0).isDeleted || context.object(with: $0).isFault ? nil : ItemIdentifier.habit($0)
-      }
-      let reconfigureCategoryIdentifiers: [ItemIdentifier] = reconfigureHabitIdentifiers.compactMap { itemIdentifier in
-        guard case let ItemIdentifier.habit(habitId) = itemIdentifier,
-              let habit = context.object(with: habitId) as? Habit,
-              let category = habit.category else { return nil }
-        return ItemIdentifier.category(category.objectID)
-      }
-      completedHabitIds = updatedHabitIds
-      let reconfigureItems = reconfigureHabitIdentifiers + Set(reconfigureCategoryIdentifiers)
-      newSnapshot.reconfigureItems(reconfigureItems)
-    }
+    } 
+//      else if let fetchedHabits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
+//      // reload habit cells and related categories with progress bar
+//      let updatedHabitIds = Set(fetchedHabits.map { $0.objectID } )
+//      let reconfigureHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).compactMap {
+//        context.object(with: $0).isDeleted || context.object(with: $0).isFault ? nil : ItemIdentifier.habit($0)
+//      }
+//      let reconfigureCategoryIdentifiers: [ItemIdentifier] = reconfigureHabitIdentifiers.compactMap { itemIdentifier in
+//        guard case let ItemIdentifier.habit(habitId) = itemIdentifier,
+//              let habit = context.object(with: habitId) as? Habit,
+//              let category = habit.category else { return nil }
+//        return ItemIdentifier.category(category.objectID)
+//      }
+//      completedHabitIds = updatedHabitIds
+//      let reconfigureItems = reconfigureHabitIdentifiers + Set(reconfigureCategoryIdentifiers)
+//      newSnapshot.reconfigureItems(reconfigureItems)
+//    }
   }
 }
 
 extension TrackerDayDataProvider {
   func toggleCompletionFor(_ habit: Habit) {
-    var dayResults = dayResultFetchResultsController.fetchedObjects?.first
-    if dayResults == nil {
-      dayResults = DayResult(context: context)
-      dayResults?.date = Calendar.current.startOfDay(for: date)
-      dayResults?.completedHabits = Set<Habit>() as NSSet
-    }
-
-    guard let dayResults else { return }
-    if let habits = dayResults.completedHabits, habits.contains(habit) {
-      dayResults.removeFromCompletedHabits(habit)
-    } else {
-      dayResults.addToCompletedHabits(habit)
-    }
-
-    saveContextChanges()
+//    var dayResults = dayResultFetchResultsController.fetchedObjects?.first
+//    if dayResults == nil {
+//      dayResults = DayResult(context: context)
+//      dayResults?.date = Calendar.current.startOfDay(for: date)
+//      dayResults?.completedHabits = Set<Habit>() as NSSet
+//    }
+//
+//    guard let dayResults else { return }
+//    if let habits = dayResults.completedHabits, habits.contains(habit) {
+//      dayResults.removeFromCompletedHabits(habit)
+//    } else {
+//      dayResults.addToCompletedHabits(habit)
+//    }
+//
+//    saveContextChanges()
   }
 }

@@ -15,11 +15,6 @@ extension Category: Identifiable {
   @NSManaged var habits: NSSet?
 
   @NSManaged var order: Int32
-
-  var orderPriority: Int {
-    get { Int(order) }
-    set { order = Int32(newValue) }
-  }
 }
 
 // MARK: Generated accessors for habits
@@ -53,9 +48,12 @@ extension Category {
     return request
   }
 
-  @nonobjc class func orderedCategoriesFetchRequest() -> NSFetchRequest<Category> {
+  @nonobjc class func orderedCategoriesFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Category> {
     let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: false)]
+    if let position {
+      request.predicate = NSPredicate(format: "self.order <= %@", NSNumber(value: position))
+    }
     return request
   }
 
