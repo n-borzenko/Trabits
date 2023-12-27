@@ -17,6 +17,9 @@ struct CategoryDetailHabitView: View {
     
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
+        if habit.archivedAt != nil {
+          HabitArchivedStatusView()
+        }
         Text(habit.title ?? "")
           .padding(0)
         if hasDetailsRow {
@@ -24,7 +27,7 @@ struct CategoryDetailHabitView: View {
         }
       }
     }
-    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
+    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 20))
   }
 }
 

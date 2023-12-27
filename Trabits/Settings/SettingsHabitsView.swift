@@ -18,6 +18,9 @@ struct SettingsHabitView: View {
     
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
+        if habit.archivedAt != nil {
+          HabitArchivedStatusView()
+        }
         Text(habit.title ?? "")
           .padding(0)
         if hasDetailsRow {
@@ -30,8 +33,12 @@ struct SettingsHabitView: View {
 
 struct SettingsHabitsView: View {
   @Environment(\.managedObjectContext) var context
+  @Environment(\.editMode) var editMode
   @FetchRequest(
-    sortDescriptors: [SortDescriptor(\.order, order: .forward)]
+    sortDescriptors: [
+      SortDescriptor(\.archivedAt, order: .forward),
+      SortDescriptor(\.order, order: .forward)
+    ]
   )
   private var habits: FetchedResults<Habit>
   
@@ -41,10 +48,28 @@ struct SettingsHabitsView: View {
         SettingsListItem(backgroundColor: habit.color) {
           SettingsHabitView(habit: habit)
         }
+        .moveDisabled(habit.archivedAt != nil)
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+          if habit.archivedAt != nil {
+            Button {
+              unarchiveHabit(habit)
+            } label: {
+              Label("Unarchive", systemImage: "shippingbox.and.arrow.backward")
+            }
+            .tint(Color(uiColor: .neutral30))
+          } else {
+            Button {
+              archiveHabit(habit)
+            } label: {
+              Label("Archive", systemImage: "archivebox")
+            }
+            .tint(Color(uiColor: .neutral40))
+          }
+        }
       }
       .onMove(perform: reorderHabits)
-      .onDelete(perform: deleteHabits)
     }
+    .id(editMode?.wrappedValue)
     .scrollContentBackground(.hidden)
     .listRowSpacing(6)
     .listStyle(.plain)
@@ -67,13 +92,40 @@ struct SettingsHabitsView: View {
     saveChanges()
   }
   
-  private func deleteHabits(indices: IndexSet) {
-    guard indices.count == 1, let habitIndex = indices.first else { return }
-    let habit = habits[habitIndex]
-    for index in habitIndex.advanced(by: 1)..<habits.endIndex {
-      habits[index].order -= 1
+  private func unarchiveHabit(_ habit: Habit) {
+    var notArchivedHabitsCount = 0
+    do {
+      let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: 0)
+      fetchRequest.includesSubentities = false
+      notArchivedHabitsCount = try context.count(for: fetchRequest)
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    context.delete(habit)
+    
+    habit.archivedAt = nil
+    habit.order = Int32(notArchivedHabitsCount)
+    saveChanges()
+  }
+  
+  private func archiveHabit(_ habit: Habit) {
+    var habits: [Habit] = []
+    do {
+      let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: habit.order + 1)
+      fetchRequest.includesSubentities = false
+      habits = try context.fetch(fetchRequest)
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
+    
+    if !habits.isEmpty {
+      for index in 0..<habits.endIndex {
+        habits[index].order -= 1
+      }
+    }
+    habit.archivedAt = Date()
+    habit.order = -1
     saveChanges()
   }
   

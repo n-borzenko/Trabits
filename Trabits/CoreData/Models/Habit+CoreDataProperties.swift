@@ -35,32 +35,30 @@ extension Habit: Identifiable {
   }
   
   var sortedWeekGoals: [WeekGoal] {
-    weekGoals?.sortedArray(using: [NSSortDescriptor(key: "applicableFrom", ascending: false)]) as? [WeekGoal] ?? []
+    weekGoals?.sortedArray(using: [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: false)]) as? [WeekGoal] ?? []
   }
   
   var sortedDayTargets: [DayTarget] {
-    dayTargets?.sortedArray(using: [NSSortDescriptor(key: "applicableFrom", ascending: false)]) as? [DayTarget] ?? []
+    dayTargets?.sortedArray(using: [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: false)]) as? [DayTarget] ?? []
   }
 }
 
 extension Habit {
-  @nonobjc class func fetchRequest() -> NSFetchRequest<Habit> {
-    return NSFetchRequest<Habit>(entityName: "Habit")
+  @nonobjc private class func orderedHabitsFetchRequest() -> NSFetchRequest<Habit> {
+    let request = NSFetchRequest<Habit>(entityName: "Habit")
+    request.sortDescriptors = [
+      NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+    ]
+    return request
   }
 
+  // from nil - all habits, from 0 - not archived habits, from n - subset of not archived habits
   @nonobjc class func orderedHabitsFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Habit> {
-    let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+    let request = orderedHabitsFetchRequest()
     if let position {
       request.predicate = NSPredicate(format: "self.order >= %@", NSNumber(value: position))
     }
-    return request
-  }
-  
-  @nonobjc class func categoryOrderedHabitsFetchRequest(categoryObjectID: NSManagedObjectID) -> NSFetchRequest<Habit> {
-    let request = fetchRequest()
-    request.predicate = NSPredicate(format: "self.category == %@", categoryObjectID)
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
     return request
   }
 }

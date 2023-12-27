@@ -46,11 +46,14 @@ struct HabitDetailObjectivesView: View {
 
 struct SettingsHabitDetailView: View {
   @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.managedObjectContext) var context
   @State private var isEditorVisible = false
   @ObservedObject var habit: Habit
   
   var body: some View {
+    let isArchived = habit.archivedAt != nil
+    
     List {
       Section("Title") {
         SettingsListItem(backgroundColor: habit.color) {
@@ -79,6 +82,24 @@ struct SettingsHabitDetailView: View {
         HabitDetailObjectivesView(objectives: habit.sortedWeekGoals, imageName: "flame")
       }
       
+      Section("Status") {
+        SettingsListItem(backgroundColor: .neutral5) {
+          HStack {
+            Text(isArchived ? "Archived from \(Calendar.current.startOfDay(for: habit.archivedAt!).formatted(date: .abbreviated, time: .omitted))" : "Active")
+            Spacer()
+            Button(action: isArchived ? unarchiveHabit : archiveHabit) {
+              Text(isArchived ? "Unarchive" : "Archive")
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(
+                  RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(.tint, lineWidth: dynamicTypeSize >= .accessibility1 ? 2 : 1)
+                )
+            }
+          }
+        }
+      }
+      
       Section {
         SettingsListItem(backgroundColor: .neutral5) {
           Button(role: .destructive, action: removeCompletions) {
@@ -90,7 +111,7 @@ struct SettingsHabitDetailView: View {
         }
         SettingsListItem(backgroundColor: .neutral5) {
           Button(role: .destructive, action: deleteHabit) {
-            Text("Delete habit and related data")
+            Text("Delete habit and all related data")
               .frame(minWidth: 0, maxWidth: .infinity)
           }
           .buttonStyle(.borderless)
@@ -112,6 +133,43 @@ struct SettingsHabitDetailView: View {
     .sheet(isPresented: $isEditorVisible) {
       HabitEditorView(habit: habit)
     }
+  }
+  
+  private func unarchiveHabit() {
+    var notArchivedHabitsCount = 0
+    do {
+      let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: 0)
+      fetchRequest.includesSubentities = false
+      notArchivedHabitsCount = try context.count(for: fetchRequest)
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
+    
+    habit.archivedAt = nil
+    habit.order = Int32(notArchivedHabitsCount)
+    saveChanges()
+  }
+  
+  private func archiveHabit() {
+    var habits: [Habit] = []
+    do {
+      let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: habit.order + 1)
+      fetchRequest.includesSubentities = false
+      habits = try context.fetch(fetchRequest)
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
+    
+    if !habits.isEmpty {
+      for index in 0..<habits.endIndex {
+        habits[index].order -= 1
+      }
+    }
+    habit.archivedAt = Date()
+    habit.order = -1
+    saveChanges()
   }
   
   private func deleteHabit() {

@@ -17,6 +17,9 @@ struct SettingsGroupedHabitView: View {
     
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
+        if habit.archivedAt != nil {
+          HabitArchivedStatusView()
+        }
         Text(habit.title ?? "")
           .padding(0)
         if hasDetailsRow {
@@ -33,6 +36,7 @@ struct SettingsGroupedHabitsView: View {
     sectionIdentifier: \.categoryTitle,
     sortDescriptors: [
       SortDescriptor(\.category?.order, order: .reverse),
+      SortDescriptor(\.archivedAt, order: .forward),
       SortDescriptor(\.order, order: .forward)
     ]
   )
@@ -46,10 +50,24 @@ struct SettingsGroupedHabitsView: View {
             SettingsListItem(backgroundColor: habit.category?.color) {
               SettingsGroupedHabitView(habit: habit)
             }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+              if habit.archivedAt != nil {
+                Button {
+                  unarchiveHabit(habit)
+                } label: {
+                  Label("Unarchive", systemImage: "shippingbox.and.arrow.backward")
+                }
+                .tint(Color(uiColor: .neutral30))
+              } else {
+                Button {
+                  archiveHabit(habit)
+                } label: {
+                  Label("Archive", systemImage: "archivebox")
+                }
+                .tint(Color(uiColor: .neutral40))
+              }
+            }
           }
-          .onDelete(perform: { indicies in
-            deleteHabits(indices: indicies, categoryTitle: category.id)
-          })
         }
         .headerProminence(.increased)
       }
@@ -59,11 +77,23 @@ struct SettingsGroupedHabitsView: View {
     .listStyle(.grouped)
   }
   
-  private func deleteHabits(indices: IndexSet, categoryTitle: String) {
-    guard let category = groupedHabitSections.first(where: { $0.id == categoryTitle }),
-          indices.count == 1, let habitIndex = indices.first else { return }
-    let habit = category[habitIndex]
+  private func unarchiveHabit(_ habit: Habit) {
+    var notArchivedHabitsCount = 0
+    do {
+      let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: 0)
+      fetchRequest.includesSubentities = false
+      notArchivedHabitsCount = try context.count(for: fetchRequest)
+    } catch {
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
     
+    habit.archivedAt = nil
+    habit.order = Int32(notArchivedHabitsCount)
+    saveChanges()
+  }
+  
+  private func archiveHabit(_ habit: Habit) {
     var habits: [Habit] = []
     do {
       let fetchRequest = Habit.orderedHabitsFetchRequest(startingFrom: habit.order + 1)
@@ -74,11 +104,13 @@ struct SettingsGroupedHabitsView: View {
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
     
-    guard !habits.isEmpty else { return }
-    for index in 0..<habits.endIndex {
-      habits[index].order -= 1
+    if !habits.isEmpty {
+      for index in 0..<habits.endIndex {
+        habits[index].order -= 1
+      }
     }
-    context.delete(habit)
+    habit.archivedAt = Date()
+    habit.order = -1
     saveChanges()
   }
   

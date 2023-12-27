@@ -24,5 +24,6 @@ struct SettingsListItem<Content: View>: View {
         .fill(Color(uiColor: backgroundColor ?? .neutral10).opacity(0.7))
         .padding(.horizontal, 12)
     )
+    .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
   }
 }

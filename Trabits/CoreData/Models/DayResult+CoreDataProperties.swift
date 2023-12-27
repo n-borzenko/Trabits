@@ -27,7 +27,7 @@ extension DayResult {
 
   @nonobjc class func singleDayFetchRequest(date: Date = Date()) -> NSFetchRequest<DayResult> {
     let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+    request.sortDescriptors = [NSSortDescriptor(keyPath: \DayResult.date, ascending: true)]
     request.predicate = singleDayPredicate(date: date)
     request.fetchLimit = 1
     return request

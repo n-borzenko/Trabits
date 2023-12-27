@@ -146,6 +146,18 @@ struct HabitDetailsRowView: View {
   }
 }
 
+struct HabitArchivedStatusView: View {
+  var body: some View {
+    Text("Archived")
+      .font(.caption2)
+      .padding(.horizontal, 4)
+      .foregroundColor(Color(uiColor: .inverted))
+      .background(Color(uiColor: .neutral80))
+      .cornerRadius(4)
+      .opacity(0.8)
+  }
+}
+
 #Preview {
   let context = PersistenceController.preview.container.viewContext
   var habit: Habit? = nil

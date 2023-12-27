@@ -32,7 +32,11 @@ extension Category {
   @NSManaged func removeFromHabits(_ values: NSSet)
   
   func getSortedHabits() -> [Habit] {
-    return habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
+    let sortDescriptors = [
+      NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+    ]
+    return habits?.sortedArray(using: sortDescriptors) as? [Habit] ?? []
   }
 }
 
@@ -44,13 +48,12 @@ extension Category {
   @nonobjc class func singleCategoryFetchRequest(objectID: NSManagedObjectID) -> NSFetchRequest<Category> {
     let request = fetchRequest()
     request.predicate = NSPredicate(format: "self == %@", objectID)
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
     return request
   }
 
   @nonobjc class func orderedCategoriesFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Category> {
     let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: false)]
+    request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: true)]
     if let position {
       request.predicate = NSPredicate(format: "self.order <= %@", NSNumber(value: position))
     }
