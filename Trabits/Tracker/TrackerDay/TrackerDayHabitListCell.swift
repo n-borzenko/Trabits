@@ -110,14 +110,14 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     
     isAccessibilityElement = true
     accessibilityTraits = .button
-    accessibilityHint = "Double tap to toggle completion"
+    accessibilityHint = "Double tap to adjust completion"
   }
 
   func apply(configuration: TrackerDayHabitContentConfiguration) {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
 
-    titleLabel.text = configuration.title
+    titleLabel.text = "\(configuration.isArchived ? "[A] " : "")\(configuration.title)"
     backgroundView.updateColors(startColor: configuration.color, endColor: .neutral5)
 
     var buttonConfiguration = completionButton.configuration
@@ -144,6 +144,8 @@ struct TrackerDayHabitContentConfiguration: UIContentConfiguration, Hashable {
   var title: String = ""
   var color: UIColor = .clear
   var isCompleted: Bool = false
+  var isGrouped: Bool = false
+  var isArchived: Bool = false
   var completion: (() -> Void)? = nil
 
   func makeContentView() -> UIView & UIContentView {
@@ -158,19 +160,24 @@ struct TrackerDayHabitContentConfiguration: UIContentConfiguration, Hashable {
     hasher.combine(title)
     hasher.combine(isCompleted)
     hasher.combine(color)
+    hasher.combine(isGrouped)
+    hasher.combine(isArchived)
   }
   
   static func ==(lhs: TrackerDayHabitContentConfiguration, rhs: TrackerDayHabitContentConfiguration) -> Bool {
-    return lhs.isCompleted == rhs.isCompleted && lhs.title == rhs.title && lhs.color == rhs.color
+    return lhs.isCompleted == rhs.isCompleted && lhs.title == rhs.title && lhs.color == rhs.color &&
+      lhs.isGrouped == rhs.isGrouped && lhs.isArchived == rhs.isArchived
   }
 }
 
 class TrackerDayHabitListCell: UICollectionViewListCell {
-  func createConfiguration(habit: Habit, isCompleted: Bool, completion: @escaping () -> Void) {
+  func createConfiguration(habit: Habit, isCompleted: Bool, isGrouped: Bool, isArchived: Bool, completion: @escaping () -> Void) {
     var newConfiguration = TrackerDayHabitContentConfiguration()
     newConfiguration.title = habit.title ?? ""
-    newConfiguration.color = habit.category?.color ?? .neutral5
+    newConfiguration.color = (isGrouped ? habit.category?.color : habit.color) ?? .neutral5
     newConfiguration.isCompleted = isCompleted
+    newConfiguration.isGrouped = isGrouped
+    newConfiguration.isArchived = isArchived
     newConfiguration.completion = completion
     contentConfiguration = newConfiguration
   }

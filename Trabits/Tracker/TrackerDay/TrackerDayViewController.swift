@@ -26,12 +26,11 @@ class TrackerDayViewController: UIViewController {
   
   private var cancellable: AnyCancellable?
   
-  let date: Date
+  var date: Date { dataProvider.date }
   
   weak var delegate: TrackerDayScrollDelegate?
   
   init(date: Date) {
-    self.date = date
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
@@ -66,26 +65,35 @@ extension TrackerDayViewController {
   }
 
   private func configureDataSource() {
-    let categoryCellRegistration = UICollectionView.CellRegistration<TrackerDayCategoryListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
-      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
-      guard case let category = self.context.object(with: objectId) as? Category, let category = category else { return }
-      var completedHabitsCount = 0
-      if let habits = category.habits as? Set<Habit> {
-        completedHabitsCount = habits.filter { dataProvider.completedHabitIds.contains($0.objectID) }
-          .count
-      }
-      cell.createConfiguration(category: category, completedHabitsCount: completedHabitsCount)
-    }
-
     let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
-      cell.createConfiguration(habit: habit, isCompleted: dataProvider.completedHabitIds.contains(habit.objectID)) { [weak self] in
+      cell.createConfiguration(
+        habit: habit,
+        isCompleted: dataProvider.completedHabitIds.contains(habit.objectID),
+        isGrouped: dataProvider.isHabitGroupingOn,
+        isArchived: habit.archivedAt != nil
+      ) { [weak self] in
         guard let self else { return }
-        dataProvider.toggleCompletionFor(habit)
+        dataProvider.adjustCompletionFor(habit)
       }
     }
-
+    
+    let categoryCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
+      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
+      guard let objectId else {
+        var contentConfiguration = cell.defaultContentConfiguration()
+        contentConfiguration.text = "Uncategorized"
+        cell.contentConfiguration = contentConfiguration
+        return
+      }
+      
+      guard case let category = self.context.object(with: objectId) as? Category, let category else { return }
+      var contentConfiguration = cell.defaultContentConfiguration()
+      contentConfiguration.text = category.title ?? "No title"
+      cell.contentConfiguration = contentConfiguration
+    }
+    
     dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       switch itemIdentifier {
       case .habit(_):

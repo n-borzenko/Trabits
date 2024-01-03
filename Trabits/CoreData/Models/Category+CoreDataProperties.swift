@@ -55,7 +55,7 @@ extension Category {
     let request = fetchRequest()
     request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: true)]
     if let position {
-      request.predicate = NSPredicate(format: "self.order <= %@", NSNumber(value: position))
+      request.predicate = NSPredicate(format: "order <= %@", NSNumber(value: position))
     }
     return request
   }

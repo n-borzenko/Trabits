@@ -28,6 +28,7 @@
 		194AC5A92A40F49B00383B29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5A82A40F49B00383B29 /* Assets.xcassets */; };
 		194AC5AC2A40F49B00383B29 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5AA2A40F49B00383B29 /* LaunchScreen.storyboard */; };
 		1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */; };
+		196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196829C92B3E356200FC8E30 /* UserDefaults.swift */; };
 		196AEECB2B2E72F200F85BB2 /* SettingsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196AEECA2B2E72F200F85BB2 /* SettingsListItem.swift */; };
 		19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */; };
 		19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */; };
@@ -80,6 +81,8 @@
 		194AC5AB2A40F49B00383B29 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		194AC5AD2A40F49B00383B29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+PinnedSubview.swift"; sourceTree = "<group>"; };
+		196829C82B3DF1B900FC8E30 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		196829C92B3E356200FC8E30 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		196AEECA2B2E72F200F85BB2 /* SettingsListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsListItem.swift; sourceTree = "<group>"; };
 		19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataClass.swift"; sourceTree = "<group>"; };
 		19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -210,6 +213,7 @@
 				19BB9BE12A6F168900D328BD /* CoreData */,
 				193BBD132AC5CDF600A2F0BD /* Tracker */,
 				19FE5B5C2B2B852300827C82 /* Settings */,
+				196829C82B3DF1B900FC8E30 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Trabits;
 			sourceTree = "<group>";
@@ -247,6 +251,7 @@
 			children = (
 				194AC59C2A40F49900383B29 /* AppDelegate.swift */,
 				194AC59E2A40F49900383B29 /* SceneDelegate.swift */,
+				196829C92B3E356200FC8E30 /* UserDefaults.swift */,
 				194AC5AD2A40F49B00383B29 /* Info.plist */,
 			);
 			path = App;
@@ -390,6 +395,7 @@
 				193F873B2AFDA03600B45DE5 /* UnderlinedContainerView.swift in Sources */,
 				19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */,
 				19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */,
+				196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */,
 				199B8E612B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift in Sources */,
 				1994EEE42B2230A800651674 /* SettingsGroupedHabitsView.swift in Sources */,
 				190ACBA02B1A86220081A7CD /* CategoryPickerView.swift in Sources */,

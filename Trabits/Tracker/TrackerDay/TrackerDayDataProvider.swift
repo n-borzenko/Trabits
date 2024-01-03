@@ -7,30 +7,35 @@
 
 import UIKit
 import CoreData
+import Combine
 
 class TrackerDayDataProvider: NSObject, ObservableObject {
   enum SectionIdentifier: Hashable {
-    case category(NSManagedObjectID)
+    case main
+    case category(String)
   }
 
   enum ItemIdentifier: Hashable {
-    case category(NSManagedObjectID)
     case habit(NSManagedObjectID)
+    case category(NSManagedObjectID?)
   }
 
   typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
   private typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
 
   private let context = PersistenceController.shared.container.viewContext
-  private var categoriesFetchResultsController: NSFetchedResultsController<Category>!
   private var habitsFetchResultsController: NSFetchedResultsController<Habit>!
-  private var dayResultFetchResultsController: NSFetchedResultsController<DayResult>!
+  private var groupedHabitsFetchResultsController: NSFetchedResultsController<Habit>!
+  
+  private var cancellables = Set<AnyCancellable>()
+  
+  private(set) var isHabitGroupingOn = UserDefaults.standard.isHabitGroupingOn
 
   private(set) var completedHabitIds: Set<NSManagedObjectID> = Set()
 
   var dataSource: DataSource!
   
-  private let date: Date
+  let date: Date
   
   @Published var isListEmpty = false
 
@@ -38,30 +43,38 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
     self.date = date
     self.dataSource = dataSource
     super.init()
-    configureFetchedResultsControllers()
+    
+    UserDefaults.standard
+      .publisher(for: \.isHabitGroupingOn)
+      .sink { [weak self] in
+        self?.isHabitGroupingOn = $0
+        self?.configureFetchedResultsControllers()
+      }
+      .store(in: &cancellables)
+  }
+  
+  deinit {
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
   }
 
   func configureFetchedResultsControllers() {
-    categoriesFetchResultsController = NSFetchedResultsController(
-      fetchRequest: Category.nonEmptyCategoriesFetchRequest(),
-      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
-    )
-    habitsFetchResultsController = NSFetchedResultsController(
-      fetchRequest: Habit.orderedHabitsFetchRequest(),
-      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
-    )
-    dayResultFetchResultsController = NSFetchedResultsController(
-      fetchRequest: DayResult.singleDayFetchRequest(date: date),
-      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
-    )
-    categoriesFetchResultsController.delegate = self
+    if isHabitGroupingOn {
+      habitsFetchResultsController = NSFetchedResultsController(
+        fetchRequest: Habit.orderedGroupedHabitsFetchRequest(forDate: date),
+        managedObjectContext: context, sectionNameKeyPath: "categoryGroupIdentifier", cacheName: nil
+      )
+    } else {
+      habitsFetchResultsController = NSFetchedResultsController(
+        fetchRequest: Habit.orderedHabitsFetchRequest(forDate: date),
+        managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+      )
+    }
+    
     habitsFetchResultsController.delegate = self
-    dayResultFetchResultsController.delegate = self
-
+    
     do {
-      try categoriesFetchResultsController.performFetch()
       try habitsFetchResultsController.performFetch()
-      try dayResultFetchResultsController.performFetch()
     } catch {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
@@ -80,81 +93,55 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
 
 extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+    if isHabitGroupingOn {
+      updateGroupedHabitsSnaphot()
+    } else {
+      updateHabitsSnaphot()
+    }
+  }
+  
+  private func updateHabitsSnaphot() {
     var newSnapshot = Snapshot()
 
     defer {
       dataSource.apply(newSnapshot, animatingDifferences: true)
-      isListEmpty = newSnapshot.sectionIdentifiers.isEmpty
+      isListEmpty = newSnapshot.itemIdentifiers.isEmpty
     }
 
-    guard let categories = categoriesFetchResultsController.fetchedObjects, !categories.isEmpty else { return }
+    guard let habits = habitsFetchResultsController.fetchedObjects, !habits.isEmpty else { return }
+    
+    newSnapshot.appendSections([.main])
+    let itemIdentifiers = habits.compactMap { habit in
+      guard let archivedDate = habit.archivedAt else { return ItemIdentifier.habit(habit.objectID) }
+      return archivedDate >= date ? ItemIdentifier.habit(habit.objectID) : nil
+    }
+    newSnapshot.appendItems(itemIdentifiers, toSection: .main)
+  }
+  
+  private func updateGroupedHabitsSnaphot() {
+    var newSnapshot = Snapshot()
 
-    newSnapshot.appendSections(categories.map { SectionIdentifier.category($0.objectID) })
-    categories.forEach {
-      newSnapshot.appendItems([ItemIdentifier.category($0.objectID)], toSection: SectionIdentifier.category($0.objectID))
+    defer {
+      dataSource.apply(newSnapshot, animatingDifferences: true)
+      isListEmpty = newSnapshot.itemIdentifiers.isEmpty
     }
 
-    if let habits = habitsFetchResultsController.fetchedObjects, !habits.isEmpty {
-      let groupedHabits = Dictionary(grouping: habits) { $0.category?.objectID }
-      for categoryId in groupedHabits.keys {
-        guard let categoryId, let habitsGroup = groupedHabits[categoryId] else { continue }
-        let items = habitsGroup.map { ItemIdentifier.habit($0.objectID) }
-        newSnapshot.appendItems(items, toSection: SectionIdentifier.category(categoryId))
-      }
-    }
+    guard let sections = habitsFetchResultsController.sections, !sections.isEmpty,
+          let habits = habitsFetchResultsController.fetchedObjects, !habits.isEmpty else { return }
 
-    if controller == categoriesFetchResultsController {
-      let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
-      let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { SectionIdentifier.category($0) }
-      newSnapshot.reloadSections(reloadIdentifiers)
-    } else if controller == habitsFetchResultsController {
-      let snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
-      let reloadIdentifiers: [ItemIdentifier] = snapshot.reloadedItemIdentifiers.compactMap { objectId in
-        guard let habit = context.object(with: objectId) as? Habit else { return nil }
-        // skip updates of dayResults
-        if habit.isUpdated, habit.changedValues().count == 1,
-           habit.changedValues()["dayResults"] != nil {
-          return nil
-        }
-        return ItemIdentifier.habit(objectId)
-      }
-      newSnapshot.reloadItems(reloadIdentifiers)
-    } 
-//      else if let fetchedHabits = dayResultFetchResultsController.fetchedObjects?.first?.completedHabits as? Set<Habit> {
-//      // reload habit cells and related categories with progress bar
-//      let updatedHabitIds = Set(fetchedHabits.map { $0.objectID } )
-//      let reconfigureHabitIdentifiers = completedHabitIds.symmetricDifference(updatedHabitIds).compactMap {
-//        context.object(with: $0).isDeleted || context.object(with: $0).isFault ? nil : ItemIdentifier.habit($0)
-//      }
-//      let reconfigureCategoryIdentifiers: [ItemIdentifier] = reconfigureHabitIdentifiers.compactMap { itemIdentifier in
-//        guard case let ItemIdentifier.habit(habitId) = itemIdentifier,
-//              let habit = context.object(with: habitId) as? Habit,
-//              let category = habit.category else { return nil }
-//        return ItemIdentifier.category(category.objectID)
-//      }
-//      completedHabitIds = updatedHabitIds
-//      let reconfigureItems = reconfigureHabitIdentifiers + Set(reconfigureCategoryIdentifiers)
-//      newSnapshot.reconfigureItems(reconfigureItems)
-//    }
+    newSnapshot.appendSections(sections.map { SectionIdentifier.category($0.name) })
+    
+    for sectionInfo in sections {
+      guard let firstItem = sectionInfo.objects?.first as? Habit,
+            let habits = sectionInfo.objects as? [Habit] else { continue }
+      let sectionIdentifier = SectionIdentifier.category(sectionInfo.name)
+      newSnapshot.appendItems([ItemIdentifier.category(firstItem.category?.objectID)], toSection: sectionIdentifier)
+      newSnapshot.appendItems(habits.map { ItemIdentifier.habit($0.objectID) }, toSection: sectionIdentifier)
+    }
   }
 }
-
 extension TrackerDayDataProvider {
-  func toggleCompletionFor(_ habit: Habit) {
-//    var dayResults = dayResultFetchResultsController.fetchedObjects?.first
-//    if dayResults == nil {
-//      dayResults = DayResult(context: context)
-//      dayResults?.date = Calendar.current.startOfDay(for: date)
-//      dayResults?.completedHabits = Set<Habit>() as NSSet
-//    }
-//
-//    guard let dayResults else { return }
-//    if let habits = dayResults.completedHabits, habits.contains(habit) {
-//      dayResults.removeFromCompletedHabits(habit)
-//    } else {
-//      dayResults.addToCompletedHabits(habit)
-//    }
-//
-//    saveContextChanges()
+  func adjustCompletionFor(_ habit: Habit) {
+
   }
 }

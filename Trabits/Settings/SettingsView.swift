@@ -6,9 +6,30 @@
 //
 
 import SwiftUI
+import Combine
 
 class NavigationCoordinator: ObservableObject {
   @Published var path = NavigationPath()
+}
+
+class UserDefaultsObserver: ObservableObject {
+  @Published var isHabitGroupingOn = UserDefaults.standard.isHabitGroupingOn
+  
+  private var cancellables = Set<AnyCancellable>()
+  
+  init() {
+    UserDefaults.standard
+      .publisher(for: \.isHabitGroupingOn)
+      .sink { [weak self] in
+        self?.isHabitGroupingOn = $0
+      }
+      .store(in: &cancellables)
+  }
+  
+  deinit {
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
+  }
 }
 
 struct SettingsView: View {
@@ -24,8 +45,8 @@ struct SettingsView: View {
     }
   }
   
+  @StateObject private var userDefaultsObserver = UserDefaultsObserver()
   @State private var selectedContentType = SettingsContentType.habits
-  @State private var isHabitGroupingOn = false
   @State private var editMode: EditMode = .inactive
   @StateObject private var navigationCoordinator = NavigationCoordinator()
   
@@ -45,10 +66,10 @@ struct SettingsView: View {
         .padding(.horizontal)
         
         Group {
-          if selectedContentType == .habits && !isHabitGroupingOn {
+          if selectedContentType == .habits && !userDefaultsObserver.isHabitGroupingOn {
             SettingsHabitsView()
           }
-          if selectedContentType == .habits && isHabitGroupingOn {
+          if selectedContentType == .habits && userDefaultsObserver.isHabitGroupingOn {
             SettingsGroupedHabitsView()
           }
           if selectedContentType == .categories {
@@ -70,10 +91,10 @@ struct SettingsView: View {
         ToolbarItemGroup(placement: .topBarLeading) {
           if selectedContentType == .habits && editMode == .inactive {
             Button(
-              isHabitGroupingOn ? "Hide category groups" : "Group by category",
-              systemImage: isHabitGroupingOn ? "rectangle.stack.fill" : "rectangle.stack"
+              userDefaultsObserver.isHabitGroupingOn ? "Hide category groups" : "Group by category",
+              systemImage: userDefaultsObserver.isHabitGroupingOn ? "rectangle.stack.fill" : "rectangle.stack"
             ) {
-              isHabitGroupingOn.toggle()
+              UserDefaults.standard.isHabitGroupingOn = !userDefaultsObserver.isHabitGroupingOn
             }
           }
         }
@@ -85,7 +106,7 @@ struct SettingsView: View {
               case .categories: isCategoryEditorVisible = true
               }
             }
-            if !isHabitGroupingOn || selectedContentType == .categories  {
+            if !userDefaultsObserver.isHabitGroupingOn || selectedContentType == .categories  {
               Button("Reorder \(selectedContentType.rawValue.lowercased())", systemImage: "arrow.up.arrow.down") {
                 editMode = .active
               }

@@ -112,6 +112,32 @@ struct HabitDetailsRowView: View {
   var dayTarget: DayTarget?
   var weekGoal: WeekGoal?
   
+  private struct DayTargetView: View {
+    @ObservedObject var dayTarget: DayTarget
+    
+    var body: some View {
+      if dayTarget.count > 1 {
+        HStack(spacing: 2) {
+          Image(systemName: "target")
+          Text("\(dayTarget.count)/day")
+        }
+      }
+    }
+  }
+  
+  private struct WeekGoalView: View {
+    @ObservedObject var weekGoal: WeekGoal
+    
+    var body: some View {
+      if weekGoal.count > 0 {
+        HStack(spacing: 2) {
+          Image(systemName: "flame")
+          Text("\(weekGoal.count)/week")
+        }
+      }
+    }
+  }
+  
   var body: some View {
     WrappableHStack {
       if let category {
@@ -127,17 +153,11 @@ struct HabitDetailsRowView: View {
       }
       
       HStack(spacing: 12) {
-        if let dayTarget, dayTarget.count > 1 {
-          HStack(spacing: 2) {
-            Image(systemName: "target")
-            Text("\(dayTarget.count)/day")
-          }
+        if let dayTarget {
+          DayTargetView(dayTarget: dayTarget)
         }
-        if let weekGoal, weekGoal.count > 0 {
-          HStack(spacing: 2) {
-            Image(systemName: "flame")
-            Text("\(weekGoal.count)/week")
-          }
+        if let weekGoal {
+          WeekGoalView(weekGoal: weekGoal)
         }
       }
       .foregroundColor(.secondary)

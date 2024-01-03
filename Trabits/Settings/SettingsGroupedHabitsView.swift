@@ -33,7 +33,7 @@ struct SettingsGroupedHabitView: View {
 struct SettingsGroupedHabitsView: View {
   @Environment(\.managedObjectContext) var context
   @SectionedFetchRequest<String, Habit>(
-    sectionIdentifier: \.categoryTitle,
+    sectionIdentifier: \.categoryGroupIdentifier,
     sortDescriptors: [
       SortDescriptor(\.category?.order, order: .reverse),
       SortDescriptor(\.archivedAt, order: .forward),
@@ -45,7 +45,7 @@ struct SettingsGroupedHabitsView: View {
   var body: some View {
     List {
       ForEach(groupedHabitSections) { category in
-        Section(header: Text(category.id)) {
+        Section(header: Text(category.first?.category?.title ?? "Uncategorized")) {
           ForEach(category) { habit in
             SettingsListItem(backgroundColor: habit.category?.color) {
               SettingsGroupedHabitView(habit: habit)
