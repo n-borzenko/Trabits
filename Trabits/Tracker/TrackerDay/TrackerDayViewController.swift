@@ -70,9 +70,7 @@ extension TrackerDayViewController {
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
       cell.createConfiguration(
         habit: habit,
-        isCompleted: dataProvider.completedHabitIds.contains(habit.objectID),
-        isGrouped: dataProvider.isHabitGroupingOn,
-        isArchived: habit.archivedAt != nil
+        isGrouped: dataProvider.isHabitGroupingOn
       ) { [weak self] in
         guard let self else { return }
         dataProvider.adjustCompletionFor(habit)
@@ -80,17 +78,17 @@ extension TrackerDayViewController {
     }
     
     let categoryCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
-      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
-      guard let objectId else {
+      if itemIdentifier == TrackerDayDataProvider.ItemIdentifier.unknownCategory {
         var contentConfiguration = cell.defaultContentConfiguration()
         contentConfiguration.text = "Uncategorized"
         cell.contentConfiguration = contentConfiguration
         return
       }
       
+      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectId) as? Category, let category else { return }
       var contentConfiguration = cell.defaultContentConfiguration()
-      contentConfiguration.text = category.title ?? "No title"
+      contentConfiguration.text = category.title ?? "Untitled"
       cell.contentConfiguration = contentConfiguration
     }
     
@@ -98,7 +96,7 @@ extension TrackerDayViewController {
       switch itemIdentifier {
       case .habit(_):
         return collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
-      case .category(_):
+      case .category(_), .unknownCategory:
         return collectionView.dequeueConfiguredReusableCell(using: categoryCellRegistration, for: indexPath, item: itemIdentifier)
       }
     }

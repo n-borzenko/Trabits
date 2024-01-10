@@ -26,7 +26,7 @@ extension Habit: Identifiable {
   @NSManaged var weekGoals: NSSet?
   
   @objc var categoryGroupIdentifier: String {
-    category?.objectID.description ?? "Uncategorized"
+    category?.objectID.uriRepresentation().lastPathComponent ?? "Uncategorized"
   }
   
   public override func awakeFromInsert() {

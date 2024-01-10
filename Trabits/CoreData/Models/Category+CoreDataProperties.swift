@@ -37,32 +37,26 @@ extension Category {
       NSSortDescriptor(keyPath: \Habit.order, ascending: true),
     ]
     return habits?.sortedArray(using: sortDescriptors) as? [Habit] ?? []
-  }
+  } 
 }
 
 extension Category {
   @nonobjc class func fetchRequest() -> NSFetchRequest<Category> {
     return NSFetchRequest<Category>(entityName: "Category")
   }
-  
-  @nonobjc class func singleCategoryFetchRequest(objectID: NSManagedObjectID) -> NSFetchRequest<Category> {
-    let request = fetchRequest()
-    request.predicate = NSPredicate(format: "self == %@", objectID)
-    return request
-  }
 
   @nonobjc class func orderedCategoriesFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Category> {
     let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: true)]
+    request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: false)]
     if let position {
       request.predicate = NSPredicate(format: "order <= %@", NSNumber(value: position))
     }
     return request
   }
-
-  @nonobjc class func nonEmptyCategoriesFetchRequest() -> NSFetchRequest<Category> {
+  
+  @nonobjc class func orderedCategoriesFetchRequest(forDate date: Date) -> NSFetchRequest<Category> {
     let request = orderedCategoriesFetchRequest()
-    request.predicate = NSPredicate(format: "habits.@count > 0")
+    request.predicate = NSPredicate(format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0", date as NSDate)
     return request
   }
 }

@@ -144,10 +144,7 @@ struct HabitDetailsRowView: View {
         Text(category.title ?? "")
           .font(.caption2)
           .padding(.horizontal, 4)
-          .background(
-            Color(uiColor: .systemBackground)
-              .opacity(0.6)
-          )
+          .background(Color(uiColor: .systemBackground).opacity(0.6))
           .cornerRadius(4)
           .lineLimit(dynamicTypeSize >= .accessibility1 ? 2 : 1)
       }
@@ -172,9 +169,8 @@ struct HabitArchivedStatusView: View {
       .font(.caption2)
       .padding(.horizontal, 4)
       .foregroundColor(Color(uiColor: .inverted))
-      .background(Color(uiColor: .neutral80))
+      .background(Color(uiColor: .neutral80).opacity(0.8))
       .cornerRadius(4)
-      .opacity(0.8)
   }
 }
 
