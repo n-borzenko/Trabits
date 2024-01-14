@@ -247,7 +247,7 @@ extension HabitEditorView {
   let context = PersistenceController.preview.container.viewContext
   var habit: Habit? = nil
   do {
-    habit = try context.fetch(Habit.fetchRequest()).first
+    habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
   
   return HabitEditorView(habit: habit)

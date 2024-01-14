@@ -25,8 +25,8 @@ extension Habit: Identifiable {
   @NSManaged var dayTargets: NSSet?
   @NSManaged var weekGoals: NSSet?
   
-  @objc var categoryTitle: String {
-    category?.title ?? "Uncategorized"
+  @objc var categoryGroupIdentifier: String {
+    category?.objectID.uriRepresentation().lastPathComponent ?? "Uncategorized"
   }
   
   public override func awakeFromInsert() {
@@ -35,32 +35,50 @@ extension Habit: Identifiable {
   }
   
   var sortedWeekGoals: [WeekGoal] {
-    weekGoals?.sortedArray(using: [NSSortDescriptor(key: "applicableFrom", ascending: false)]) as? [WeekGoal] ?? []
+    weekGoals?.sortedArray(using: [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: false)]) as? [WeekGoal] ?? []
   }
   
   var sortedDayTargets: [DayTarget] {
-    dayTargets?.sortedArray(using: [NSSortDescriptor(key: "applicableFrom", ascending: false)]) as? [DayTarget] ?? []
+    dayTargets?.sortedArray(using: [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: false)]) as? [DayTarget] ?? []
   }
 }
 
 extension Habit {
-  @nonobjc class func fetchRequest() -> NSFetchRequest<Habit> {
-    return NSFetchRequest<Habit>(entityName: "Habit")
+  @nonobjc private class func orderedHabitsFetchRequest() -> NSFetchRequest<Habit> {
+    let request = NSFetchRequest<Habit>(entityName: "Habit")
+    request.sortDescriptors = [
+      NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+    ]
+    return request
   }
 
-  @nonobjc class func orderedHabitsFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Habit> {
-    let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+  // from nil - all habits, from 0 - not archived habits, from n - subset of not archived habits
+  @nonobjc class func orderedHabitsFetchRequest(startingFrom position: Int32? = nil, forDate date: Date? = nil) -> NSFetchRequest<Habit> {
+    let request = orderedHabitsFetchRequest()
+    var predicates = [NSPredicate]()
     if let position {
-      request.predicate = NSPredicate(format: "self.order >= %@", NSNumber(value: position))
+      predicates.append(NSPredicate(format: "order >= %@", NSNumber(value: position)))
+    }
+    if let date {
+      predicates.append(NSPredicate(format: "archivedAt == nil OR archivedAt >= %@", date as NSDate))
+    }
+    if !predicates.isEmpty {
+      request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
     return request
   }
   
-  @nonobjc class func categoryOrderedHabitsFetchRequest(categoryObjectID: NSManagedObjectID) -> NSFetchRequest<Habit> {
-    let request = fetchRequest()
-    request.predicate = NSPredicate(format: "self.category == %@", categoryObjectID)
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+  @nonobjc class func orderedGroupedHabitsFetchRequest(forDate date: Date? = nil) -> NSFetchRequest<Habit> {
+    let request = NSFetchRequest<Habit>(entityName: "Habit")
+    request.sortDescriptors = [
+      NSSortDescriptor(keyPath: \Habit.category?.order, ascending: false),
+      NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+    ]
+    if let date {
+      request.predicate = NSPredicate(format: "archivedAt == nil OR archivedAt >= %@", date as NSDate)
+    }
     return request
   }
 }

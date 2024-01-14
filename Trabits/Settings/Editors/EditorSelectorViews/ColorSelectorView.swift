@@ -15,11 +15,18 @@ struct ColorSelectorView: View {
     Section("Color") {
       ScrollView(.horizontal) {
         ScrollViewReader { proxy in
-          HStack {
+          HStack(spacing: dynamicTypeSize >= .accessibility1 ? 8 : 4) {
             ForEach(Array(PastelPalette.colors.enumerated()), id: \.offset) { index, color in
-              Button(action: {
+              Button {
                 colorIndex = index
-              }) {
+              } label: {
+                Image(systemName: "checkmark")
+                  .font(.title2)
+                  .imageScale(.medium)
+                  .padding(dynamicTypeSize >= .accessibility1 ? 18 : 10)
+                  .tint(colorIndex == index ? Color(.contrast) : .clear)
+              }
+              .background (
                 ZStack {
                   Circle()
                     .fill(Color(uiColor: color))
@@ -28,16 +35,9 @@ struct ColorSelectorView: View {
                       Color(.contrast),
                       lineWidth: dynamicTypeSize >= .accessibility1 ? 3 : 2
                     )
-                    .padding(dynamicTypeSize >= .accessibility1 ? 1.5 : 1)
-                  
-                  if colorIndex == index {
-                    Image(systemName: "checkmark")
-                      .resizable()
-                      .scaledToFit()
-                      .padding(dynamicTypeSize >= .accessibility1 ? 20 : 12)
-                  }
                 }
-              }
+              )
+              .frame(minWidth: 44, minHeight: 44)
               .id(index)
               .accessibilityLabel(PastelPalette.colorTitles[index])
             }

@@ -112,37 +112,65 @@ struct HabitDetailsRowView: View {
   var dayTarget: DayTarget?
   var weekGoal: WeekGoal?
   
+  private struct DayTargetView: View {
+    @ObservedObject var dayTarget: DayTarget
+    
+    var body: some View {
+      if dayTarget.count > 1 {
+        HStack(spacing: 2) {
+          Image(systemName: "target")
+          Text("\(dayTarget.count)/day")
+        }
+      }
+    }
+  }
+  
+  private struct WeekGoalView: View {
+    @ObservedObject var weekGoal: WeekGoal
+    
+    var body: some View {
+      if weekGoal.count > 0 {
+        HStack(spacing: 2) {
+          Image(systemName: "flame")
+          Text("\(weekGoal.count)/week")
+        }
+      }
+    }
+  }
+  
   var body: some View {
     WrappableHStack {
       if let category {
         Text(category.title ?? "")
           .font(.caption2)
           .padding(.horizontal, 4)
-          .background(
-            Color(uiColor: .systemBackground)
-              .opacity(0.6)
-          )
+          .background(Color(uiColor: .systemBackground).opacity(0.6))
           .cornerRadius(4)
           .lineLimit(dynamicTypeSize >= .accessibility1 ? 2 : 1)
       }
       
       HStack(spacing: 12) {
-        if let dayTarget, dayTarget.count > 1 {
-          HStack(spacing: 2) {
-            Image(systemName: "target")
-            Text("\(dayTarget.count)/day")
-          }
+        if let dayTarget {
+          DayTargetView(dayTarget: dayTarget)
         }
-        if let weekGoal, weekGoal.count > 0 {
-          HStack(spacing: 2) {
-            Image(systemName: "flame")
-            Text("\(weekGoal.count)/week")
-          }
+        if let weekGoal {
+          WeekGoalView(weekGoal: weekGoal)
         }
       }
       .foregroundColor(.secondary)
       .font(.caption2)
     }
+  }
+}
+
+struct HabitArchivedStatusView: View {
+  var body: some View {
+    Text("Archived")
+      .font(.caption2)
+      .padding(.horizontal, 4)
+      .foregroundColor(Color(uiColor: .inverted))
+      .background(Color(uiColor: .neutral80).opacity(0.8))
+      .cornerRadius(4)
   }
 }
 
