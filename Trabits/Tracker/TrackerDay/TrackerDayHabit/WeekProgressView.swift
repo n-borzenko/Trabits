@@ -14,7 +14,7 @@ class WeekProgressCircleView: UIView {
     }
   }
   
-  var progress: DayProgress {
+  var progress: HabitWeekResults.DayProgress {
     didSet {
       updateProgressAndColors()
     }
@@ -23,7 +23,7 @@ class WeekProgressCircleView: UIView {
   private let colorLayer = CALayer()
   private let dotLayer = CAShapeLayer()
   
-  init(color: UIColor = .neutral10, progress: DayProgress = .none) {
+  init(color: UIColor = .neutral10, progress: HabitWeekResults.DayProgress = .none) {
     self.color = color
     self.progress = progress
     super.init(frame: .zero)
@@ -103,7 +103,7 @@ class WeekProgressView: UIView {
     }
   }
   
-  var progress: [DayProgress] {
+  var progress: [HabitWeekResults.DayProgress] {
     didSet {
       guard progress.count == stackView.arrangedSubviews.count else { return }
       for i in 0..<progress.count {
@@ -116,7 +116,7 @@ class WeekProgressView: UIView {
   private let stackView = UIStackView()
   private var heightConstraint: NSLayoutConstraint!
   
-  init(color: UIColor = .neutral10, progress: [DayProgress] = Array(repeating: .none, count: 7)) {
+  init(color: UIColor = .neutral10, progress: [HabitWeekResults.DayProgress] = Array(repeating: .none, count: 7)) {
     self.color = color
     self.progress = progress
     super.init(frame: .zero)

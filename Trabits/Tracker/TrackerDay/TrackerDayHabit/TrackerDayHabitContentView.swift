@@ -52,8 +52,8 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     backgroundView.updateColors(startColor: configuration.color, endColor: .neutral5)
 
     var buttonConfiguration = completionButton.configuration
-    let isCompleted = configuration.completionCount >= configuration.completionTarget
-    buttonConfiguration?.baseBackgroundColor = configuration.completionCount > 0 ?
+    let isCompleted = configuration.weekResults.completionCount >= configuration.weekResults.completionTarget
+    buttonConfiguration?.baseBackgroundColor = configuration.weekResults.completionCount > 0 ?
       configuration.color.withAlphaComponent(isCompleted ? 1 : 0.3) : .systemBackground
     let imageConfiguration = UIImage.SymbolConfiguration(font: .preferredFont(forTextStyle: .title2), scale: .medium)
     buttonConfiguration?.image = UIImage(systemName: isCompleted ? "checkmark" : "plus", withConfiguration: imageConfiguration)

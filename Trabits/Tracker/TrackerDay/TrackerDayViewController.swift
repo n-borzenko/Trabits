@@ -70,7 +70,8 @@ extension TrackerDayViewController {
       guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
       cell.createConfiguration(
         habit: habit,
-        isGrouped: dataProvider.isHabitGroupingOn
+        isGrouped: dataProvider.isHabitGroupingOn,
+        weekResults: dataProvider.getWeekResults(for: habit)
       ) { [weak self] in
         guard let self else { return }
         dataProvider.adjustCompletionFor(habit)

@@ -38,38 +38,33 @@ class TrackerDayHabitResultsView: UIView {
 
   func applyConfiguration() {
     guard let configuration else { return }
-    if configuration.weekGoal > 0 {
-      weekResultLabel.text = "\(configuration.weekResult)/\(configuration.weekGoal)"
-      weekResultLabel.isHidden = false
+    let weekResults = configuration.weekResults
+    if weekResults.weekGoal > 0 {
+      weekResultLabel.text = "\(weekResults.weekResult)/\(weekResults.weekGoal)"
       weekResultLabelImage.isHidden = false
-    } else if configuration.weekResult > 0 {
-      weekResultLabel.text = "\(configuration.weekResult)"
-      weekResultLabel.isHidden = false
+    } else if weekResults.weekResult > 0 {
+      weekResultLabel.text = "\(weekResults.weekResult)"
       weekResultLabelImage.isHidden = true
     } else {
-      weekResultLabel.text = nil
-      weekResultLabel.isHidden = true
+      weekResultLabel.text = ""
       weekResultLabelImage.isHidden = true
     }
     
     weekProgressView.color = configuration.color
-    weekProgressView.progress = configuration.progress
+    weekProgressView.progress = weekResults.progress
     
-    if configuration.completionTarget > 1 {
-      dayResultLabel.text = "\(configuration.completionCount)/\(configuration.completionTarget)"
-      dayResultLabel.isHidden = false
+    if weekResults.completionTarget > 1 {
+      dayResultLabel.text = "\(weekResults.completionCount)/\(weekResults.completionTarget)"
       dayResultLabelImage.isHidden = false
-    } else if configuration.completionCount > 1 {
-      dayResultLabel.text = "\(configuration.completionCount)"
-      dayResultLabel.isHidden = false
+    } else if weekResults.completionCount > 1 {
+      dayResultLabel.text = "\(weekResults.completionCount)"
       dayResultLabelImage.isHidden = true
     } else {
-      dayResultLabel.text = nil
-      dayResultLabel.isHidden = true
+      dayResultLabel.text = ""
       dayResultLabelImage.isHidden = true
     }
     
-    dayProgressView.progress = min(Float(configuration.completionCount) / Float(configuration.completionTarget), 1)
+    dayProgressView.progress = min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1)
     dayProgressView.progressTintColor = configuration.color
   }
   

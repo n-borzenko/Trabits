@@ -89,7 +89,7 @@ class TrackerWeekViewController: UIViewController {
   
   init(dataProvider: TrackerDataProvider) {
     self.dataProvider = dataProvider
-    self.startOfTheWeek = dataProvider.getStartOfTheWeek(for: dataProvider.selectedDate) ?? dataProvider.selectedDate
+    self.startOfTheWeek = Calendar.current.startOfTheWeek(for: dataProvider.selectedDate) ?? dataProvider.selectedDate
     super.init(nibName: nil, bundle: nil)
     setupViews()
     
@@ -209,7 +209,7 @@ extension TrackerWeekViewController {
 
 extension TrackerWeekViewController {
   func selectedDateUpdateHandler(selectedDate: Date) {
-    startOfTheWeek = dataProvider.getStartOfTheWeek(for: selectedDate) ?? selectedDate
+    startOfTheWeek = Calendar.current.startOfTheWeek(for: selectedDate) ?? selectedDate
     applySnapshot()
     
     guard let indexPath = dataSource.indexPath(for: selectedDate) else { return }

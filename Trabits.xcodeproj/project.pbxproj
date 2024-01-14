@@ -56,6 +56,7 @@
 		19BB9BE42A6F16D000D328BD /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE32A6F16D000D328BD /* PersistenceController.swift */; };
 		19C138B42ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */; };
 		19CC938E2B07DD3C0026789C /* Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 19CC938D2B07DD3C0026789C /* Logo.png */; };
+		19E12FBC2B4F2E7500C3F39E /* CalendarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */; };
 		19E3C6502AD06EA8006D80D9 /* TrackerContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E3C64F2AD06EA8006D80D9 /* TrackerContainerViewController.swift */; };
 		19E8EDB12B4E2679001A5856 /* TrackerDayHabitResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8EDB02B4E2679001A5856 /* TrackerDayHabitResultsView.swift */; };
 		19FE5B5E2B2BD5DD00827C82 /* SettingsHabitDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FE5B5D2B2BD5DD00827C82 /* SettingsHabitDetailView.swift */; };
@@ -115,6 +116,7 @@
 		19BB9BE32A6F16D000D328BD /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitListCell.swift; sourceTree = "<group>"; };
 		19CC938D2B07DD3C0026789C /* Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo.png; sourceTree = "<group>"; };
+		19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarExtension.swift; sourceTree = "<group>"; };
 		19E3C64F2AD06EA8006D80D9 /* TrackerContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerContainerViewController.swift; sourceTree = "<group>"; };
 		19E8EDB02B4E2679001A5856 /* TrackerDayHabitResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitResultsView.swift; sourceTree = "<group>"; };
 		19FE5B5D2B2BD5DD00827C82 /* SettingsHabitDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHabitDetailView.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */,
 				1942EC382AB50036000F70CC /* PastelPalette.swift */,
 				193F873A2AFDA03600B45DE5 /* UnderlinedContainerView.swift */,
+				19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -409,6 +412,7 @@
 				19E3C6502AD06EA8006D80D9 /* TrackerContainerViewController.swift in Sources */,
 				1942EC402AB8B9D5000F70CC /* DayResult+CoreDataClass.swift in Sources */,
 				19813BEF2B151E76003B2B97 /* HabitEditorView.swift in Sources */,
+				19E12FBC2B4F2E7500C3F39E /* CalendarExtension.swift in Sources */,
 				1952B1612B48E02B00FE16C7 /* LabelWithInsets.swift in Sources */,
 				1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */,
 				19186D562B1D41C500618E70 /* ColorSelectorView.swift in Sources */,

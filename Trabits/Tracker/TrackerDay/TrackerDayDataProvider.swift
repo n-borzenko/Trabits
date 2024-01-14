@@ -28,6 +28,9 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
   private let context = PersistenceController.shared.container.viewContext
   private var habitsFetchResultsController: NSFetchedResultsController<Habit>!
   private var categoriesFetchResultsController: NSFetchedResultsController<Category>!
+  private var dayResultsFetchResultsController: NSFetchedResultsController<DayResult>!
+  private var dayTargetsFetchResultsController: NSFetchedResultsController<DayTarget>!
+  private var weekGoalsFetchResultsController: NSFetchedResultsController<WeekGoal>!
   
   private var cancellables = Set<AnyCancellable>()
   
@@ -77,16 +80,85 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
       fetchRequest: Habit.orderedHabitsFetchRequest(forDate: date),
       managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
     )
+    dayResultsFetchResultsController = NSFetchedResultsController(
+      fetchRequest: DayResult.weekResultsFetchRequest(forDate: date),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
+    dayTargetsFetchResultsController = NSFetchedResultsController(
+      fetchRequest: DayTarget.targetsUntilNextWeekFetchRequest(forDate: date),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
+    weekGoalsFetchResultsController = NSFetchedResultsController(
+      fetchRequest: WeekGoal.goalsUntilNextWeekFetchRequest(forDate: date),
+      managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil
+    )
     categoriesFetchResultsController.delegate = self
     habitsFetchResultsController.delegate = self
+    dayResultsFetchResultsController.delegate = self
+    dayTargetsFetchResultsController.delegate = self
+    weekGoalsFetchResultsController.delegate = self
     
     do {
       try categoriesFetchResultsController.performFetch()
       try habitsFetchResultsController.performFetch()
+      try dayResultsFetchResultsController.performFetch()
+      try dayTargetsFetchResultsController.performFetch()
+      try weekGoalsFetchResultsController.performFetch()
     } catch {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
+  }
+  
+  func getWeekResults(for habit: Habit) -> HabitWeekResults {
+    var results = HabitWeekResults()
+    var completions = Array(repeating: 0, count: 7)
+    
+    guard let weekInterval = Calendar.current.weekInterval(for: date) else { return results }
+    
+    if let dayResults = dayResultsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }), !dayResults.isEmpty {
+      for dayResult in dayResults {
+        guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
+        let index = (Calendar.current.component(.weekday, from: resultDate) + 7 - Calendar.current.firstWeekday) % 7
+        completions[index] = Int(dayResult.completionCount)
+        if dayResult.date == date {
+          results.completionCount = Int(dayResult.completionCount)
+        }
+      }
+    }
+    
+    if let dayTargets = dayTargetsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }), !dayTargets.isEmpty {
+      var currentDate = weekInterval.end
+      var targetsIndex = dayTargets.count - 1
+      
+      while currentDate > weekInterval.start && targetsIndex >= 0 {
+        guard let newDate = Calendar.current.date(byAdding: .day, value: -1, to: currentDate) else { break }
+        currentDate = newDate
+        
+        while let targetDate = dayTargets[targetsIndex].applicableFrom, targetDate > currentDate {
+          targetsIndex -= 1
+        }
+        
+        if currentDate == date {
+          results.completionTarget = Int(dayTargets[targetsIndex].count)
+        }
+        
+        let index = (Calendar.current.component(.weekday, from: currentDate) + 7 - Calendar.current.firstWeekday) % 7
+        if completions[index] > 0  {
+          results.progress[index] = completions[index] >= dayTargets[targetsIndex].count ? .completed : .partial
+        }
+      }
+    }
+    
+    if let weekGoals = weekGoalsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }), !weekGoals.isEmpty {
+      var goalsIndex = weekGoals.count - 1
+      while let goalDate = weekGoals[goalsIndex].applicableFrom, goalDate > date {
+        goalsIndex -= 1
+      }
+      results.weekGoal = Int(weekGoals[goalsIndex].count)
+    }
+    results.weekResult = results.progress.filter({ $0 == .completed }).count
+    return results
   }
 
   private func saveContextChanges() {
@@ -127,7 +199,7 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
     if controller == categoriesFetchResultsController {
       let reloadedCategories = Set<NSManagedObjectID>(snapshot.reloadedItemIdentifiers.compactMap { objectID in
         guard let category = context.object(with: objectID) as? Category else { return nil }
-        // reload in case of category properies changes
+        // reload if category properties were changed
         if category.isUpdated, category.changedValues().count == 1,
            category.changedValues()["habits"] != nil {
           return nil
@@ -141,10 +213,7 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
       newSnapshot.reloadItems(reloadIdentifiers)
     }
     
-    if controller == habitsFetchResultsController {
-      let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
-      newSnapshot.reloadItems(reloadIdentifiers)
-    }
+    newSnapshot.reconfigureItems(getReconfiguredIdentifiers(controller, snapshot: snapshot))
   }
   
   private func updateGroupedHabitsSnaphot(_ controller: NSFetchedResultsController<NSFetchRequestResult>? = nil,
@@ -187,14 +256,90 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
       newSnapshot.reloadSections(reloadIdentifiers)
     }
     
+    newSnapshot.reconfigureItems(getReconfiguredIdentifiers(controller, snapshot: snapshot))
+  }
+  
+  private func getReconfiguredIdentifiers(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                                    snapshot: NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>) -> [ItemIdentifier] {
     if controller == habitsFetchResultsController {
-      let reloadIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
-      newSnapshot.reloadItems(reloadIdentifiers)
+      let reconfiguredIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
+      return reconfiguredIdentifiers
     }
+    
+    if controller == dayResultsFetchResultsController {
+      let insertedIdentifiers: [ItemIdentifier] = dayResultsFetchResultsController.fetchedObjects?.compactMap { dayResult in
+        guard dayResult.isInserted, let habitObjectID = dayResult.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      } ?? []
+      let reloadedIdentifiers: [ItemIdentifier] = snapshot.reloadedItemIdentifiers.compactMap { objectID in
+        guard let dayResult = context.object(with: objectID) as? DayResult,
+              let habitObjectID = dayResult.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      }
+      return insertedIdentifiers + reloadedIdentifiers
+    }
+    
+    if controller == weekGoalsFetchResultsController {
+      let insertedIdentifiers: [ItemIdentifier] = weekGoalsFetchResultsController.fetchedObjects?.compactMap { weekGoal in
+        guard weekGoal.isInserted, let habitObjectID = weekGoal.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      } ?? []
+      let reloadedIdentifiers: [ItemIdentifier] = snapshot.reloadedItemIdentifiers.compactMap { objectID in
+        guard let weekGoal = context.object(with: objectID) as? WeekGoal,
+              let habitObjectID = weekGoal.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      }
+      return insertedIdentifiers + reloadedIdentifiers
+    }
+    
+    if controller == dayTargetsFetchResultsController {
+      let insertedIdentifiers: [ItemIdentifier] = dayTargetsFetchResultsController.fetchedObjects?.compactMap { dayTarget in
+        guard dayTarget.isInserted, let habitObjectID = dayTarget.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      } ?? []
+      let reloadedIdentifiers: [ItemIdentifier] = snapshot.reloadedItemIdentifiers.compactMap { objectID in
+        guard let dayTarget = context.object(with: objectID) as? DayTarget,
+              let habitObjectID = dayTarget.habit?.objectID else { return nil }
+        return ItemIdentifier.habit(habitObjectID)
+      }
+      return insertedIdentifiers + reloadedIdentifiers
+    }
+    
+    return []
   }
 }
+
 extension TrackerDayDataProvider {
   func adjustCompletionFor(_ habit: Habit) {
-
+    var dayTarget = 1
+    if let dayTargets = dayTargetsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }), !dayTargets.isEmpty {
+      var targetsIndex = dayTargets.count - 1
+      while targetsIndex >= 0, let targetDate = dayTargets[targetsIndex].applicableFrom, targetDate > date {
+        targetsIndex -= 1
+      }
+      dayTarget = Int(dayTargets[targetsIndex].count)
+    }
+    
+    if let dayResult = dayResultsFetchResultsController.fetchedObjects?.first(where: { $0.habit == habit && $0.date == date }) {
+      if dayResult.completionCount < dayTarget {
+        dayResult.completionCount += 1
+      } else {
+        context.delete(dayResult)
+      }
+    } else {
+      let dayResult = DayResult(context: context)
+      dayResult.date = date
+      dayResult.completionCount = 1
+      dayResult.habit = habit
+      
+      do {
+        try context.obtainPermanentIDs(for: [dayResult])
+      } catch {
+        let nserror = error as NSError
+        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+      }
+    }
+    
+    saveContextChanges()
   }
 }

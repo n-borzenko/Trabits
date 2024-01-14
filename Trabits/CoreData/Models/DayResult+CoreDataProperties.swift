@@ -16,20 +16,17 @@ extension DayResult: Identifiable {
 }
 
 extension DayResult {
-  @nonobjc class func fetchRequest() -> NSFetchRequest<DayResult> {
+  @nonobjc private class func fetchRequest() -> NSFetchRequest<DayResult> {
     return NSFetchRequest<DayResult>(entityName: "DayResult")
   }
-
-  @nonobjc class func singleDayPredicate(date: Date = Date()) -> NSPredicate {
-    let interval = Calendar.current.dateInterval(of: .day, for: date)!
-    return NSPredicate(format: "date >= %@ AND date < %@", interval.start as NSDate, interval.end as NSDate)
-  }
-
-  @nonobjc class func singleDayFetchRequest(date: Date = Date()) -> NSFetchRequest<DayResult> {
+  
+  @nonobjc class func weekResultsFetchRequest(forDate date: Date) -> NSFetchRequest<DayResult> {
     let request = fetchRequest()
+    guard let weekInterval = Calendar.current.weekInterval(for: date) else { return request }
+    let datePredicate = NSPredicate(format: "date >= %@ AND date < %@", weekInterval.start as NSDate, weekInterval.end as NSDate)
+    let habitPredicate = NSPredicate(format: "habit.archivedAt == nil OR habit.archivedAt >= %@", date as NSDate)
+    request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, habitPredicate])
     request.sortDescriptors = [NSSortDescriptor(keyPath: \DayResult.date, ascending: true)]
-    request.predicate = singleDayPredicate(date: date)
-    request.fetchLimit = 1
     return request
   }
 }
