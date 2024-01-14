@@ -34,10 +34,12 @@ struct HabitEditorView: View {
   @State private var isInitiallySetUp: Bool = false
   @State private var path = NavigationPath()
   
+  @FocusState private var focusedField: FocusedEditorField?
+  
   var body: some View {
     NavigationStack(path: $path) {
       List {
-        TitleSelectorView(title: $habitDraft.title)
+        TitleSelectorView(title: $habitDraft.title, focusedField: $focusedField)
         ColorSelectorView(colorIndex: $habitDraft.colorIndex)
         CategorySelectorView(category: selectedCategory)
         DayTargetSelectorView(
@@ -72,7 +74,10 @@ struct HabitEditorView: View {
           .disabled(!isValid)
         }
       }
-      .onAppear { setupHabitDraft() }
+      .onAppear { 
+        setupHabitDraft()
+        focusedField = .title
+      }
       .onChange(of: habitDraft) { _ in validate() }
     }
   }

@@ -22,10 +22,12 @@ struct CategoryEditorView: View {
   @State private var isValid = false
   @State private var isNew = true
   
+  @FocusState private var focusedField: FocusedEditorField?
+  
   var body: some View {
     NavigationStack {
       List {
-        TitleSelectorView(title: $categoryDraft.title)
+        TitleSelectorView(title: $categoryDraft.title, focusedField: $focusedField)
         ColorSelectorView(colorIndex: $categoryDraft.colorIndex)
       }
       .navigationTitle(isNew ? "New Category" : "Edit Category")
@@ -44,7 +46,10 @@ struct CategoryEditorView: View {
           .disabled(!isValid)
         }
       }
-      .onAppear { setupCategoryDraft() }
+      .onAppear {
+        setupCategoryDraft()
+        focusedField = .title
+      }
       .onChange(of: categoryDraft) { _ in validate() }
     }
   }

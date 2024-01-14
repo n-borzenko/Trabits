@@ -52,6 +52,7 @@
 		19A16CF22AD0CC0200595101 /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */; };
 		19A16CF42AD0E30700595101 /* TrackerWeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF32AD0E30700595101 /* TrackerWeekViewController.swift */; };
 		19A16CF62AD0EDB500595101 /* TrackerDayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF52AD0EDB500595101 /* TrackerDayViewController.swift */; };
+		19AB20C62B5442D200B072A0 /* FocusedEditorField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AB20C52B5442D200B072A0 /* FocusedEditorField.swift */; };
 		19AE5EB62AD77A5100E1860C /* TrackerDayDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AE5EB52AD77A5100E1860C /* TrackerDayDataProvider.swift */; };
 		19BB9BE42A6F16D000D328BD /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE32A6F16D000D328BD /* PersistenceController.swift */; };
 		19C138B42ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */; };
@@ -112,6 +113,7 @@
 		19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
 		19A16CF32AD0E30700595101 /* TrackerWeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerWeekViewController.swift; sourceTree = "<group>"; };
 		19A16CF52AD0EDB500595101 /* TrackerDayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayViewController.swift; sourceTree = "<group>"; };
+		19AB20C52B5442D200B072A0 /* FocusedEditorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedEditorField.swift; sourceTree = "<group>"; };
 		19AE5EB52AD77A5100E1860C /* TrackerDayDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayDataProvider.swift; sourceTree = "<group>"; };
 		19BB9BE32A6F16D000D328BD /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitListCell.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 		19186D592B1E2B6200618E70 /* EditorSelectorViews */ = {
 			isa = PBXGroup;
 			children = (
+				19AB20C52B5442D200B072A0 /* FocusedEditorField.swift */,
 				19186D4F2B1D41AD00618E70 /* TitleSelectorView.swift */,
 				19186D512B1D41B500618E70 /* DayTargetSelectorView.swift */,
 				19186D532B1D41BC00618E70 /* WeekGoalSelectorView.swift */,
@@ -429,6 +432,7 @@
 				19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */,
 				196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */,
 				199B8E612B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift in Sources */,
+				19AB20C62B5442D200B072A0 /* FocusedEditorField.swift in Sources */,
 				1994EEE42B2230A800651674 /* SettingsGroupedHabitsView.swift in Sources */,
 				190ACBA02B1A86220081A7CD /* CategoryPickerView.swift in Sources */,
 			);

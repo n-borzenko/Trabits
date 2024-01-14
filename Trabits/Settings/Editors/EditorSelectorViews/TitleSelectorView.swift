@@ -9,16 +9,21 @@ import SwiftUI
 
 struct TitleSelectorView: View {
   @Binding var title: String
+  @FocusState.Binding var focusedField: FocusedEditorField?
   
   var body: some View {
     Section("Title") {
       TextField("Title", text: $title)
+        .focused($focusedField, equals: .title)
     }
   }
 }
 
 #Preview {
   List {
-    TitleSelectorView(title: .constant("Title"))
+    TitleSelectorView(
+      title: .constant("Title"),
+      focusedField: FocusState<FocusedEditorField?>().projectedValue
+    )
   }
 }
