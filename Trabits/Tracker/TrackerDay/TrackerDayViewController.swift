@@ -66,8 +66,8 @@ extension TrackerDayViewController {
 
   private func configureDataSource() {
     let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
-      guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectId) = itemIdentifier else { return }
-      guard case let habit = self.context.object(with: objectId) as? Habit, let habit = habit else { return }
+      guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectID) = itemIdentifier else { return }
+      guard case let habit = self.context.object(with: objectID) as? Habit, let habit = habit else { return }
       cell.createConfiguration(
         habit: habit,
         isGrouped: dataProvider.isHabitGroupingOn,
@@ -79,16 +79,21 @@ extension TrackerDayViewController {
     }
     
     let categoryCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
+      var contentConfiguration = UIListContentConfiguration.prominentInsetGroupedHeader()
+      var margins = contentConfiguration.directionalLayoutMargins
+      margins.leading = 16
+      margins.trailing = 16
+      margins.top = margins.bottom * 2
+      contentConfiguration.directionalLayoutMargins = margins
+      
       if itemIdentifier == TrackerDayDataProvider.ItemIdentifier.unknownCategory {
-        var contentConfiguration = cell.defaultContentConfiguration()
         contentConfiguration.text = "Uncategorized"
         cell.contentConfiguration = contentConfiguration
         return
       }
       
-      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectId) = itemIdentifier else { return }
-      guard case let category = self.context.object(with: objectId) as? Category, let category else { return }
-      var contentConfiguration = cell.defaultContentConfiguration()
+      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectID) = itemIdentifier else { return }
+      guard case let category = self.context.object(with: objectID) as? Category, let category else { return }
       contentConfiguration.text = category.title ?? "Untitled"
       cell.contentConfiguration = contentConfiguration
     }
