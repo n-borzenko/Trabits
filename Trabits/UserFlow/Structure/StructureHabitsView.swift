@@ -1,5 +1,5 @@
 //
-//  SettingsGroupedHabitsView.swift
+//  StructureHabitsView.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 07/12/2023.
@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct SettingsGroupedHabitView: View {
+struct StructureHabitView: View {
   @ObservedObject var habit: Habit
   
   var body: some View {
     let weekGoal = habit.sortedWeekGoals.first
     let dayTarget = habit.sortedDayTargets.first
-    let hasDetailsRow = (weekGoal?.count ?? 0) > 0 || (dayTarget?.count ?? 1) > 1
+    let hasDetailsRow = habit.category != nil ||
+    (weekGoal?.count ?? 0) > 0 || (dayTarget?.count ?? 1) > 1
     
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
@@ -23,58 +24,80 @@ struct SettingsGroupedHabitView: View {
         Text(habit.title ?? "")
           .padding(0)
         if hasDetailsRow {
-          HabitDetailsRowView(dayTarget: dayTarget, weekGoal: weekGoal)
+          HabitDetailsRowView(category: habit.category, dayTarget: dayTarget, weekGoal: weekGoal)
         }
       }
     }
   }
 }
 
-struct SettingsGroupedHabitsView: View {
+struct StructureHabitsView: View {
   @Environment(\.managedObjectContext) var context
-  @SectionedFetchRequest<String, Habit>(
-    sectionIdentifier: \.categoryGroupIdentifier,
+  @Environment(\.editMode) var editMode
+  @FetchRequest(
     sortDescriptors: [
-      SortDescriptor(\.category?.order, order: .reverse),
       SortDescriptor(\.archivedAt, order: .forward),
       SortDescriptor(\.order, order: .forward)
     ]
   )
-  private var groupedHabitSections: SectionedFetchResults<String, Habit>
+  private var habits: FetchedResults<Habit>
+  @Binding var isHabitEditorVisible: Bool
   
   var body: some View {
     List {
-      ForEach(groupedHabitSections) { category in
-        Section(header: Text(category.first?.category?.title ?? "Uncategorized")) {
-          ForEach(category) { habit in
-            SettingsListItem(backgroundColor: habit.category?.color) {
-              SettingsGroupedHabitView(habit: habit)
+      ForEach(habits) { habit in
+        StructureListItem(backgroundColor: habit.color) {
+          StructureHabitView(habit: habit)
+        }
+        .moveDisabled(habit.archivedAt != nil)
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+          if habit.archivedAt != nil {
+            Button {
+              unarchiveHabit(habit)
+            } label: {
+              Label("Unarchive", systemImage: "shippingbox.and.arrow.backward")
             }
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-              if habit.archivedAt != nil {
-                Button {
-                  unarchiveHabit(habit)
-                } label: {
-                  Label("Unarchive", systemImage: "shippingbox.and.arrow.backward")
-                }
-                .tint(Color(uiColor: .neutral30))
-              } else {
-                Button {
-                  archiveHabit(habit)
-                } label: {
-                  Label("Archive", systemImage: "archivebox")
-                }
-                .tint(Color(uiColor: .neutral40))
-              }
+            .tint(Color(uiColor: .neutral30))
+          } else {
+            Button {
+              archiveHabit(habit)
+            } label: {
+              Label("Archive", systemImage: "archivebox")
             }
+            .tint(Color(uiColor: .neutral40))
           }
         }
-        .headerProminence(.increased)
       }
+      .onMove(perform: reorderHabits)
     }
+    .id(editMode?.wrappedValue)
     .scrollContentBackground(.hidden)
     .listRowSpacing(6)
-    .listStyle(.grouped)
+    .listStyle(.plain)
+    .overlay {
+      if habits.isEmpty {
+        EmptyStateWrapperView(message: "List is empty", actionTitle: "Add habit") {
+          isHabitEditorVisible = true
+        }
+      }
+    }
+  }
+  
+  private func reorderHabits(indices: IndexSet, destinationIndex: Int) {
+    guard indices.count == 1, let sourceIndex = indices.first else { return }
+    let habit = habits[sourceIndex]
+    if sourceIndex < destinationIndex {
+      for index in (sourceIndex + 1)..<destinationIndex {
+        habits[index].order -= 1
+      }
+      habit.order = Int32(destinationIndex - 1)
+    } else {
+      for index in destinationIndex..<sourceIndex {
+        habits[index].order += 1
+      }
+      habit.order = Int32(destinationIndex)
+    }
+    saveChanges()
   }
   
   private func unarchiveHabit(_ habit: Habit) {
@@ -127,7 +150,7 @@ struct SettingsGroupedHabitsView: View {
 #Preview {
   let context = PersistenceController.preview.container.viewContext
   return NavigationStack {
-    SettingsGroupedHabitsView()
+    StructureHabitsView(isHabitEditorVisible: .constant(false))
       .background(Color(uiColor: .systemBackground))
   }
   .environment(\.managedObjectContext, context)

@@ -1,5 +1,5 @@
 //
-//  SettingsHabitDetailView.swift
+//  StructureHabitDetailView.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 15/12/2023.
@@ -44,8 +44,8 @@ struct HabitDetailObjectivesView: View {
   }
 }
 
-struct SettingsHabitDetailView: View {
-  @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+struct StructureHabitDetailView: View {
+  @EnvironmentObject var structureRouter: StructureRouter
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.managedObjectContext) var context
   @State private var isEditorVisible = false
@@ -56,14 +56,14 @@ struct SettingsHabitDetailView: View {
     
     List {
       Section("Title") {
-        SettingsListItem(backgroundColor: habit.color) {
+        StructureListItem(backgroundColor: habit.color) {
           Text(habit.title ?? "")
         }
       }
       
       if let category = habit.category {
         Section("Category") {
-          SettingsListItem(backgroundColor: .neutral5) {
+          StructureListItem(backgroundColor: .neutral5) {
             HStack {
               Circle()
                 .fill(Color(uiColor: category.color ?? .neutral5))
@@ -83,7 +83,7 @@ struct SettingsHabitDetailView: View {
       }
       
       Section("Status") {
-        SettingsListItem(backgroundColor: .neutral5) {
+        StructureListItem(backgroundColor: .neutral5) {
           HStack {
             Text(isArchived ? "Archived from \(Calendar.current.startOfDay(for: habit.archivedAt!).formatted(date: .abbreviated, time: .omitted))" : "Active")
             Spacer()
@@ -101,7 +101,7 @@ struct SettingsHabitDetailView: View {
       }
       
       Section {
-        SettingsListItem(backgroundColor: .neutral5) {
+        StructureListItem(backgroundColor: .neutral5) {
           Button(role: .destructive, action: removeCompletions) {
             Text("Remove all completion records")
               .frame(minWidth: 0, maxWidth: .infinity)
@@ -109,7 +109,7 @@ struct SettingsHabitDetailView: View {
           .buttonStyle(.borderless)
           .disabled((habit.dayResults?.count ?? 0) == 0)
         }
-        SettingsListItem(backgroundColor: .neutral5) {
+        StructureListItem(backgroundColor: .neutral5) {
           Button(role: .destructive, action: deleteHabit) {
             Text("Delete habit and all related data")
               .frame(minWidth: 0, maxWidth: .infinity)
@@ -130,7 +130,7 @@ struct SettingsHabitDetailView: View {
         }
       }
     }
-    .sheet(isPresented: $isEditorVisible) {
+    .fullScreenCover(isPresented: $isEditorVisible) {
       HabitEditorView(habit: habit)
     }
   }
@@ -190,7 +190,7 @@ struct SettingsHabitDetailView: View {
     }
     context.delete(habit)
     saveChanges()
-    navigationCoordinator.path.removeLast()
+    structureRouter.path.removeLast()
   }
   
   private func removeCompletions() {
@@ -217,11 +217,11 @@ struct SettingsHabitDetailView: View {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
   
-  let navigationCoordinator = NavigationCoordinator()
+  let structureRouter = StructureRouter()
   
-  return NavigationStack(path: .constant(navigationCoordinator.path)) {
-    SettingsHabitDetailView(habit: habit!)
+  return NavigationStack(path: .constant(structureRouter.path)) {
+    StructureHabitDetailView(habit: habit!)
   }
   .environment(\.managedObjectContext, context)
-  .environmentObject(navigationCoordinator)
+  .environmentObject(structureRouter)
 }

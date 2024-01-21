@@ -1,5 +1,5 @@
 //
-//  SettingsCategoryDetailView.swift
+//  StructureCategoryDetailView.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 15/12/2023.
@@ -31,8 +31,8 @@ struct CategoryDetailHabitView: View {
   }
 }
 
-struct SettingsCategoryDetailView: View {
-  @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+struct StructureCategoryDetailView: View {
+  @EnvironmentObject var structureRouter: StructureRouter
   @Environment(\.managedObjectContext) var context
   @State private var isEditorVisible = false
   @State private var isHabitsSectionExpanded = false
@@ -42,19 +42,19 @@ struct SettingsCategoryDetailView: View {
     let habitsCount = category.habits?.count ?? 0
     List {
       Section("Title") {
-        SettingsListItem(backgroundColor: category.color) {
+        StructureListItem(backgroundColor: category.color) {
           Text(category.title ?? "")
         }
       }
       
       Section {
-        SettingsListItem(backgroundColor: .neutral5) {
+        StructureListItem(backgroundColor: .neutral5) {
           DisclosureGroup(
             "^[\(habitsCount) \("habit")](inflect: true)",
             isExpanded: habitsCount == 0 ? .constant(false) : $isHabitsSectionExpanded
           ) {
             ForEach(category.getSortedHabits()) { habit in
-              SettingsListItem(backgroundColor: habit.color?.withAlphaComponent(0.7)) {
+              StructureListItem(backgroundColor: habit.color?.withAlphaComponent(0.7)) {
                 CategoryDetailHabitView(habit: habit)
               }
             }
@@ -69,7 +69,7 @@ struct SettingsCategoryDetailView: View {
           .frame(minWidth: 0, maxWidth: .infinity)
           .multilineTextAlignment(.center)
       }) {
-        SettingsListItem(backgroundColor: .neutral5) {
+        StructureListItem(backgroundColor: .neutral5) {
           Button(role: .destructive, action: deleteCategory) {
             Text("Delete category")
               .frame(minWidth: 0, maxWidth: .infinity)
@@ -90,7 +90,7 @@ struct SettingsCategoryDetailView: View {
         }
       }
     }
-    .sheet(isPresented: $isEditorVisible) {
+    .fullScreenCover(isPresented: $isEditorVisible) {
       CategoryEditorView(category: category)
     }
   }
@@ -113,7 +113,7 @@ struct SettingsCategoryDetailView: View {
     }
     context.delete(category)
     saveChanges()
-    navigationCoordinator.path.removeLast()
+    structureRouter.path.removeLast()
   }
   
   private func saveChanges() {
@@ -133,11 +133,11 @@ struct SettingsCategoryDetailView: View {
     category = try context.fetch(Category.fetchRequest()).first
   } catch {}
   
-  let navigationCoordinator = NavigationCoordinator()
+  let structureRouter = StructureRouter()
   
-  return NavigationStack(path: .constant(navigationCoordinator.path)) {
-    SettingsCategoryDetailView(category: category!)
+  return NavigationStack(path: .constant(structureRouter.path)) {
+    StructureCategoryDetailView(category: category!)
   }
   .environment(\.managedObjectContext, context)
-  .environmentObject(navigationCoordinator)
+  .environmentObject(structureRouter)
 }

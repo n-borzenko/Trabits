@@ -13,6 +13,8 @@ protocol TrackerDayScrollDelegate: AnyObject {
 }
 
 class TrackerDayViewController: UIViewController {
+  private weak var trackerCoordinator: TrackerCoordinator?
+  
   private let context = PersistenceController.shared.container.viewContext
   
   private var dataSource: TrackerDayDataProvider.DataSource!
@@ -30,7 +32,8 @@ class TrackerDayViewController: UIViewController {
   
   weak var delegate: TrackerDayScrollDelegate?
   
-  init(date: Date) {
+  init(date: Date, trackerCoordinator: TrackerCoordinator? = nil) {
+    self.trackerCoordinator = trackerCoordinator
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
@@ -121,7 +124,11 @@ extension TrackerDayViewController {
     collectionView.allowsSelection = false
     collectionView.delegate = self
 
-    emptyStateView = EmptyStateView(message: "List of habits is empty.\nPlease, fill it in Settings.")
+    emptyStateView = EmptyStateView(
+      message: "List of habits is empty. Please, create your first habit.",
+      actionTitle: "Go to My Habits") { [weak self] in
+      self?.trackerCoordinator?.navigateToStructureTab()
+    }
     view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)
     emptyStateView.isHidden = true
   }

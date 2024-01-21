@@ -54,7 +54,7 @@ struct CategoryPickerView: View {
         }
       }
     }
-    .sheet(isPresented: $isCategoryEditorPresented) {
+    .fullScreenCover(isPresented: $isCategoryEditorPresented) {
       CategoryEditorView()
     }
   }

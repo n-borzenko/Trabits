@@ -1,5 +1,5 @@
 //
-//  SettingsCategoriesView.swift
+//  StructureCategoriesView.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 07/12/2023.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SettingsCategoryView: View {
+struct StructureCategoryView: View {
   @ObservedObject var category: Category
   
   var body: some View {
@@ -25,18 +25,20 @@ struct SettingsCategoryView: View {
   }
 }
 
-struct SettingsCategoriesView: View {
+struct StructureCategoriesView: View {
   @Environment(\.managedObjectContext) var context
   @FetchRequest(
     sortDescriptors: [SortDescriptor(\.order, order: .reverse)]
   )
   private var categories: FetchedResults<Category>
   
+  @Binding var isCategoryEditorVisible: Bool
+  
   var body: some View {
     List {
       ForEach(categories) { category in
-        SettingsListItem(backgroundColor: category.color) {
-          SettingsCategoryView(category: category)
+        StructureListItem(backgroundColor: category.color) {
+          StructureCategoryView(category: category)
         }
       }
       .onMove(perform: reorderCategories)
@@ -45,6 +47,13 @@ struct SettingsCategoriesView: View {
     .scrollContentBackground(.hidden)
     .listRowSpacing(6)
     .listStyle(.plain)
+    .overlay {
+      if categories.isEmpty {
+        EmptyStateWrapperView(message: "List is empty", actionTitle: "Add category") {
+          isCategoryEditorVisible = true
+        }
+      }
+    }
   }
   
   private func reorderCategories(indices: IndexSet, destinationIndex: Int) {
@@ -87,7 +96,7 @@ struct SettingsCategoriesView: View {
 #Preview {
   let context = PersistenceController.preview.container.viewContext
   return NavigationStack {
-    SettingsCategoriesView()
+    StructureCategoriesView(isCategoryEditorVisible: .constant(false))
       .background(Color(uiColor: .systemBackground))
   }
   .environment(\.managedObjectContext, context)

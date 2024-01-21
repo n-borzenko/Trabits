@@ -9,7 +9,6 @@ import SwiftUI
 import CoreData
 
 enum HabitEditorPath {
-  case none
   case category
 }
 

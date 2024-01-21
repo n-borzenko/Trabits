@@ -6,10 +6,29 @@
 //
 
 import UIKit
+import SwiftUI
+
+struct EmptyStateWrapperView: UIViewRepresentable {
+  var message: String
+  var actionTitle: String
+  var action: () -> Void
+  
+  func makeUIView(context: Context) -> EmptyStateView {
+    let emptyStateView = EmptyStateView(message: message, actionTitle: actionTitle, action: action)
+    return emptyStateView
+  }
+  
+  func updateUIView(_ uiView: EmptyStateView, context: Context) {
+    uiView.message = message
+    uiView.actionTitle = actionTitle
+    uiView.action = action
+  }
+}
 
 class EmptyStateView: UIView {
   private var centerYConstraint: NSLayoutConstraint!
   private let titleLabel = UILabel()
+  private let actionButton = UIButton()
   
   var message: String {
     didSet {
@@ -17,24 +36,32 @@ class EmptyStateView: UIView {
     }
   }
   
-  init(message: String = "List is empty", image: UIImage? = nil) {
+  var actionTitle: String {
+    didSet {
+      var buttonConfiguration = actionButton.configuration
+      buttonConfiguration?.title = actionTitle
+      actionButton.configuration = buttonConfiguration
+    }
+  }
+  
+  var action: () -> Void
+  
+  init(message: String = "List is empty", actionTitle: String, action: @escaping () -> Void) {
     self.message = message
+    self.actionTitle = actionTitle
+    self.action = action
     super.init(frame: .zero)
-    setupViews(image: image)
+    setupViews()
   }
 
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-
-  override class var requiresConstraintBasedLayout: Bool {
-    true
-  }
 }
 
 extension EmptyStateView {
-  private func setupViews(image: UIImage?) {
+  private func setupViews() {
     let stackView = UIStackView()
     stackView.axis = .vertical
     stackView.alignment = .center
@@ -50,7 +77,7 @@ extension EmptyStateView {
     stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8).isActive = true
     stackView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.8).isActive = true
     
-    let imageView = UIImageView(image: image ?? UIImage.emptyState)
+    let imageView = UIImageView(image: UIImage.emptyState)
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .tertiaryLabel
     imageView.isAccessibilityElement = false
@@ -67,10 +94,20 @@ extension EmptyStateView {
     titleLabel.text = message
     titleLabel.numberOfLines = 0
     titleLabel.textAlignment = .center
-    titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .title3)
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.adjustsFontSizeToFitWidth = true
     stackView.addArrangedSubview(titleLabel)
+    
+    var buttonConfiguration = UIButton.Configuration.borderedProminent()
+    buttonConfiguration.title = actionTitle
+    actionButton.configuration = buttonConfiguration
+    actionButton.addTarget(self, action: #selector(actionHandler), for: .touchUpInside)
+    stackView.addArrangedSubview(actionButton)
+  }
+  
+  @objc private func actionHandler() {
+    action()
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

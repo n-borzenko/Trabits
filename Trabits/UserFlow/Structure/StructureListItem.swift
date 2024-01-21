@@ -1,5 +1,5 @@
 //
-//  SettingsListItem.swift
+//  StructureListItem.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 17/12/2023.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SettingsListItem<Content: View>: View {
+struct StructureListItem<Content: View>: View {
   private let content: () -> Content
   var backgroundColor: UIColor?
   

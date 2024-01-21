@@ -31,6 +31,7 @@ class DayPageViewController: UIPageViewController {
 }
 
 class TrackerContainerViewController: UIViewController {
+  private weak var trackerCoordinator: TrackerCoordinator?
   private let dataProvider = TrackerDataProvider()
   
   private var weekViewController: TrackerWeekViewController!
@@ -55,7 +56,8 @@ class TrackerContainerViewController: UIViewController {
     return dateFormatter
   }()
   
-  init() {
+  init(trackerCoordinator: TrackerCoordinator? = nil) {
+    self.trackerCoordinator = trackerCoordinator
     super.init(nibName: nil, bundle: nil)
     setupViews()
     
@@ -107,7 +109,7 @@ extension TrackerContainerViewController {
     
     addChild(dayPageViewController)
     dayContainerView.addPinnedSubview(dayPageViewController.view)
-    let dayViewController = TrackerDayViewController(date: dataProvider.selectedDate)
+    let dayViewController = TrackerDayViewController(date: dataProvider.selectedDate, trackerCoordinator: trackerCoordinator)
     dayViewController.delegate = self
     let dayPageViewInitialControllers = [dayViewController]
     dayPageViewController.setViewControllers(dayPageViewInitialControllers, direction: .forward, animated: false)
@@ -146,7 +148,7 @@ extension TrackerContainerViewController {
     present(containerController, animated: true)
   }
   
-  @objc private func chooseToday() {
+  @objc func chooseToday() {
     dataProvider.selectedDate = Calendar.current.startOfDay(for: Date())
     UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
   }
@@ -173,7 +175,7 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
           let newDate = Calendar.current.date(byAdding: .day, value: -1, to: controller.date) else {
       return nil
     }
-    let dayViewController = TrackerDayViewController(date: newDate)
+    let dayViewController = TrackerDayViewController(date: newDate, trackerCoordinator: trackerCoordinator)
     dayViewController.delegate = self
     return dayViewController
   }
@@ -183,7 +185,7 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
           let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {
       return nil
     }
-    let dayViewController = TrackerDayViewController(date: newDate)
+    let dayViewController = TrackerDayViewController(date: newDate, trackerCoordinator: trackerCoordinator)
     dayViewController.delegate = self
     return dayViewController
   }
@@ -209,7 +211,7 @@ extension TrackerContainerViewController {
     if let dayController = dayPageViewController.viewControllers?.first as? TrackerDayViewController,
        newDate != dayController.date {
       let direction: UIPageViewController.NavigationDirection = newDate > dayController.date ? .forward : .reverse
-      let newDayController = TrackerDayViewController(date: newDate)
+      let newDayController = TrackerDayViewController(date: newDate, trackerCoordinator: trackerCoordinator)
       newDayController.delegate = self
       dayPageViewController.setViewControllers([newDayController], direction: direction, animated: true, completion: completion)
     }
