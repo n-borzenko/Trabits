@@ -49,7 +49,7 @@ struct StructureCategoriesView: View {
     .listStyle(.plain)
     .overlay {
       if categories.isEmpty {
-        EmptyStateWrapperView(message: "List is empty", actionTitle: "Add category") {
+        EmptyStateWrapperView(message: "List is empty. Please create a new category.", actionTitle: "Add Category") {
           isCategoryEditorVisible = true
         }
       }

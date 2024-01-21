@@ -76,7 +76,7 @@ struct StructureHabitsView: View {
     .listStyle(.plain)
     .overlay {
       if habits.isEmpty {
-        EmptyStateWrapperView(message: "List is empty", actionTitle: "Add habit") {
+        EmptyStateWrapperView(message: "List is empty. Please create a new habit.", actionTitle: "Add Habit") {
           isHabitEditorVisible = true
         }
       }

@@ -104,6 +104,7 @@ extension EmptyStateView {
     actionButton.configuration = buttonConfiguration
     actionButton.addTarget(self, action: #selector(actionHandler), for: .touchUpInside)
     stackView.addArrangedSubview(actionButton)
+    actionButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
   }
   
   @objc private func actionHandler() {

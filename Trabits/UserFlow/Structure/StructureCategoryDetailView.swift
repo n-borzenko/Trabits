@@ -36,6 +36,7 @@ struct StructureCategoryDetailView: View {
   @Environment(\.managedObjectContext) var context
   @State private var isEditorVisible = false
   @State private var isHabitsSectionExpanded = false
+  @State private var isDeletingCategoryAlertVisible = false
   @ObservedObject var category: Category
   
   var body: some View {
@@ -70,11 +71,17 @@ struct StructureCategoryDetailView: View {
           .multilineTextAlignment(.center)
       }) {
         StructureListItem(backgroundColor: .neutral5) {
-          Button(role: .destructive, action: deleteCategory) {
+          Button(role: .destructive) {
+            isDeletingCategoryAlertVisible = true
+          } label: {
             Text("Delete category")
               .frame(minWidth: 0, maxWidth: .infinity)
           }
           .buttonStyle(.borderless)
+          .alert("Delete category", isPresented: $isDeletingCategoryAlertVisible) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive, action: deleteCategory)
+          }
         }
       }
     }

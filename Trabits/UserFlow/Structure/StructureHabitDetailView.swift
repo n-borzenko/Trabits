@@ -48,7 +48,11 @@ struct StructureHabitDetailView: View {
   @EnvironmentObject var structureRouter: StructureRouter
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.managedObjectContext) var context
+  
   @State private var isEditorVisible = false
+  @State private var isRemovingDataAlertVisible = false
+  @State private var isDeletingHabitAlertVisible = false
+  
   @ObservedObject var habit: Habit
   
   var body: some View {
@@ -102,19 +106,31 @@ struct StructureHabitDetailView: View {
       
       Section {
         StructureListItem(backgroundColor: .neutral5) {
-          Button(role: .destructive, action: removeCompletions) {
+          Button(role: .destructive) {
+            isRemovingDataAlertVisible = true
+          } label: {
             Text("Remove all completion records")
               .frame(minWidth: 0, maxWidth: .infinity)
           }
           .buttonStyle(.borderless)
           .disabled((habit.dayResults?.count ?? 0) == 0)
+          .alert("Remove all completion records", isPresented: $isRemovingDataAlertVisible) {
+            Button("Cancel", role: .cancel) {}
+            Button("Remove", role: .destructive, action: removeCompletions)
+          }
         }
         StructureListItem(backgroundColor: .neutral5) {
-          Button(role: .destructive, action: deleteHabit) {
+          Button(role: .destructive) {
+            isDeletingHabitAlertVisible = true
+          } label: {
             Text("Delete habit and all related data")
               .frame(minWidth: 0, maxWidth: .infinity)
           }
           .buttonStyle(.borderless)
+          .alert("Delete habit", isPresented: $isDeletingHabitAlertVisible) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive, action: deleteHabit)
+          }
         }
       }
     }
