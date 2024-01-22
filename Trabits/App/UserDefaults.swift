@@ -9,9 +9,15 @@ import Foundation
 
 extension UserDefaults {
   private static let isHabitGroupingOnKey = "me.nborzenko.Trabits.isHabitGroupingOn"
+  private static let wasOnboardingShown = "me.nborzenko.Trabits.wasOnboardingShown"
   
-  @objc var isHabitGroupingOn: Bool {
+  @objc dynamic var isHabitGroupingOn: Bool {
     get { bool(forKey: UserDefaults.isHabitGroupingOnKey) }
     set { setValue(newValue, forKey: UserDefaults.isHabitGroupingOnKey) }
+  }
+  
+  @objc dynamic var wasOnboardingShown: Bool {
+    get { bool(forKey: UserDefaults.wasOnboardingShown) }
+    set { setValue(newValue, forKey: UserDefaults.wasOnboardingShown) }
   }
 }
