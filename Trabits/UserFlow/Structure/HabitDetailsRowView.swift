@@ -121,6 +121,8 @@ struct HabitDetailsRowView: View {
           Image(systemName: "target")
           Text("\(dayTarget.count)/day")
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Day target is \(dayTarget.count) per day")
       }
     }
   }
@@ -134,19 +136,22 @@ struct HabitDetailsRowView: View {
           Image(systemName: "flame")
           Text("\(weekGoal.count)/week")
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Week goal is \(weekGoal.count) per week")
       }
     }
   }
   
   var body: some View {
     WrappableHStack {
-      if let category {
-        Text(category.title ?? "")
+      if let category, let title = category.title, !title.isEmpty {
+        Text(title)
           .font(.caption2)
           .padding(.horizontal, 4)
           .background(Color(uiColor: .systemBackground).opacity(0.6))
           .cornerRadius(4)
           .lineLimit(dynamicTypeSize >= .accessibility1 ? 2 : 1)
+          .accessibilityLabel("Category \(title)")
       }
       
       HStack(spacing: 12) {

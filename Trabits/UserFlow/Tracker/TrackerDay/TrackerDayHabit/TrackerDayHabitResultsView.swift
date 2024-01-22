@@ -66,6 +66,8 @@ class TrackerDayHabitResultsView: UIView {
     
     dayProgressView.progress = min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1)
     dayProgressView.progressTintColor = configuration.color
+    
+    accessibilityLabel = weekResults.accessibilityLongDescription
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -189,5 +191,8 @@ extension TrackerDayHabitResultsView {
     dayProgressViewHeightConstraint.isActive = true
     dayProgressView.widthAnchor.constraint(greaterThanOrEqualTo: weekProgressView.widthAnchor).isActive = true
     dayProgressView.widthAnchor.constraint(lessThanOrEqualTo: weekProgressView.widthAnchor, multiplier: 1.5).isActive = true
+    
+    isAccessibilityElement = true
+    accessibilityTraits = [.staticText]
   }
 }

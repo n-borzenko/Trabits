@@ -8,10 +8,10 @@
 import UIKit
 
 struct HabitWeekResults: Hashable {
-  enum DayProgress {
-    case none
-    case partial
-    case completed
+  enum DayProgress: String {
+    case none = "not completed"
+    case partial = "partially completed"
+    case completed = "fully completed"
   }
   
   var completionTarget: Int = 1
@@ -34,6 +34,30 @@ struct HabitWeekResults: Hashable {
     lhs.weekGoal == rhs.weekGoal &&
     lhs.weekResult == rhs.weekResult &&
     lhs.progress == rhs.progress
+  }
+  
+  var accessibilityShortDescription: String {
+    var description = ""
+    if completionTarget > 1 {
+      description += "\(completionCount) of \(completionTarget) completed. "
+    } else {
+      description += completionCount == completionTarget ? "Completed. " : "Not completed. "
+    }
+    return description
+  }
+  
+  var accessibilityLongDescription: String {
+    var description = ""
+    if weekGoal > 0 {
+      description += "\(weekResult) of \(weekGoal) targets completed this week. "
+    } else {
+      description += "\(weekResult) targets completed this week. "
+    }
+    for index in 0..<progress.count {
+      let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+      description += "\(progress[index].rawValue) on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex]). "
+    }
+    return description
   }
 }
 

@@ -40,10 +40,12 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
 
+    var labelInfo = configuration.isArchived ? " archived " : " "
     archivedLabel.isHidden = !configuration.isArchived
     titleLabel.text = configuration.title
     if let categoryTitle = configuration.categoryTitle {
       categoryLabel.text = categoryTitle
+      labelInfo += categoryTitle
       categoryLabel.isHidden = false
     } else {
       categoryLabel.text = nil
@@ -61,16 +63,13 @@ class TrackerDayHabitContentView: UIView, UIContentView {
     
     resultsView.configuration = configuration
     
-//    accessibilityLabel = "\(configuration.title), \(configuration.isCompleted ? "" : "not ") completed"
+    backgroundView.accessibilityLabel = "\(configuration.title) \(labelInfo)"
+    backgroundView.accessibilityValue = configuration.weekResults.accessibilityShortDescription
+    backgroundView.completion = configuration.completion
   }
   
   @objc private func completionHandler() {
     currentConfiguration.completion?()
-  }
-  
-  override func accessibilityActivate() -> Bool {
-    currentConfiguration.completion?()
-    return true
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -156,8 +155,10 @@ extension TrackerDayHabitContentView {
     stackView.addArrangedSubview(resultsView)
     resultsView.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
     
-    isAccessibilityElement = true
-    accessibilityTraits = .button
-    accessibilityHint = "Double tap to adjust completion"
+    isAccessibilityElement = false
+    accessibilityElements = [backgroundView , resultsView]
+    backgroundView.isAccessibilityElement = true
+    backgroundView.accessibilityTraits = .button
+    backgroundView.accessibilityHint = "Double tap to adjust completion"
   }
 }

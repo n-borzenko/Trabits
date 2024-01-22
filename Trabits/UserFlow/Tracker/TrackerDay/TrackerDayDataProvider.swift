@@ -18,8 +18,6 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
 
   enum ItemIdentifier: Hashable {
     case habit(NSManagedObjectID)
-    case category(NSManagedObjectID)
-    case unknownCategory
   }
 
   typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
@@ -231,7 +229,6 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
     categories.forEach { category in
       let sectionIdentifier = SectionIdentifier.category(category.objectID)
       newSnapshot.appendSections([sectionIdentifier])
-      newSnapshot.appendItems([ItemIdentifier.category(category.objectID)], toSection: sectionIdentifier)
     }
     
     var uncategorizedHabitIdentifiers = [ItemIdentifier]()
@@ -246,7 +243,6 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
     
     if !uncategorizedHabitIdentifiers.isEmpty {
       newSnapshot.appendSections([SectionIdentifier.unknownCategory])
-      newSnapshot.appendItems([ItemIdentifier.unknownCategory], toSection: SectionIdentifier.unknownCategory)
       newSnapshot.appendItems(uncategorizedHabitIdentifiers, toSection: SectionIdentifier.unknownCategory)
     }
     

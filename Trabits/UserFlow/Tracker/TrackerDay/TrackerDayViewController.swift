@@ -59,14 +59,23 @@ class TrackerDayViewController: UIViewController {
 
 extension TrackerDayViewController {
   private func createLayout() -> UICollectionViewCompositionalLayout {
-    var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-    configuration.headerMode = .none
-    configuration.showsSeparators = false
-    configuration.backgroundColor = .clear
-    configuration.footerMode = .none
-    return UICollectionViewCompositionalLayout.list(using: configuration)
+    let layout = UICollectionViewCompositionalLayout { [unowned self] sectionIndex, layoutEnvironment in
+      var configuration: UICollectionLayoutListConfiguration
+      if !self.dataProvider.isHabitGroupingOn {
+        configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+        configuration.headerMode = .none
+      } else {
+        configuration = UICollectionLayoutListConfiguration(appearance: .grouped)
+        configuration.headerMode = .supplementary
+      }
+      configuration.showsSeparators = false
+      configuration.backgroundColor = .clear
+      configuration.footerMode = .none
+      return NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+    }
+    return layout
   }
-
+  
   private func configureDataSource() {
     let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectID) = itemIdentifier else { return }
@@ -81,33 +90,34 @@ extension TrackerDayViewController {
       }
     }
     
-    let categoryCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
+    dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+      collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
+    }
+    
+    let headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
+      elementKind: UICollectionView.elementKindSectionHeader
+    ) { [unowned self] headerView, elementKind, indexPath in
       var contentConfiguration = UIListContentConfiguration.prominentInsetGroupedHeader()
       var margins = contentConfiguration.directionalLayoutMargins
-      margins.leading = 16
-      margins.trailing = 16
-      margins.top = margins.bottom * 2
+      margins.leading = 20
+      margins.trailing = 20
       contentConfiguration.directionalLayoutMargins = margins
       
-      if itemIdentifier == TrackerDayDataProvider.ItemIdentifier.unknownCategory {
+      let itemIdentifier = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+      if itemIdentifier == TrackerDayDataProvider.SectionIdentifier.unknownCategory {
         contentConfiguration.text = "Uncategorized"
-        cell.contentConfiguration = contentConfiguration
+        headerView.contentConfiguration = contentConfiguration
         return
       }
       
-      guard case let TrackerDayDataProvider.ItemIdentifier.category(objectID) = itemIdentifier else { return }
+      guard case let TrackerDayDataProvider.SectionIdentifier.category(objectID) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectID) as? Category, let category else { return }
       contentConfiguration.text = category.title ?? "Untitled"
-      cell.contentConfiguration = contentConfiguration
+      headerView.contentConfiguration = contentConfiguration
     }
     
-    dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
-      switch itemIdentifier {
-      case .habit(_):
-        return collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
-      case .category(_), .unknownCategory:
-        return collectionView.dequeueConfiguredReusableCell(using: categoryCellRegistration, for: indexPath, item: itemIdentifier)
-      }
+    dataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+      collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
     }
   }
 }

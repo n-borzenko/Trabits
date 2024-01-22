@@ -15,6 +15,7 @@ struct CategoryPickerView: View {
     sortDescriptors: [SortDescriptor(\.order, order: .reverse)]
   ) var categories: FetchedResults<Category>
   @State private var isCategoryEditorPresented = false
+  @State private var listSelectionRefreshingId = UUID()
 
   var body: some View {
     ScrollViewReader { proxy in
@@ -29,13 +30,16 @@ struct CategoryPickerView: View {
               Spacer()
               if selectedCategory == category {
                 Image(systemName: "checkmark")
+                  .accessibilityHidden(true)
               }
             }
           }
         }
+        .id(listSelectionRefreshingId)
         Section {
           Button("Clear selection", role: .destructive) {
             selectedCategory = nil
+            listSelectionRefreshingId = UUID()
           }
         }
       }

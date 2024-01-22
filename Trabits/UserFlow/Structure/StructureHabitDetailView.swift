@@ -22,6 +22,9 @@ struct HabitDetailObjectivesView: View {
               Image(systemName: imageName)
               Text("\(objective.count)")
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityValue("\(index == 0 ? "Current value" : " ") \(objective.count) ")
+            
             if let startDate = objective.applicableFrom {
               Text("Since \(startDate.formatted(date: .abbreviated, time: .omitted))")
                 .font(.caption)
@@ -34,6 +37,7 @@ struct HabitDetailObjectivesView: View {
           .padding(8)
           .background(Color(uiColor: .neutral5).opacity(0.7))
           .cornerRadius(8)
+          .accessibilityElement(children: .combine)
         }
       }
       .padding(.bottom, 4)
@@ -80,10 +84,12 @@ struct StructureHabitDetailView: View {
       
       Section("Day targets") {
         HabitDetailObjectivesView(objectives: habit.sortedDayTargets, imageName: "target")
+          .accessibilityElement(children: .contain)
       }
       
       Section("Week goals") {
         HabitDetailObjectivesView(objectives: habit.sortedWeekGoals, imageName: "flame")
+          .accessibilityElement(children: .contain)
       }
       
       Section("Status") {

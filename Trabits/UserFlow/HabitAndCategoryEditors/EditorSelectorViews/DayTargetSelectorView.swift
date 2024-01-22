@@ -30,8 +30,8 @@ struct DayTargetStepperView: View {
       .buttonStyle(.bordered)
       .disabled(value == maxValue)
     }
-    .accessibilityElement()
-    .accessibilityValue(Text("\(value)"))
+    .accessibilityElement(children: .ignore)
+    .accessibilityValue("\(value)")
     .accessibilityAdjustableAction { direction in
       switch direction {
       case .increment:
@@ -63,6 +63,7 @@ struct DayTargetSelectorView: View {
         Spacer()
         DayTargetStepperView(value: $dayTarget)
       }
+      .accessibilityElement(children: .combine)
       if !isNew {
         HStack {
           Toggle("Reset previously set targets", isOn: $resetIsOn)

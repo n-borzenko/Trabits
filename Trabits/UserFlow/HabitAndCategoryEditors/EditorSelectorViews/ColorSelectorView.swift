@@ -39,11 +39,31 @@ struct ColorSelectorView: View {
               )
               .frame(minWidth: 44, minHeight: 44)
               .id(index)
-              .accessibilityLabel(PastelPalette.colorTitles[index])
             }
           }
           .padding(.vertical)
           .onAppear {
+            proxy.scrollTo(colorIndex)
+          }
+          .accessibilityElement(children: .ignore)
+          .accessibilityLabel("Item color")
+          .accessibilityValue(PastelPalette.colorTitles[colorIndex])
+          .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment:
+              if colorIndex < PastelPalette.colors.count - 1  {
+                colorIndex += 1
+              } else {
+                colorIndex = 0
+              }
+            case .decrement:
+              if colorIndex > 0 {
+                colorIndex -= 1
+              } else {
+                colorIndex = PastelPalette.colors.count - 1
+              }
+            @unknown default: return
+            }
             proxy.scrollTo(colorIndex)
           }
         }

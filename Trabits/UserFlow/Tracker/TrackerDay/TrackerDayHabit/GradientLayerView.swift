@@ -15,6 +15,8 @@ final class GradientLayerView: UIView {
   private var gradientLayer: CAGradientLayer {
     return self.layer as! CAGradientLayer
   }
+  
+  var completion: (() -> Void)? = nil
 
   init(startColor: UIColor = .clear, endColor: UIColor = .clear) {
     self.startColor = startColor
@@ -46,5 +48,15 @@ final class GradientLayerView: UIView {
       gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
       layoutIfNeeded()
     }
+  }
+  
+  override var accessibilityFrame: CGRect {
+    get { UIAccessibility.convertToScreenCoordinates(bounds.inset(by: UIEdgeInsets(top: -4, left: -4, bottom: -4, right: -4)), in: self) }
+    set { super.accessibilityFrame = newValue }
+  }
+  
+  override func accessibilityActivate() -> Bool {
+    completion?()
+    return true
   }
 }
