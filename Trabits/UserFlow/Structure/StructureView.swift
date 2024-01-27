@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+@MainActor
 class UserDefaultsObserver: ObservableObject {
   @Published var isHabitGroupingOn = UserDefaults.standard.isHabitGroupingOn
   

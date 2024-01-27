@@ -32,7 +32,7 @@ final class MainCoordinator: NSObject, Coordinator, UITabBarControllerDelegate {
   var childCoordinators: [any Coordinator] = []
   lazy var rootViewController = UITabBarController()
 
-  private let tabs: [TabRoute] = [.tracker, .structure]
+  private let tabs: [TabRoute] = [.tracker, .structure, .settings]
   var selectedTab: TabRoute = .tracker {
     didSet {
       let index = tabs.firstIndex(where: { $0 == selectedTab }) ?? 0

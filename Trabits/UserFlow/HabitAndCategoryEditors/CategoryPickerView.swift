@@ -36,10 +36,20 @@ struct CategoryPickerView: View {
           }
         }
         .id(listSelectionRefreshingId)
-        Section {
-          Button("Clear selection", role: .destructive) {
-            selectedCategory = nil
-            listSelectionRefreshingId = UUID()
+        if !categories.isEmpty {
+          Section {
+            Button("Clear selection", role: .destructive) {
+              selectedCategory = nil
+              listSelectionRefreshingId = UUID()
+            }
+            .disabled(selectedCategory == nil)
+          }
+        }
+      }
+      .overlay {
+        if categories.isEmpty {
+          EmptyStateWrapperView(message: "List is empty. Please create a new category.", actionTitle: "Add Category") {
+            isCategoryEditorPresented = true
           }
         }
       }

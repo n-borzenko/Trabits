@@ -128,7 +128,7 @@ extension CategoryEditorView {
   let context = PersistenceController.preview.container.viewContext
   var category: Category? = nil
   do {
-    category = try context.fetch(Category.fetchRequest()).first
+    category = try context.fetch(Category.orderedCategoriesFetchRequest()).first
   } catch {}
   
   return CategoryEditorView(category: category)

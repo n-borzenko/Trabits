@@ -34,6 +34,9 @@
 		1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960EF8D2A96719C002BD3BA /* UIView+PinnedSubview.swift */; };
 		196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196829C92B3E356200FC8E30 /* UserDefaults.swift */; };
 		196AEECB2B2E72F200F85BB2 /* StructureListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196AEECA2B2E72F200F85BB2 /* StructureListItem.swift */; };
+		1979DBDE2B5F407F00E6164B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDD2B5F407F00E6164B /* SettingsView.swift */; };
+		1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */; };
+		1979DBE22B5F56A300E6164B /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */; };
 		19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */; };
 		19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */; };
 		19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E542A45F6410050C8C9 /* Category+CoreDataClass.swift */; };
@@ -102,6 +105,9 @@
 		196829C82B3DF1B900FC8E30 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		196829C92B3E356200FC8E30 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		196AEECA2B2E72F200F85BB2 /* StructureListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureListItem.swift; sourceTree = "<group>"; };
+		1979DBDD2B5F407F00E6164B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUserDataView.swift; sourceTree = "<group>"; };
+		1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		19801E442A411D300050C8C9 /* Habit+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataClass.swift"; sourceTree = "<group>"; };
 		19801E452A411D300050C8C9 /* Habit+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Habit+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		19801E542A45F6410050C8C9 /* Category+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -255,6 +261,7 @@
 				19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */,
 				1942EC382AB50036000F70CC /* PastelPalette.swift */,
 				19AF066E2B5CAB7500C559C4 /* MainCoordinator.swift */,
+				196829C92B3E356200FC8E30 /* UserDefaults.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -282,6 +289,9 @@
 			isa = PBXGroup;
 			children = (
 				19AF06632B5CAA7400C559C4 /* SettingsCoordinator.swift */,
+				1979DBDD2B5F407F00E6164B /* SettingsView.swift */,
+				1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */,
+				1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -341,7 +351,6 @@
 				194AC59C2A40F49900383B29 /* AppDelegate.swift */,
 				194AC59E2A40F49900383B29 /* SceneDelegate.swift */,
 				19AF065C2B58A2A900C559C4 /* AppCoordinator.swift */,
-				196829C92B3E356200FC8E30 /* UserDefaults.swift */,
 				194AC5AD2A40F49B00383B29 /* Info.plist */,
 			);
 			path = App;
@@ -445,11 +454,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				19AF06622B5CAA4900C559C4 /* OnboardingCoordinator.swift in Sources */,
+				1979DBE22B5F56A300E6164B /* SettingsAboutView.swift in Sources */,
 				1942EC392AB50037000F70CC /* PastelPalette.swift in Sources */,
 				19186D542B1D41BC00618E70 /* WeekGoalSelectorView.swift in Sources */,
 				196AEECB2B2E72F200F85BB2 /* StructureListItem.swift in Sources */,
 				19186D502B1D41AD00618E70 /* TitleSelectorView.swift in Sources */,
 				1952B15D2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift in Sources */,
+				1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */,
 				1942EC412AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift in Sources */,
 				199B8E622B150D1D00DD2DA1 /* DayTarget+CoreDataProperties.swift in Sources */,
 				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
@@ -489,6 +500,7 @@
 				19186D5B2B1E2D2D00618E70 /* CategoryEditorView.swift in Sources */,
 				199B8E602B150D1D00DD2DA1 /* WeekGoal+CoreDataProperties.swift in Sources */,
 				193BBD182AC5CE8F00A2F0BD /* TrackerDataProvider.swift in Sources */,
+				1979DBDE2B5F407F00E6164B /* SettingsView.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,
 				1952B15F2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift in Sources */,
 				19AF066F2B5CAB7500C559C4 /* MainCoordinator.swift in Sources */,

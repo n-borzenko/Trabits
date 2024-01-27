@@ -41,12 +41,8 @@ extension Category {
 }
 
 extension Category {
-  @nonobjc class func fetchRequest() -> NSFetchRequest<Category> {
-    return NSFetchRequest<Category>(entityName: "Category")
-  }
-
   @nonobjc class func orderedCategoriesFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Category> {
-    let request = fetchRequest()
+    let request = NSFetchRequest<Category>(entityName: "Category")
     request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: false)]
     if let position {
       request.predicate = NSPredicate(format: "order <= %@", NSNumber(value: position))
