@@ -84,10 +84,10 @@ extension EmptyStateView {
     stackView.addArrangedSubview(imageView)
     
     imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-    let imageWidthConstraint = imageView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.4)
+    let imageWidthConstraint = imageView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.2)
     imageWidthConstraint.priority = .defaultHigh
     imageWidthConstraint.isActive = true
-    let imageHeightConstraint = imageView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.4)
+    let imageHeightConstraint = imageView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor, multiplier: 0.2)
     imageHeightConstraint.priority = .defaultHigh
     imageHeightConstraint.isActive = true
     
