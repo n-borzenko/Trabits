@@ -29,6 +29,7 @@ class EmptyStateView: UIView {
   private var centerYConstraint: NSLayoutConstraint!
   private let titleLabel = UILabel()
   private let actionButton = UIButton()
+  private let imageView = UIImageView(image: UIImage.emptyState)
   
   var message: String {
     didSet {
@@ -74,14 +75,15 @@ extension EmptyStateView {
     centerYConstraint.constant = traitCollection.verticalSizeClass == .compact ? 0 : -20
     centerYConstraint.isActive = true
     stackView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-    stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8).isActive = true
+    stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9).isActive = true
     stackView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.8).isActive = true
     
-    let imageView = UIImageView(image: UIImage.emptyState)
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .tertiaryLabel
     imageView.isAccessibilityElement = false
     stackView.addArrangedSubview(imageView)
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.isHidden = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
     
     imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
     let imageWidthConstraint = imageView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.2)
@@ -98,12 +100,18 @@ extension EmptyStateView {
     titleLabel.adjustsFontForContentSizeCategory = true
     titleLabel.adjustsFontSizeToFitWidth = true
     stackView.addArrangedSubview(titleLabel)
+    titleLabel.translatesAutoresizingMaskIntoConstraints = false
+    titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
     
     var buttonConfiguration = UIButton.Configuration.borderedProminent()
     buttonConfiguration.title = actionTitle
+    buttonConfiguration.baseForegroundColor = .inverted
+    buttonConfiguration.titleAlignment = .center
     actionButton.configuration = buttonConfiguration
+    actionButton.maximumContentSizeCategory = .accessibilityExtraLarge
     actionButton.addTarget(self, action: #selector(actionHandler), for: .touchUpInside)
     stackView.addArrangedSubview(actionButton)
+    actionButton.translatesAutoresizingMaskIntoConstraints = false
     actionButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
   }
   
@@ -115,5 +123,6 @@ extension EmptyStateView {
     if traitCollection.verticalSizeClass != previousTraitCollection?.verticalSizeClass {
       centerYConstraint.constant = traitCollection.verticalSizeClass == .compact ? 0 : -20
     }
+    imageView.isHidden = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
   }
 }
