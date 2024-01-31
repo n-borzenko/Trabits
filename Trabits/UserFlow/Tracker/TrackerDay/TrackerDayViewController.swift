@@ -135,7 +135,7 @@ extension TrackerDayViewController {
     collectionView.delegate = self
 
     emptyStateView = EmptyStateView(
-      message: "List of habits is empty. Please, create your first habit.",
+      message: "List is empty. Please, create your first habit.",
       actionTitle: "Go to My Habits") { [weak self] in
       self?.trackerCoordinator?.navigateToStructureTab()
     }

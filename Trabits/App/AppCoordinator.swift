@@ -21,11 +21,11 @@ final class AppCoordinator {
     UserDefaults.standard
       .publisher(for: \.wasOnboardingShown)
       .sink { [weak self] wasOnboardingShown in
-//        if wasOnboardingShown {
+        if wasOnboardingShown {
           self?.setupMainCoordinator()
-//        } else {
-//          self?.setupOnboardingCoordinator()
-//        }
+        } else {
+          self?.setupOnboardingCoordinator()
+        }
       }
       .store(in: &cancellables)
   }
