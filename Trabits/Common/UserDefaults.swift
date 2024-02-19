@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 extension UserDefaults {
   enum Key: String {
@@ -29,5 +30,26 @@ extension UserDefaults {
   
   func hasData(for key: Key) -> Bool {
     object(forKey: key.rawValue) != nil
+  }
+}
+
+@MainActor
+class UserDefaultsObserver: ObservableObject {
+  @Published var isHabitGroupingOn = UserDefaults.standard.isHabitGroupingOn
+  
+  private var cancellables = Set<AnyCancellable>()
+  
+  init() {
+    UserDefaults.standard
+      .publisher(for: \.isHabitGroupingOn)
+      .sink { [weak self] in
+        self?.isHabitGroupingOn = $0
+      }
+      .store(in: &cancellables)
+  }
+  
+  deinit {
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
   }
 }

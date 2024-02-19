@@ -10,6 +10,7 @@
 		19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 19020CFE2A7D98CF00616BBE /* Trabits.xcdatamodeld */; };
 		19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19020D022A7DBC8B00616BBE /* EmptyStateView.swift */; };
 		190ACBA02B1A86220081A7CD /* CategoryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190ACB9F2B1A86220081A7CD /* CategoryPickerView.swift */; };
+		19164C492B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19164C482B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift */; };
 		19186D502B1D41AD00618E70 /* TitleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19186D4F2B1D41AD00618E70 /* TitleSelectorView.swift */; };
 		19186D522B1D41B500618E70 /* DayTargetSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19186D512B1D41B500618E70 /* DayTargetSelectorView.swift */; };
 		19186D542B1D41BC00618E70 /* WeekGoalSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19186D532B1D41BC00618E70 /* WeekGoalSelectorView.swift */; };
@@ -26,6 +27,10 @@
 		194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194AC59E2A40F49900383B29 /* SceneDelegate.swift */; };
 		194AC5A92A40F49B00383B29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5A82A40F49B00383B29 /* Assets.xcassets */; };
 		194AC5AC2A40F49B00383B29 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 194AC5AA2A40F49B00383B29 /* LaunchScreen.storyboard */; };
+		194CCE802B72A64200F35FEE /* StatisticsWeekData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194CCE7F2B72A64200F35FEE /* StatisticsWeekData.swift */; };
+		194CCE822B72A65500F35FEE /* StatisticsWeeklyDataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194CCE812B72A65500F35FEE /* StatisticsWeeklyDataContainer.swift */; };
+		194CCE842B731FD200F35FEE /* StatisticsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194CCE832B731FD200F35FEE /* StatisticsListItem.swift */; };
+		194CCE862B73E18500F35FEE /* StatisticsWeekHabitChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194CCE852B73E18500F35FEE /* StatisticsWeekHabitChartView.swift */; };
 		1952B15B2B48C8FD00FE16C7 /* GradientLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1952B15A2B48C8FD00FE16C7 /* GradientLayerView.swift */; };
 		1952B15D2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1952B15C2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift */; };
 		1952B15F2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1952B15E2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift */; };
@@ -35,6 +40,11 @@
 		196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196829C92B3E356200FC8E30 /* UserDefaults.swift */; };
 		196AEECB2B2E72F200F85BB2 /* StructureListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196AEECA2B2E72F200F85BB2 /* StructureListItem.swift */; };
 		197606B52B6AAF5100E34B9B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606B42B6AAF5100E34B9B /* OnboardingView.swift */; };
+		197606B72B6B1FEC00E34B9B /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606B62B6B1FEC00E34B9B /* StatisticsView.swift */; };
+		197606B92B6B2C3700E34B9B /* StatisticsWeeklyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606B82B6B2C3700E34B9B /* StatisticsWeeklyView.swift */; };
+		197606BB2B6C88CC00E34B9B /* StatisticsSubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */; };
+		197606BD2B6C8AED00E34B9B /* StatisticsMonthlyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */; };
+		197606BF2B6C8D3600E34B9B /* StatisticsAnnualyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BE2B6C8D3600E34B9B /* StatisticsAnnualyView.swift */; };
 		1979DBDE2B5F407F00E6164B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDD2B5F407F00E6164B /* SettingsView.swift */; };
 		1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */; };
 		1979DBE22B5F56A300E6164B /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */; };
@@ -44,6 +54,8 @@
 		19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E552A45F6410050C8C9 /* Category+CoreDataProperties.swift */; };
 		19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */; };
 		19813BEF2B151E76003B2B97 /* HabitEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19813BEE2B151E76003B2B97 /* HabitEditorView.swift */; };
+		198E88B02B7EF6EF006A8C33 /* StatisticsWeekSummaryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198E88AF2B7EF6EF006A8C33 /* StatisticsWeekSummaryHeaderView.swift */; };
+		198F60B62B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198F60B52B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift */; };
 		199098722B23B44200C7C253 /* HabitDetailsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199098712B23B44200C7C253 /* HabitDetailsRowView.swift */; };
 		1994EEE02B222E4C00651674 /* StructureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1994EEDF2B222E4C00651674 /* StructureView.swift */; };
 		1994EEE22B222FAA00651674 /* StructureHabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1994EEE12B222FAA00651674 /* StructureHabitsView.swift */; };
@@ -68,6 +80,13 @@
 		19BB9BE42A6F16D000D328BD /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BB9BE32A6F16D000D328BD /* PersistenceController.swift */; };
 		19C138B42ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */; };
 		19CC938E2B07DD3C0026789C /* Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 19CC938D2B07DD3C0026789C /* Logo.png */; };
+		19D4D7E72B6D44A400D961A3 /* StatisticsYearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7E62B6D44A400D961A3 /* StatisticsYearView.swift */; };
+		19D4D7E92B6D44F400D961A3 /* StatisticsMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7E82B6D44F400D961A3 /* StatisticsMonthView.swift */; };
+		19D4D7EB2B6D451F00D961A3 /* StatisticsWeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7EA2B6D451F00D961A3 /* StatisticsWeekView.swift */; };
+		19D4D7ED2B6D45C800D961A3 /* StatisticsHabitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7EC2B6D45C800D961A3 /* StatisticsHabitView.swift */; };
+		19D4D7EF2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7EE2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift */; };
+		19D4D7F12B6D634B00D961A3 /* StatisticsWeekPlainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7F02B6D634B00D961A3 /* StatisticsWeekPlainView.swift */; };
+		19D4D7F32B6D63FB00D961A3 /* StatisticsWeekSummaryGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4D7F22B6D63FB00D961A3 /* StatisticsWeekSummaryGridView.swift */; };
 		19E12FBC2B4F2E7500C3F39E /* CalendarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */; };
 		19E3C6502AD06EA8006D80D9 /* TrackerContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E3C64F2AD06EA8006D80D9 /* TrackerContainerViewController.swift */; };
 		19E8EDB12B4E2679001A5856 /* TrackerDayHabitResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8EDB02B4E2679001A5856 /* TrackerDayHabitResultsView.swift */; };
@@ -79,6 +98,7 @@
 		19020CFF2A7D98CF00616BBE /* Trabits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Trabits.xcdatamodel; sourceTree = "<group>"; };
 		19020D022A7DBC8B00616BBE /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		190ACB9F2B1A86220081A7CD /* CategoryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerView.swift; sourceTree = "<group>"; };
+		19164C482B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsHabitSmallWeekGoalView.swift; sourceTree = "<group>"; };
 		19186D4F2B1D41AD00618E70 /* TitleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleSelectorView.swift; sourceTree = "<group>"; };
 		19186D512B1D41B500618E70 /* DayTargetSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTargetSelectorView.swift; sourceTree = "<group>"; };
 		19186D532B1D41BC00618E70 /* WeekGoalSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGoalSelectorView.swift; sourceTree = "<group>"; };
@@ -97,6 +117,10 @@
 		194AC5A82A40F49B00383B29 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		194AC5AB2A40F49B00383B29 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		194AC5AD2A40F49B00383B29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		194CCE7F2B72A64200F35FEE /* StatisticsWeekData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekData.swift; sourceTree = "<group>"; };
+		194CCE812B72A65500F35FEE /* StatisticsWeeklyDataContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeeklyDataContainer.swift; sourceTree = "<group>"; };
+		194CCE832B731FD200F35FEE /* StatisticsListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsListItem.swift; sourceTree = "<group>"; };
+		194CCE852B73E18500F35FEE /* StatisticsWeekHabitChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekHabitChartView.swift; sourceTree = "<group>"; };
 		1952B15A2B48C8FD00FE16C7 /* GradientLayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientLayerView.swift; sourceTree = "<group>"; };
 		1952B15C2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitContentConfiguration.swift; sourceTree = "<group>"; };
 		1952B15E2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitContentView.swift; sourceTree = "<group>"; };
@@ -107,6 +131,11 @@
 		196829C92B3E356200FC8E30 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		196AEECA2B2E72F200F85BB2 /* StructureListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureListItem.swift; sourceTree = "<group>"; };
 		197606B42B6AAF5100E34B9B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		197606B62B6B1FEC00E34B9B /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		197606B82B6B2C3700E34B9B /* StatisticsWeeklyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeeklyView.swift; sourceTree = "<group>"; };
+		197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsSubtitleView.swift; sourceTree = "<group>"; };
+		197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthlyView.swift; sourceTree = "<group>"; };
+		197606BE2B6C8D3600E34B9B /* StatisticsAnnualyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsAnnualyView.swift; sourceTree = "<group>"; };
 		1979DBDD2B5F407F00E6164B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUserDataView.swift; sourceTree = "<group>"; };
 		1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
@@ -116,6 +145,8 @@
 		19801E552A45F6410050C8C9 /* Category+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		19801E582A4798820050C8C9 /* UIColorValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorValueTransformer.swift; sourceTree = "<group>"; };
 		19813BEE2B151E76003B2B97 /* HabitEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEditorView.swift; sourceTree = "<group>"; };
+		198E88AF2B7EF6EF006A8C33 /* StatisticsWeekSummaryHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekSummaryHeaderView.swift; sourceTree = "<group>"; };
+		198F60B52B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekHabitGoalView.swift; sourceTree = "<group>"; };
 		199098712B23B44200C7C253 /* HabitDetailsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailsRowView.swift; sourceTree = "<group>"; };
 		1994EEDF2B222E4C00651674 /* StructureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureView.swift; sourceTree = "<group>"; };
 		1994EEE12B222FAA00651674 /* StructureHabitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureHabitsView.swift; sourceTree = "<group>"; };
@@ -140,6 +171,13 @@
 		19BB9BE32A6F16D000D328BD /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		19C138B32ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitListCell.swift; sourceTree = "<group>"; };
 		19CC938D2B07DD3C0026789C /* Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo.png; sourceTree = "<group>"; };
+		19D4D7E62B6D44A400D961A3 /* StatisticsYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsYearView.swift; sourceTree = "<group>"; };
+		19D4D7E82B6D44F400D961A3 /* StatisticsMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthView.swift; sourceTree = "<group>"; };
+		19D4D7EA2B6D451F00D961A3 /* StatisticsWeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekView.swift; sourceTree = "<group>"; };
+		19D4D7EC2B6D45C800D961A3 /* StatisticsHabitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsHabitView.swift; sourceTree = "<group>"; };
+		19D4D7EE2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekGroupedView.swift; sourceTree = "<group>"; };
+		19D4D7F02B6D634B00D961A3 /* StatisticsWeekPlainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekPlainView.swift; sourceTree = "<group>"; };
+		19D4D7F22B6D63FB00D961A3 /* StatisticsWeekSummaryGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsWeekSummaryGridView.swift; sourceTree = "<group>"; };
 		19E12FBB2B4F2E7500C3F39E /* CalendarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarExtension.swift; sourceTree = "<group>"; };
 		19E3C64F2AD06EA8006D80D9 /* TrackerContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerContainerViewController.swift; sourceTree = "<group>"; };
 		19E8EDB02B4E2679001A5856 /* TrackerDayHabitResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayHabitResultsView.swift; sourceTree = "<group>"; };
@@ -166,6 +204,20 @@
 				193F873A2AFDA03600B45DE5 /* UnderlinedContainerView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		19164C4A2B8045CC0073A762 /* StatisticsWeek */ = {
+			isa = PBXGroup;
+			children = (
+				19D4D7EA2B6D451F00D961A3 /* StatisticsWeekView.swift */,
+				19D4D7F02B6D634B00D961A3 /* StatisticsWeekPlainView.swift */,
+				19D4D7EE2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift */,
+				198E88AF2B7EF6EF006A8C33 /* StatisticsWeekSummaryHeaderView.swift */,
+				19D4D7F22B6D63FB00D961A3 /* StatisticsWeekSummaryGridView.swift */,
+				198F60B52B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift */,
+				194CCE852B73E18500F35FEE /* StatisticsWeekHabitChartView.swift */,
+			);
+			path = StatisticsWeek;
 			sourceTree = "<group>";
 		};
 		19186D592B1E2B6200618E70 /* EditorSelectorViews */ = {
@@ -198,7 +250,6 @@
 				19AF066B2B5CAB2300C559C4 /* TrackerCoordinator.swift */,
 				19E3C64F2AD06EA8006D80D9 /* TrackerContainerViewController.swift */,
 				193BBD172AC5CE8F00A2F0BD /* TrackerDataProvider.swift */,
-				19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -264,6 +315,7 @@
 				1942EC382AB50036000F70CC /* PastelPalette.swift */,
 				19AF066E2B5CAB7500C559C4 /* MainCoordinator.swift */,
 				196829C92B3E356200FC8E30 /* UserDefaults.swift */,
+				19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -283,6 +335,14 @@
 			isa = PBXGroup;
 			children = (
 				19AF06652B5CAA8500C559C4 /* StatisticsCoordinator.swift */,
+				197606B62B6B1FEC00E34B9B /* StatisticsView.swift */,
+				197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */,
+				19D4D7EC2B6D45C800D961A3 /* StatisticsHabitView.swift */,
+				19164C482B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift */,
+				194CCE832B731FD200F35FEE /* StatisticsListItem.swift */,
+				19D4D7E32B6D447B00D961A3 /* StatisticsWeekly */,
+				19D4D7E42B6D448800D961A3 /* StatisticsMonthly */,
+				19D4D7E52B6D449400D961A3 /* StatisticsAnnualy */,
 			);
 			path = Statistics;
 			sourceTree = "<group>";
@@ -367,6 +427,35 @@
 				194AC5A82A40F49B00383B29 /* Assets.xcassets */,
 			);
 			path = Assets;
+			sourceTree = "<group>";
+		};
+		19D4D7E32B6D447B00D961A3 /* StatisticsWeekly */ = {
+			isa = PBXGroup;
+			children = (
+				194CCE812B72A65500F35FEE /* StatisticsWeeklyDataContainer.swift */,
+				197606B82B6B2C3700E34B9B /* StatisticsWeeklyView.swift */,
+				194CCE7F2B72A64200F35FEE /* StatisticsWeekData.swift */,
+				19164C4A2B8045CC0073A762 /* StatisticsWeek */,
+			);
+			path = StatisticsWeekly;
+			sourceTree = "<group>";
+		};
+		19D4D7E42B6D448800D961A3 /* StatisticsMonthly */ = {
+			isa = PBXGroup;
+			children = (
+				197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */,
+				19D4D7E82B6D44F400D961A3 /* StatisticsMonthView.swift */,
+			);
+			path = StatisticsMonthly;
+			sourceTree = "<group>";
+		};
+		19D4D7E52B6D449400D961A3 /* StatisticsAnnualy */ = {
+			isa = PBXGroup;
+			children = (
+				197606BE2B6C8D3600E34B9B /* StatisticsAnnualyView.swift */,
+				19D4D7E62B6D44A400D961A3 /* StatisticsYearView.swift */,
+			);
+			path = StatisticsAnnualy;
 			sourceTree = "<group>";
 		};
 		19FE5B5C2B2B852300827C82 /* Structure */ = {
@@ -465,11 +554,15 @@
 				1952B15D2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift in Sources */,
 				1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */,
 				1942EC412AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift in Sources */,
+				197606BD2B6C8AED00E34B9B /* StatisticsMonthlyView.swift in Sources */,
+				19D4D7ED2B6D45C800D961A3 /* StatisticsHabitView.swift in Sources */,
 				199B8E622B150D1D00DD2DA1 /* DayTarget+CoreDataProperties.swift in Sources */,
 				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
+				197606BF2B6C8D3600E34B9B /* StatisticsAnnualyView.swift in Sources */,
 				19AF06642B5CAA7400C559C4 /* SettingsCoordinator.swift in Sources */,
 				19AF065D2B58A2A900C559C4 /* AppCoordinator.swift in Sources */,
 				1994EEE62B2230B900651674 /* StructureCategoriesView.swift in Sources */,
+				198E88B02B7EF6EF006A8C33 /* StatisticsWeekSummaryHeaderView.swift in Sources */,
 				1952B15B2B48C8FD00FE16C7 /* GradientLayerView.swift in Sources */,
 				19186D582B1D41CE00618E70 /* CategorySelectorView.swift in Sources */,
 				19AF06662B5CAA8500C559C4 /* StatisticsCoordinator.swift in Sources */,
@@ -477,11 +570,15 @@
 				199098722B23B44200C7C253 /* HabitDetailsRowView.swift in Sources */,
 				19A16CF22AD0CC0200595101 /* DatePickerViewController.swift in Sources */,
 				19AE5EB62AD77A5100E1860C /* TrackerDayDataProvider.swift in Sources */,
+				194CCE802B72A64200F35FEE /* StatisticsWeekData.swift in Sources */,
 				199B8E5F2B150D1D00DD2DA1 /* WeekGoal+CoreDataClass.swift in Sources */,
+				194CCE822B72A65500F35FEE /* StatisticsWeeklyDataContainer.swift in Sources */,
 				1994EEE22B222FAA00651674 /* StructureHabitsView.swift in Sources */,
+				197606B92B6B2C3700E34B9B /* StatisticsWeeklyView.swift in Sources */,
 				19A16CF62AD0EDB500595101 /* TrackerDayViewController.swift in Sources */,
 				19FE5B5E2B2BD5DD00827C82 /* StructureHabitDetailView.swift in Sources */,
 				193BBD1A2AC6029D00A2F0BD /* TrackerWeekDayCell.swift in Sources */,
+				19D4D7E72B6D44A400D961A3 /* StatisticsYearView.swift in Sources */,
 				194AC59D2A40F49900383B29 /* AppDelegate.swift in Sources */,
 				19BB9BE42A6F16D000D328BD /* PersistenceController.swift in Sources */,
 				19FE5B602B2BD75500827C82 /* StructureCategoryDetailView.swift in Sources */,
@@ -489,6 +586,7 @@
 				1952B1632B48EFEB00FE16C7 /* WeekProgressView.swift in Sources */,
 				19C138B42ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift in Sources */,
 				19E8EDB12B4E2679001A5856 /* TrackerDayHabitResultsView.swift in Sources */,
+				194CCE862B73E18500F35FEE /* StatisticsWeekHabitChartView.swift in Sources */,
 				194AC59F2A40F49900383B29 /* SceneDelegate.swift in Sources */,
 				19801E492A411D300050C8C9 /* Habit+CoreDataProperties.swift in Sources */,
 				19AF066A2B5CAAE400C559C4 /* StructureCoordinator.swift in Sources */,
@@ -497,27 +595,37 @@
 				19813BEF2B151E76003B2B97 /* HabitEditorView.swift in Sources */,
 				19E12FBC2B4F2E7500C3F39E /* CalendarExtension.swift in Sources */,
 				1952B1612B48E02B00FE16C7 /* LabelWithInsets.swift in Sources */,
+				19D4D7F12B6D634B00D961A3 /* StatisticsWeekPlainView.swift in Sources */,
+				194CCE842B731FD200F35FEE /* StatisticsListItem.swift in Sources */,
 				1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */,
 				19186D562B1D41C500618E70 /* ColorSelectorView.swift in Sources */,
 				19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */,
 				19186D5B2B1E2D2D00618E70 /* CategoryEditorView.swift in Sources */,
 				199B8E602B150D1D00DD2DA1 /* WeekGoal+CoreDataProperties.swift in Sources */,
+				19D4D7E92B6D44F400D961A3 /* StatisticsMonthView.swift in Sources */,
 				193BBD182AC5CE8F00A2F0BD /* TrackerDataProvider.swift in Sources */,
 				1979DBDE2B5F407F00E6164B /* SettingsView.swift in Sources */,
+				197606BB2B6C88CC00E34B9B /* StatisticsSubtitleView.swift in Sources */,
 				197606B52B6AAF5100E34B9B /* OnboardingView.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,
 				1952B15F2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift in Sources */,
 				19AF066F2B5CAB7500C559C4 /* MainCoordinator.swift in Sources */,
+				19D4D7EF2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift in Sources */,
 				19A16CF42AD0E30700595101 /* TrackerWeekViewController.swift in Sources */,
+				197606B72B6B1FEC00E34B9B /* StatisticsView.swift in Sources */,
 				19020D002A7D98CF00616BBE /* Trabits.xcdatamodeld in Sources */,
+				19D4D7EB2B6D451F00D961A3 /* StatisticsWeekView.swift in Sources */,
 				193F873B2AFDA03600B45DE5 /* UnderlinedContainerView.swift in Sources */,
 				19801E572A45F6410050C8C9 /* Category+CoreDataProperties.swift in Sources */,
 				19801E562A45F6410050C8C9 /* Category+CoreDataClass.swift in Sources */,
 				196829CA2B3E356200FC8E30 /* UserDefaults.swift in Sources */,
 				19AF066C2B5CAB2300C559C4 /* TrackerCoordinator.swift in Sources */,
+				19164C492B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift in Sources */,
 				199B8E612B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift in Sources */,
+				198F60B62B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift in Sources */,
 				19AB20C62B5442D200B072A0 /* FocusedEditorField.swift in Sources */,
 				1994EEE42B2230A800651674 /* StructureGroupedHabitsView.swift in Sources */,
+				19D4D7F32B6D63FB00D961A3 /* StatisticsWeekSummaryGridView.swift in Sources */,
 				190ACBA02B1A86220081A7CD /* CategoryPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

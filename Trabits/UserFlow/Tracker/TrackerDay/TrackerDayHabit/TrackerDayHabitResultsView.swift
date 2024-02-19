@@ -41,12 +41,15 @@ class TrackerDayHabitResultsView: UIView {
     let weekResults = configuration.weekResults
     if weekResults.weekGoal > 0 {
       weekResultLabel.text = "\(weekResults.weekResult)/\(weekResults.weekGoal)"
+      weekResultLabel.textColor = .secondaryLabel
       weekResultLabelImage.isHidden = false
     } else if weekResults.weekResult > 0 {
       weekResultLabel.text = "\(weekResults.weekResult)"
+      weekResultLabel.textColor = .secondaryLabel
       weekResultLabelImage.isHidden = true
     } else {
-      weekResultLabel.text = ""
+      weekResultLabel.text = "0"
+      weekResultLabel.textColor = .clear
       weekResultLabelImage.isHidden = true
     }
     
@@ -55,12 +58,15 @@ class TrackerDayHabitResultsView: UIView {
     
     if weekResults.completionTarget > 1 {
       dayResultLabel.text = "\(weekResults.completionCount)/\(weekResults.completionTarget)"
+      dayResultLabel.textColor = .secondaryLabel
       dayResultLabelImage.isHidden = false
     } else if weekResults.completionCount > 1 {
       dayResultLabel.text = "\(weekResults.completionCount)"
+      dayResultLabel.textColor = .secondaryLabel
       dayResultLabelImage.isHidden = true
     } else {
-      dayResultLabel.text = ""
+      dayResultLabel.text = "0"
+      dayResultLabel.textColor = .clear
       dayResultLabelImage.isHidden = true
     }
     

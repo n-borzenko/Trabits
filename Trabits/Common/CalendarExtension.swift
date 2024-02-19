@@ -14,7 +14,20 @@ extension Calendar {
     return startOfDay(for: startOfTheWeek)
   }
   
-  func weekInterval(for date: Date) -> DateInterval? {
-    return dateInterval(of: .weekOfYear, for: date)
+  func startOfTheMonth(for date: Date) -> Date? {
+    let dateComponents = dateComponents([.month, .year], from: date)
+    guard let startOfTheMonth = self.date(from: dateComponents) else { return nil }
+    return startOfDay(for: startOfTheMonth)
+  }
+  
+  func startOfTheYear(for date: Date) -> Date? {
+    let dateComponents = dateComponents([.year], from: date)
+    guard let startOfTheYear = self.date(from: dateComponents) else { return nil }
+    return startOfDay(for: startOfTheYear)
+  }
+  
+  func weekInterval(for date: Date, adjustment: Int = 0) -> DateInterval? {
+    guard let adjustedDate = Calendar.current.date(byAdding: .day, value: 7 * adjustment, to: date) else { return nil}
+    return dateInterval(of: .weekOfYear, for: adjustedDate)
   }
 }

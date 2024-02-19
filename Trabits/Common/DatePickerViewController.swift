@@ -6,6 +6,22 @@
 //
 
 import UIKit
+import SwiftUI
+
+struct DatePickerView: UIViewControllerRepresentable {
+  typealias UIViewControllerType = UINavigationController
+  
+  var selectedDate: Date
+  weak var delegate: DatePickerViewControllerDelegate?
+  
+  func makeUIViewController(context: Context) -> UINavigationController {
+    let datePickerController = DatePickerViewController(date: selectedDate)
+    datePickerController.delegate = delegate
+    return UINavigationController(rootViewController: datePickerController)
+  }
+  
+  func updateUIViewController(_ uiViewController: UINavigationController, context: Context) { }
+}
 
 protocol DatePickerViewControllerDelegate: AnyObject {
   func dateSelectionHandler(date: Date)

@@ -32,7 +32,7 @@ final class MainCoordinator: NSObject, Coordinator, UITabBarControllerDelegate {
   var childCoordinators: [any Coordinator] = []
   lazy var rootViewController = UITabBarController()
 
-  private let tabs: [TabRoute] = [.tracker, .structure, .settings]
+  private let tabs: [TabRoute] = [.tracker, .statistics, .structure, .settings]
   var selectedTab: TabRoute = .tracker {
     didSet {
       let index = tabs.firstIndex(where: { $0 == selectedTab }) ?? 0
@@ -60,7 +60,7 @@ final class MainCoordinator: NSObject, Coordinator, UITabBarControllerDelegate {
         trackerCoordinator.rootViewController.tabBarItem = UITabBarItem(title: "Tracker", image: UIImage(systemName: "checklist"), tag: i)
         viewControllers.append(trackerCoordinator.rootViewController)
       case .statistics:
-        let statisticsCoordinator = StatisticsCoordinator()
+        let statisticsCoordinator = StatisticsCoordinator(mainCoordinator: self)
         childCoordinators.append(statisticsCoordinator)
         statisticsCoordinator.rootViewController.tabBarItem = UITabBarItem(title: "Statistics", image: UIImage(systemName: "chart.xyaxis.line"), tag: i)
         viewControllers.append(statisticsCoordinator.rootViewController)
