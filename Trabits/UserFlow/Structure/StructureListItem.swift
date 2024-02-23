@@ -8,13 +8,8 @@
 import SwiftUI
 
 struct StructureListItem<Content: View>: View {
-  private let content: () -> Content
   var backgroundColor: UIColor?
-  
-  init(backgroundColor: UIColor? = nil, @ViewBuilder content: @escaping () -> Content) {
-    self.content = content
-    self.backgroundColor = backgroundColor
-  }
+  @ViewBuilder var content: () -> Content
   
   var body: some View {
     content()

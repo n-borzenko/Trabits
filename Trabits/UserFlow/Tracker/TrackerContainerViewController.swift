@@ -8,34 +8,12 @@
 import UIKit
 import Combine
 
-protocol AccessibilityDayPageScrollDelegate: AnyObject {
-  func selectNextPage(direction: UIPageViewController.NavigationDirection) -> Bool
-}
-
-class DayPageViewController: UIPageViewController {
-  weak var accessibilityScrollDelegate: AccessibilityDayPageScrollDelegate?
-  
-  override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
-    guard let delegate = accessibilityScrollDelegate else { return false }
-    var newDirection: UIPageViewController.NavigationDirection
-    switch direction {
-    case .left:
-      newDirection = .forward
-    case .right:
-      newDirection = .reverse
-    default:
-      return false
-    }
-    return delegate.selectNextPage(direction: newDirection)
-  }
-}
-
 class TrackerContainerViewController: UIViewController {
   private weak var trackerCoordinator: TrackerCoordinator?
   private let dataProvider = TrackerDataProvider()
   
   private var weekViewController: TrackerWeekViewController!
-  private var dayPageViewController: DayPageViewController!
+  private var dayPageViewController: PageViewController!
   
   private let underlinedContainerView = UnderlinedContainerView()
   
@@ -44,8 +22,6 @@ class TrackerContainerViewController: UIViewController {
       underlinedContainerView.isLineVisible = !isNegativeCollectionScrollOffset
     }
   }
-  
-  private var areCompletedHabitsHidden: Bool = false
   
   private var cancellable: AnyCancellable?
     
@@ -102,7 +78,7 @@ extension TrackerContainerViewController {
     dayContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     dayContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     
-    dayPageViewController = DayPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    dayPageViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     dayPageViewController.delegate = self
     dayPageViewController.dataSource = self
     dayPageViewController.accessibilityScrollDelegate = self
@@ -191,7 +167,7 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
   }
 }
 
-extension TrackerContainerViewController: AccessibilityDayPageScrollDelegate {
+extension TrackerContainerViewController: AccessibilityPageScrollDelegate {
   func selectNextPage(direction: UIPageViewController.NavigationDirection) -> Bool {
     guard let offset = direction == .forward ? 1 : -1,
           let newDate = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate) else {

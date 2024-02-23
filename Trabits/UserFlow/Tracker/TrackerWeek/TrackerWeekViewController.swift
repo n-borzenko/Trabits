@@ -61,7 +61,7 @@ class TrackerWeekAccessibilityContainerView: UIView {
     
     guard offset != 0, let date = Calendar.current.date(byAdding: .day, value: offset, to: dataProvider.selectedDate) else { return false }
     dataProvider.selectedDate = date
-    let announcement = "\(direction == .left ? "Next" : "Previous") week, \(dataProvider.generateSelectedDateDescription()) is selected"
+    let announcement = "\(direction == .left ? "Next" : "Previous") week, \(dataProvider.generateSelectedDateDescription())"
     UIAccessibility.post(notification: .pageScrolled, argument: announcement)
     return true
   }
