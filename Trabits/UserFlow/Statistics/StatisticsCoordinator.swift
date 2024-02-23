@@ -10,13 +10,13 @@ import SwiftUI
 enum StatisticsContentType: String, CaseIterable {
   case weekly = "Weekly"
   case monthly = "Monthly"
-  case annualy = "Annualy"
+  case yearly = "Yearly"
   
   var itemTitle: String {
     switch self {
     case .weekly: return "week"
     case .monthly: return "month"
-    case .annualy: return "year"
+    case .yearly: return "year"
     }
   }
 }
@@ -25,20 +25,44 @@ protocol StatisticsRouterDelegate: AnyObject {
   func navigateToStructureTab()
 }
 
+struct StatisticsRouterState {
+  var contentType: StatisticsContentType
+  var date: Date
+}
+
 final class StatisticsRouter: ObservableObject {
-  @Published var selectedContentType = StatisticsContentType.weekly
-  @Published var currentDate = Date()
+  @Published var pickerContentType = StatisticsContentType.weekly
+  @Published var currentState = StatisticsRouterState(contentType: .weekly, date: Date())
   
   weak var delegate: StatisticsRouterDelegate?
   
   func navigateToStructureTab() {
     delegate?.navigateToStructureTab()
   }
+  
+  static func generateTitle(contentType: StatisticsContentType, date: Date) -> String {
+    switch contentType {
+    case .weekly:
+      guard let interval = Calendar.current.weekInterval(for: date),
+            let endDate = Calendar.current.date(byAdding: .day, value: -1, to: interval.end) else { return "" }
+      let startDateString = interval.start.formatted(date: .abbreviated, time: .omitted)
+      let endDateString = endDate.formatted(date: .abbreviated, time: .omitted)
+      return "\(startDateString) - \(endDateString)"
+      
+    case .monthly:
+      return Calendar.current.monthSymbols[Calendar.current.component(.month, from: date) - 1]
+      
+    case .yearly:
+      return "\(Calendar.current.component(.year, from: date))"
+    }
+  }
 }
 
 extension StatisticsRouter: DatePickerViewControllerDelegate {
   func dateSelectionHandler(date: Date) {
-    currentDate = date
+    currentState.date = date
+    let message = "\(StatisticsRouter.generateTitle(contentType: currentState.contentType, date: date)) is selected"
+    UIAccessibility.post(notification: .pageScrolled, argument: message)
   }
 }
 
@@ -62,8 +86,7 @@ final class StatisticsCoordinator: Coordinator, StatisticsRouterDelegate {
   }
   
   func popToRoot() {
-    statisticsRouter.currentDate = Date()
-    statisticsRouter.selectedContentType = .weekly
+    statisticsRouter.currentState = StatisticsRouterState(contentType: .weekly, date: Date())
   }
   
   func navigateToStructureTab() {

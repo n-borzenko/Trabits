@@ -27,7 +27,7 @@ extension Calendar {
   }
   
   func weekInterval(for date: Date, adjustment: Int = 0) -> DateInterval? {
-    guard let adjustedDate = Calendar.current.date(byAdding: .day, value: 7 * adjustment, to: date) else { return nil}
+    guard let adjustedDate = Calendar.current.date(byAdding: .day, value: 7 * adjustment, to: date) else { return nil }
     return dateInterval(of: .weekOfYear, for: adjustedDate)
   }
 }

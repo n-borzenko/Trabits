@@ -1,5 +1,5 @@
 //
-//  StatisticsMonthlyView.swift
+//  StatisticsYearlyView.swift
 //  Trabits
 //
 //  Created by Natalia Borzenko on 02/02/2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StatisticsMonthlyView: View {
+struct StatisticsYearlyView: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   
   @State private var selectedTab = 0
@@ -21,7 +21,7 @@ struct StatisticsMonthlyView: View {
 #Preview {
   let statisticsRouter = StatisticsRouter()
   let context = PersistenceController.preview.container.viewContext
-  return StatisticsMonthlyView()
+  return StatisticsYearlyView()
     .environment(\.managedObjectContext, context)
     .environmentObject(statisticsRouter)
 }

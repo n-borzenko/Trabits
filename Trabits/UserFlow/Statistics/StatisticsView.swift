@@ -16,8 +16,8 @@ struct StatisticsView: View {
   var body: some View {
     NavigationStack {
       VStack {
-        Picker("Type of content", selection: $statisticsRouter.selectedContentType) {
-          ForEach(StatisticsContentType.allCases, id: \.rawValue) { contentType in
+        Picker("Type of content", selection: $statisticsRouter.pickerContentType) {
+          ForEach([StatisticsContentType.weekly], id: \.rawValue) { contentType in
             Text(contentType.rawValue)
               .tag(contentType)
           }
@@ -25,22 +25,12 @@ struct StatisticsView: View {
         .pickerStyle(.segmented)
         .padding(.horizontal)
         .padding(.bottom)
-        .onChange(of: statisticsRouter.selectedContentType) { _ in
-          statisticsRouter.currentDate = Date()
+        .onChange(of: statisticsRouter.pickerContentType) { newValue in
+          statisticsRouter.currentState = StatisticsRouterState(contentType: newValue, date: Date())
         }
         
-        Group {
-          if statisticsRouter.selectedContentType == .weekly {
-            StatisticsWeeklyView()
-          }
-          if statisticsRouter.selectedContentType == .monthly {
-            StatisticsMonthlyView()
-          }
-          if statisticsRouter.selectedContentType == .annualy {
-            StatisticsAnnualyView()
-          }
-        }
-        .environmentObject(userDefaultsObserver)
+        StatisticsPaginationViewControllerWrapper()
+          .environmentObject(userDefaultsObserver)
       }
       .background(Color(uiColor: .systemBackground))
       .navigationTitle("Statistics")
@@ -61,7 +51,7 @@ struct StatisticsView: View {
         }
       }
       .sheet(isPresented: $isDatePickerVisible) {
-        DatePickerView(selectedDate: statisticsRouter.currentDate, delegate: statisticsRouter)
+        DatePickerView(selectedDate: statisticsRouter.currentState.date, delegate: statisticsRouter)
           .presentationDetents([.medium, .large])
           .presentationDragIndicator(.hidden)
           .interactiveDismissDisabled(true)

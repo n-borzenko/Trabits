@@ -41,6 +41,11 @@ struct StatisticsWeekHabitGoalView: View {
         .font(.caption2)
         .padding(0)
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      hasWeekGoal ? "\(weekResult) of \(weekGoal) targets completed this week , goal \(isWeekGoalAchieved ? "" : "not " )achieved" :
+        "\(weekResult) targets completed this week"
+    )
   }
 }
 

@@ -20,7 +20,6 @@ struct StatisticsSubtitleView: View {
       } label: {
         Image(systemName: "chevron.left")
       }
-      .accessibilityLabel("Previous \(unit.itemTitle)")
       .accessibilityShowsLargeContentViewer {
         Label("Previous \(unit.itemTitle)", systemImage: "chevron.left")
       }
@@ -35,7 +34,6 @@ struct StatisticsSubtitleView: View {
       } label: {
         Image(systemName: "chevron.right")
       }
-      .accessibilityLabel("Next \(unit.itemTitle)")
       .accessibilityShowsLargeContentViewer {
         Label("Next \(unit.itemTitle)", systemImage: "chevron.right")
       }
@@ -43,6 +41,20 @@ struct StatisticsSubtitleView: View {
     .font(.headline)
     .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
     .padding(.horizontal)
+    .padding(.bottom)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel("Period")
+    .accessibilityValue(subtitle)
+    .accessibilityAdjustableAction { direction in
+      switch direction {
+      case .increment:
+        nextSelectionHandler()
+      case .decrement:
+        previousSelectionHandler()
+      @unknown default:
+        break
+      }
+    }
   }
 }
 

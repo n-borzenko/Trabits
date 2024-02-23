@@ -28,11 +28,13 @@ struct StatisticsHabitView<Summary: View, Chart: View>: View {
           }
           Text(habit.title ?? "")
             .padding(0)
+            .accessibilityHidden(true)
           Spacer(minLength: 0)
           if hasDetailsRow {
             HabitDetailsRowView(category: isGrouped ? nil : habit.category, dayTarget: results.dayTarget, weekGoal: results.weekGoal)
           }
         }
+        .accessibilityElement(children: .combine)
         Spacer()
         summary()
       }
@@ -50,6 +52,8 @@ struct StatisticsHabitView<Summary: View, Chart: View>: View {
       chart()
         .padding(.top, 20)
     }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(habit.title ?? "")
   }
 }
 

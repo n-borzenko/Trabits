@@ -19,30 +19,35 @@ struct StatisticsHabitSmallWeekGoalView: View {
     let isWeekGoalAchieved = weekResult >= weekGoal
     let isSymbolVisible = hasWeekGoal && isWeekGoalAchieved
     
-    return HStack(spacing: 8.0) {
-      if hasWeekGoal {
-        Text("\(weekResult)/\(weekGoal)")
-          .font(.caption2)
-          .padding(0)
-        Image(systemName: "flame")
-          .font(.caption)
-          .imageScale(.medium)
-          .padding(dynamicTypeSize.isAccessibilitySize ? 8 : 4)
-          .tint(Color(.contrast))
-          .opacity(isSymbolVisible ? 1 : 0)
-          .background (
-            ZStack {
-              Circle()
-                .fill(Color(uiColor: isSymbolVisible ? color ?? .neutral10 : .white))
-              Circle()
-                .stroke(
-                  Color(.contrast),
-                  lineWidth: dynamicTypeSize.isAccessibilitySize ? 2 : 1
-                )
-            }
-          )
-      }
+    return HStack {
+      Text(hasWeekGoal ? "\(weekResult)/\(weekGoal)" : "\(weekResult)")
+        .font(.caption2)
+        .padding(0)
+      Image(systemName: "flame")
+        .font(.caption)
+        .imageScale(.medium)
+        .padding(dynamicTypeSize.isAccessibilitySize ? 8 : 4)
+        .tint(Color(.contrast))
+        .opacity(isSymbolVisible ? 1 : 0)
+        .background (
+          ZStack {
+            Circle()
+              .fill(Color(uiColor: isSymbolVisible ? color ?? .neutral10 : .white))
+            Circle()
+              .stroke(
+                Color(.contrast),
+                lineWidth: dynamicTypeSize.isAccessibilitySize ? 2 : 1
+              )
+          }
+            .opacity(hasWeekGoal ? 1 : 0)
+        )
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      hasWeekGoal ? "\(weekResult) of \(weekGoal) targets completed this week , goal \(isWeekGoalAchieved ? "" : "not " )achieved" :
+        "\(weekResult) targets completed this week"
+    )
+    .accessibilityAddTraits(.isStaticText)
     .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     .accessibilityShowsLargeContentViewer()
   }
