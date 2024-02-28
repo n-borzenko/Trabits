@@ -10,7 +10,7 @@ import SwiftUI
 struct StatisticsWeekSummaryGridView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
   
-  var habitsWithResults: [StatisticsWeekData.HabitWithResults]
+  var habitsWithResults: [StatisticsWeekData.HabitWithResults<StatisticsWeekResults>]
   var isGrouped: Bool = false
   
   var body: some View {

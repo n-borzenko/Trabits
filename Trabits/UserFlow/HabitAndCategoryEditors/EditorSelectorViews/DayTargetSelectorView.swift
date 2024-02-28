@@ -55,7 +55,7 @@ struct DayTargetSelectorView: View {
   var isNew: Bool
   
   var body: some View {
-    let layout = dynamicTypeSize < .accessibility1 ? AnyLayout(HStackLayout(alignment: .center)) : AnyLayout(VStackLayout(alignment: .leading))
+    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .center))
     
     Section("Completions per day") {
       layout {

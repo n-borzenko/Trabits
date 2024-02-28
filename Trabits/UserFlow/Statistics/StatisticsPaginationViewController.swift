@@ -143,9 +143,14 @@ extension StatisticsPaginationViewController: AccessibilityPageScrollDelegate {
 
 extension StatisticsPaginationViewController {
   func currentDateUpdateHandler(newState: StatisticsRouterState, completion: ((Bool) -> Void)? = nil) {
+    if newState.contentType != statisticsRouter.currentState.contentType {
+      let initialControllers = [generatePageView(contentType: newState.contentType, date: newState.date)]
+      pageViewController.setViewControllers(initialControllers, direction: .forward, animated: false, completion: completion)
+      return
+    }
+    
     guard let currentPageDate = getCurrentPageDate(),
           !isDateInCurrentPageInterval(contentType: newState.contentType, testDate: newState.date) else { return }
-
     let direction: UIPageViewController.NavigationDirection = newState.date > currentPageDate ? .forward : .reverse
     let initialControllers = [generatePageView(contentType: newState.contentType, date: newState.date)]
     pageViewController.setViewControllers(initialControllers, direction: direction, animated: true, completion: completion)
@@ -154,18 +159,16 @@ extension StatisticsPaginationViewController {
 
 extension StatisticsPaginationViewController {
   private func generatePageView(contentType: StatisticsContentType, date: Date, adjustment: Int = 0) -> UIViewController {
-    //    switch contentType {
-    //    case .weekly:
-    guard let interval = Calendar.current.weekInterval(for: date, adjustment: adjustment) else { return UIViewController() }
-    let weekData = StatisticsWeekData(week: interval, context: context)
-    return UIHostingController(rootView: StatisticsWeekView(weekData: weekData))
-    //    case .monthly:
-    //      return Calendar.current.monthSymbols[Calendar.current.component(.month, from: currentState.date) - 1]
-    //
-    //    case .yearly:
-    //      return "\(Calendar.current.component(.year, from: currentState.date))"
-    //    default: return nil
-    //    }
+    switch contentType {
+    case .weekly:
+      guard let interval = Calendar.current.weekInterval(for: date, adjustment: adjustment) else { return UIViewController() }
+      let weekData = StatisticsWeekData(week: interval, context: context)
+      return UIHostingController(rootView: StatisticsWeekView(weekData: weekData))
+    case .monthly:
+      guard let interval = Calendar.current.monthInterval(for: date, adjustment: adjustment),
+            let monthData = StatisticsMonthData(month: interval, context: context) else { return UIViewController() }
+      return UIHostingController(rootView: StatisticsMonthView(monthData: monthData))
+    }
   }
   
   private func getCurrentPageDate(adjustment: Int = 0) -> Date? {
@@ -176,9 +179,10 @@ extension StatisticsPaginationViewController {
       guard let date = Calendar.current.weekInterval(for: startDate, adjustment: adjustment)?.start else { return nil }
       return date
     case .monthly:
-      return nil
-    case .yearly:
-      return nil
+      guard let controller = pageViewController.viewControllers?.first as? UIHostingController<StatisticsMonthView> else { return nil }
+      let startDate = controller.rootView.monthData.month.start
+      guard let date = Calendar.current.monthInterval(for: startDate, adjustment: adjustment)?.start else { return nil }
+      return date
     }
   }
   
@@ -188,9 +192,8 @@ extension StatisticsPaginationViewController {
       guard let controller = pageViewController.viewControllers?.first as? UIHostingController<StatisticsWeekView> else { return false }
       return testDate >= controller.rootView.weekData.week.start && testDate < controller.rootView.weekData.week.end
     case .monthly:
-      return false
-    case .yearly:
-      return false
+      guard let controller = pageViewController.viewControllers?.first as? UIHostingController<StatisticsMonthView> else { return false }
+      return testDate >= controller.rootView.monthData.month.start && testDate < controller.rootView.monthData.month.end
     }
   }
 }

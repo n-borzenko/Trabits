@@ -10,13 +10,11 @@ import SwiftUI
 enum StatisticsContentType: String, CaseIterable {
   case weekly = "Weekly"
   case monthly = "Monthly"
-  case yearly = "Yearly"
   
   var itemTitle: String {
     switch self {
     case .weekly: return "week"
     case .monthly: return "month"
-    case .yearly: return "year"
     }
   }
 }
@@ -51,9 +49,6 @@ final class StatisticsRouter: ObservableObject {
       
     case .monthly:
       return Calendar.current.monthSymbols[Calendar.current.component(.month, from: date) - 1]
-      
-    case .yearly:
-      return "\(Calendar.current.component(.year, from: date))"
     }
   }
 }
@@ -87,6 +82,7 @@ final class StatisticsCoordinator: Coordinator, StatisticsRouterDelegate {
   
   func popToRoot() {
     statisticsRouter.currentState = StatisticsRouterState(contentType: .weekly, date: Date())
+    statisticsRouter.pickerContentType = .weekly
   }
   
   func navigateToStructureTab() {

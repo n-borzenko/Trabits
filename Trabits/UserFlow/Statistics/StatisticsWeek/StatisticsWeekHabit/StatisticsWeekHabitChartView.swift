@@ -11,7 +11,7 @@ struct StatisticsWeekHabitChartView: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
   
-  var results: StatisticsResults
+  var results: StatisticsWeekResults
   var title: String?
   var color: UIColor?
   
@@ -86,7 +86,7 @@ struct StatisticsWeekHabitChartView: View {
     .accessibilityHint("Swipe up or down to select an audio graph action, then double tap to activate. Double tap and hold, wait or the sound, then drag to hear data values.")
   }
   
-  private func getProgressDetails(progress: StatisticsResults.DayProgress) -> (isCompleted: Bool, value: Double, target: Double) {
+  private func getProgressDetails(progress: StatisticsDayProgress) -> (isCompleted: Bool, value: Double, target: Double) {
     switch progress {
     case let .completed(completed: value, target: target): return (isCompleted: true, value: Double(value), target: Double(target))
     case let .partial(completed: value, target: target): return (isCompleted: false, value: Double(value), target: Double(target))
@@ -214,7 +214,7 @@ extension StatisticsWeekHabitChartView: AXChartDescriptorRepresentable {
   } catch {}
   
   let statisticsRouter = StatisticsRouter()
-  let results = StatisticsResults(dayTarget: habit?.sortedDayTargets.first, weekGoal: habit?.sortedWeekGoals.first,
+  let results = StatisticsWeekResults(dayTarget: habit?.sortedDayTargets.first, weekGoal: habit?.sortedWeekGoals.first,
                                   weekResult: 4,
                                   progress: [
                                     .completed(completed: 3, target: 3),

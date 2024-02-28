@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StatisticsWeekSummaryChartView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
-  var results: StatisticsResults
+  var results: StatisticsWeekResults
   var color: UIColor?
   
   var body: some View {
@@ -44,7 +44,7 @@ struct StatisticsWeekSummaryChartView: View {
     .accessibilityAddTraits(.isStaticText)
   }
   
-  private func getProperties(result: StatisticsResults.DayProgress) -> (hasBorder: Bool, hasDot: Bool) {
+  private func getProperties(result: StatisticsDayProgress) -> (hasBorder: Bool, hasDot: Bool) {
     switch result {
     case .completed(completed: _, target: _): return (hasBorder: true, hasDot: true)
     case .partial(completed: _, target: _): return (hasBorder: true, hasDot: false)
@@ -52,7 +52,7 @@ struct StatisticsWeekSummaryChartView: View {
     }
   }
   
-  private func getDescription(result: StatisticsResults.DayProgress, index: Int) -> String {
+  private func getDescription(result: StatisticsDayProgress, index: Int) -> String {
     let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
     return "\(result.message) on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex])"
   }

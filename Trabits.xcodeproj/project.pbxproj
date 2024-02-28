@@ -47,8 +47,7 @@
 		197606B52B6AAF5100E34B9B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606B42B6AAF5100E34B9B /* OnboardingView.swift */; };
 		197606B72B6B1FEC00E34B9B /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606B62B6B1FEC00E34B9B /* StatisticsView.swift */; };
 		197606BB2B6C88CC00E34B9B /* StatisticsSubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */; };
-		197606BD2B6C8AED00E34B9B /* StatisticsMonthlyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */; };
-		197606BF2B6C8D3600E34B9B /* StatisticsYearlyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BE2B6C8D3600E34B9B /* StatisticsYearlyView.swift */; };
+		197606BD2B6C8AED00E34B9B /* StatisticsMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197606BC2B6C8AED00E34B9B /* StatisticsMonthView.swift */; };
 		1979DBDE2B5F407F00E6164B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDD2B5F407F00E6164B /* SettingsView.swift */; };
 		1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */; };
 		1979DBE22B5F56A300E6164B /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */; };
@@ -72,6 +71,12 @@
 		19A16CF22AD0CC0200595101 /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */; };
 		19A16CF42AD0E30700595101 /* TrackerWeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF32AD0E30700595101 /* TrackerWeekViewController.swift */; };
 		19A16CF62AD0EDB500595101 /* TrackerDayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A16CF52AD0EDB500595101 /* TrackerDayViewController.swift */; };
+		19AA44022B8A6A7800B5C5C6 /* StatisticsIntervalData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA44012B8A6A7800B5C5C6 /* StatisticsIntervalData.swift */; };
+		19AA44042B8A7C4D00B5C5C6 /* StatisticsMonthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA44032B8A7C4D00B5C5C6 /* StatisticsMonthData.swift */; };
+		19AA44072B8ACDE600B5C5C6 /* StatisticsMonthPlainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA44062B8ACDE600B5C5C6 /* StatisticsMonthPlainView.swift */; };
+		19AA44092B8ACF0000B5C5C6 /* StatisticsMonthGroupedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA44082B8ACF0000B5C5C6 /* StatisticsMonthGroupedView.swift */; };
+		19AA440B2B8AD4FF00B5C5C6 /* StatisticsMonthHabitProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA440A2B8AD4FF00B5C5C6 /* StatisticsMonthHabitProgressView.swift */; };
+		19AA440D2B8C116E00B5C5C6 /* StatisticsMonthHabitChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA440C2B8C116E00B5C5C6 /* StatisticsMonthHabitChartView.swift */; };
 		19AB20C62B5442D200B072A0 /* FocusedEditorField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AB20C52B5442D200B072A0 /* FocusedEditorField.swift */; };
 		19AE5EB62AD77A5100E1860C /* TrackerDayDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AE5EB52AD77A5100E1860C /* TrackerDayDataProvider.swift */; };
 		19AF065D2B58A2A900C559C4 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AF065C2B58A2A900C559C4 /* AppCoordinator.swift */; };
@@ -140,8 +145,7 @@
 		197606B42B6AAF5100E34B9B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		197606B62B6B1FEC00E34B9B /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsSubtitleView.swift; sourceTree = "<group>"; };
-		197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthlyView.swift; sourceTree = "<group>"; };
-		197606BE2B6C8D3600E34B9B /* StatisticsYearlyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsYearlyView.swift; sourceTree = "<group>"; };
+		197606BC2B6C8AED00E34B9B /* StatisticsMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthView.swift; sourceTree = "<group>"; };
 		1979DBDD2B5F407F00E6164B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1979DBDF2B5F568700E6164B /* SettingsUserDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUserDataView.swift; sourceTree = "<group>"; };
 		1979DBE12B5F56A300E6164B /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
@@ -165,6 +169,12 @@
 		19A16CF12AD0CC0200595101 /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
 		19A16CF32AD0E30700595101 /* TrackerWeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerWeekViewController.swift; sourceTree = "<group>"; };
 		19A16CF52AD0EDB500595101 /* TrackerDayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayViewController.swift; sourceTree = "<group>"; };
+		19AA44012B8A6A7800B5C5C6 /* StatisticsIntervalData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsIntervalData.swift; sourceTree = "<group>"; };
+		19AA44032B8A7C4D00B5C5C6 /* StatisticsMonthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthData.swift; sourceTree = "<group>"; };
+		19AA44062B8ACDE600B5C5C6 /* StatisticsMonthPlainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthPlainView.swift; sourceTree = "<group>"; };
+		19AA44082B8ACF0000B5C5C6 /* StatisticsMonthGroupedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthGroupedView.swift; sourceTree = "<group>"; };
+		19AA440A2B8AD4FF00B5C5C6 /* StatisticsMonthHabitProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthHabitProgressView.swift; sourceTree = "<group>"; };
+		19AA440C2B8C116E00B5C5C6 /* StatisticsMonthHabitChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsMonthHabitChartView.swift; sourceTree = "<group>"; };
 		19AB20C52B5442D200B072A0 /* FocusedEditorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedEditorField.swift; sourceTree = "<group>"; };
 		19AE5EB52AD77A5100E1860C /* TrackerDayDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDayDataProvider.swift; sourceTree = "<group>"; };
 		19AF065C2B58A2A900C559C4 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -317,6 +327,26 @@
 			path = TrackerDayHabit;
 			sourceTree = "<group>";
 		};
+		19AA44052B8A9F9300B5C5C6 /* StatisticsPageContent */ = {
+			isa = PBXGroup;
+			children = (
+				197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */,
+				19D4D7EC2B6D45C800D961A3 /* StatisticsHabitView.swift */,
+				19164C482B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift */,
+				194CCE832B731FD200F35FEE /* StatisticsListItem.swift */,
+			);
+			path = StatisticsPageContent;
+			sourceTree = "<group>";
+		};
+		19AA440E2B8C270600B5C5C6 /* StatisticsMonthHabit */ = {
+			isa = PBXGroup;
+			children = (
+				19AA440A2B8AD4FF00B5C5C6 /* StatisticsMonthHabitProgressView.swift */,
+				19AA440C2B8C116E00B5C5C6 /* StatisticsMonthHabitChartView.swift */,
+			);
+			path = StatisticsMonthHabit;
+			sourceTree = "<group>";
+		};
 		19AF06592B557FB400C559C4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -348,14 +378,11 @@
 			children = (
 				19AF06652B5CAA8500C559C4 /* StatisticsCoordinator.swift */,
 				197606B62B6B1FEC00E34B9B /* StatisticsView.swift */,
+				19AA44012B8A6A7800B5C5C6 /* StatisticsIntervalData.swift */,
 				192B98472B82D4D000403493 /* StatisticsPaginationViewController.swift */,
-				197606BA2B6C88CC00E34B9B /* StatisticsSubtitleView.swift */,
-				19D4D7EC2B6D45C800D961A3 /* StatisticsHabitView.swift */,
-				19164C482B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift */,
-				194CCE832B731FD200F35FEE /* StatisticsListItem.swift */,
+				19AA44052B8A9F9300B5C5C6 /* StatisticsPageContent */,
 				19D4D7E32B6D447B00D961A3 /* StatisticsWeek */,
-				19D4D7E42B6D448800D961A3 /* StatisticsMonthly */,
-				19D4D7E52B6D449400D961A3 /* StatisticsYearly */,
+				19D4D7E42B6D448800D961A3 /* StatisticsMonth */,
 			);
 			path = Statistics;
 			sourceTree = "<group>";
@@ -457,20 +484,16 @@
 			path = StatisticsWeek;
 			sourceTree = "<group>";
 		};
-		19D4D7E42B6D448800D961A3 /* StatisticsMonthly */ = {
+		19D4D7E42B6D448800D961A3 /* StatisticsMonth */ = {
 			isa = PBXGroup;
 			children = (
-				197606BC2B6C8AED00E34B9B /* StatisticsMonthlyView.swift */,
+				19AA44032B8A7C4D00B5C5C6 /* StatisticsMonthData.swift */,
+				197606BC2B6C8AED00E34B9B /* StatisticsMonthView.swift */,
+				19AA44062B8ACDE600B5C5C6 /* StatisticsMonthPlainView.swift */,
+				19AA44082B8ACF0000B5C5C6 /* StatisticsMonthGroupedView.swift */,
+				19AA440E2B8C270600B5C5C6 /* StatisticsMonthHabit */,
 			);
-			path = StatisticsMonthly;
-			sourceTree = "<group>";
-		};
-		19D4D7E52B6D449400D961A3 /* StatisticsYearly */ = {
-			isa = PBXGroup;
-			children = (
-				197606BE2B6C8D3600E34B9B /* StatisticsYearlyView.swift */,
-			);
-			path = StatisticsYearly;
+			path = StatisticsMonth;
 			sourceTree = "<group>";
 		};
 		19FE5B5C2B2B852300827C82 /* Structure */ = {
@@ -568,11 +591,10 @@
 				1952B15D2B48C9CF00FE16C7 /* TrackerDayHabitContentConfiguration.swift in Sources */,
 				1979DBE02B5F568700E6164B /* SettingsUserDataView.swift in Sources */,
 				1942EC412AB8B9D5000F70CC /* DayResult+CoreDataProperties.swift in Sources */,
-				197606BD2B6C8AED00E34B9B /* StatisticsMonthlyView.swift in Sources */,
+				197606BD2B6C8AED00E34B9B /* StatisticsMonthView.swift in Sources */,
 				19D4D7ED2B6D45C800D961A3 /* StatisticsHabitView.swift in Sources */,
 				199B8E622B150D1D00DD2DA1 /* DayTarget+CoreDataProperties.swift in Sources */,
 				19020D032A7DBC8B00616BBE /* EmptyStateView.swift in Sources */,
-				197606BF2B6C8D3600E34B9B /* StatisticsYearlyView.swift in Sources */,
 				19AF06642B5CAA7400C559C4 /* SettingsCoordinator.swift in Sources */,
 				19AF065D2B58A2A900C559C4 /* AppCoordinator.swift in Sources */,
 				1994EEE62B2230B900651674 /* StructureCategoriesView.swift in Sources */,
@@ -585,6 +607,7 @@
 				19A16CF22AD0CC0200595101 /* DatePickerViewController.swift in Sources */,
 				19AE5EB62AD77A5100E1860C /* TrackerDayDataProvider.swift in Sources */,
 				194CCE802B72A64200F35FEE /* StatisticsWeekData.swift in Sources */,
+				19AA44072B8ACDE600B5C5C6 /* StatisticsMonthPlainView.swift in Sources */,
 				199B8E5F2B150D1D00DD2DA1 /* WeekGoal+CoreDataClass.swift in Sources */,
 				1994EEE22B222FAA00651674 /* StructureHabitsView.swift in Sources */,
 				19A16CF62AD0EDB500595101 /* TrackerDayViewController.swift in Sources */,
@@ -594,6 +617,7 @@
 				19BB9BE42A6F16D000D328BD /* PersistenceController.swift in Sources */,
 				19FE5B602B2BD75500827C82 /* StructureCategoryDetailView.swift in Sources */,
 				19186D522B1D41B500618E70 /* DayTargetSelectorView.swift in Sources */,
+				19AA44042B8A7C4D00B5C5C6 /* StatisticsMonthData.swift in Sources */,
 				1952B1632B48EFEB00FE16C7 /* WeekProgressView.swift in Sources */,
 				19C138B42ABD1E1B00CDA2B1 /* TrackerDayHabitListCell.swift in Sources */,
 				19E8EDB12B4E2679001A5856 /* TrackerDayHabitResultsView.swift in Sources */,
@@ -605,6 +629,7 @@
 				192B98532B87C24100403493 /* StatisticsWeekHeaderView.swift in Sources */,
 				19E3C6502AD06EA8006D80D9 /* TrackerContainerViewController.swift in Sources */,
 				1942EC402AB8B9D5000F70CC /* DayResult+CoreDataClass.swift in Sources */,
+				19AA440D2B8C116E00B5C5C6 /* StatisticsMonthHabitChartView.swift in Sources */,
 				19813BEF2B151E76003B2B97 /* HabitEditorView.swift in Sources */,
 				19E12FBC2B4F2E7500C3F39E /* CalendarExtension.swift in Sources */,
 				1952B1612B48E02B00FE16C7 /* LabelWithInsets.swift in Sources */,
@@ -612,6 +637,7 @@
 				194CCE842B731FD200F35FEE /* StatisticsListItem.swift in Sources */,
 				1960EF8E2A96719C002BD3BA /* UIView+PinnedSubview.swift in Sources */,
 				192B98482B82D4D000403493 /* StatisticsPaginationViewController.swift in Sources */,
+				19AA44022B8A6A7800B5C5C6 /* StatisticsIntervalData.swift in Sources */,
 				19186D562B1D41C500618E70 /* ColorSelectorView.swift in Sources */,
 				19801E592A4798820050C8C9 /* UIColorValueTransformer.swift in Sources */,
 				19186D5B2B1E2D2D00618E70 /* CategoryEditorView.swift in Sources */,
@@ -624,6 +650,7 @@
 				197606B52B6AAF5100E34B9B /* OnboardingView.swift in Sources */,
 				192B984D2B85883600403493 /* StatisticsWeekSummaryRowView.swift in Sources */,
 				19801E482A411D300050C8C9 /* Habit+CoreDataClass.swift in Sources */,
+				19AA440B2B8AD4FF00B5C5C6 /* StatisticsMonthHabitProgressView.swift in Sources */,
 				1952B15F2B48CAB600FE16C7 /* TrackerDayHabitContentView.swift in Sources */,
 				19AF066F2B5CAB7500C559C4 /* MainCoordinator.swift in Sources */,
 				19D4D7EF2B6D633E00D961A3 /* StatisticsWeekGroupedView.swift in Sources */,
@@ -638,6 +665,7 @@
 				19AF066C2B5CAB2300C559C4 /* TrackerCoordinator.swift in Sources */,
 				19164C492B8045210073A762 /* StatisticsHabitSmallWeekGoalView.swift in Sources */,
 				199B8E612B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift in Sources */,
+				19AA44092B8ACF0000B5C5C6 /* StatisticsMonthGroupedView.swift in Sources */,
 				198F60B62B7592E100575EB7 /* StatisticsWeekHabitGoalView.swift in Sources */,
 				19AB20C62B5442D200B072A0 /* FocusedEditorField.swift in Sources */,
 				1994EEE42B2230A800651674 /* StructureGroupedHabitsView.swift in Sources */,

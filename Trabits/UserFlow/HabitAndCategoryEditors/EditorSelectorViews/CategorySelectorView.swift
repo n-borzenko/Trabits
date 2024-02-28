@@ -12,7 +12,7 @@ struct CategorySelectorView: View {
   var category: Category?
   
   var body: some View {
-    let layout = dynamicTypeSize < .accessibility1 ? AnyLayout(HStackLayout(alignment: .center)) : AnyLayout(VStackLayout(alignment: .leading))
+    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .center))
     
     Section("Category") {
       NavigationLink(value: HabitEditorPath.category) {

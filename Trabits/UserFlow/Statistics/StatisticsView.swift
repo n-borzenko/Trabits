@@ -17,7 +17,7 @@ struct StatisticsView: View {
     NavigationStack {
       VStack {
         Picker("Type of content", selection: $statisticsRouter.pickerContentType) {
-          ForEach([StatisticsContentType.weekly], id: \.rawValue) { contentType in
+          ForEach(StatisticsContentType.allCases, id: \.rawValue) { contentType in
             Text(contentType.rawValue)
               .tag(contentType)
           }

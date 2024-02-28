@@ -101,15 +101,6 @@ final class MainCoordinator: NSObject, Coordinator, UITabBarControllerDelegate {
     lineBorderView.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
     
     rootViewController.delegate = self
-    
-    let navigationBarAppearance = UINavigationBarAppearance()
-    navigationBarAppearance.configureWithOpaqueBackground()
-    navigationBarAppearance.backgroundColor = .systemBackground
-    navigationBarAppearance.shadowColor = nil
-    UINavigationBar.appearance().standardAppearance = navigationBarAppearance
-    UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
-    UINavigationBar.appearance().compactAppearance = navigationBarAppearance
-    UINavigationBar.appearance().compactScrollEdgeAppearance = navigationBarAppearance
   }
   
   func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
