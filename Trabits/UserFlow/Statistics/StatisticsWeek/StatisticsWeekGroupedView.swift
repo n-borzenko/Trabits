@@ -10,7 +10,7 @@ import SwiftUI
 struct StatisticsWeekGroupedView: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var weekData: StatisticsWeekData
-  
+
   var body: some View {
     ForEach(weekData.categories) { categoryWrapper in
       let category = unwrapCategory(wrappedCategory: categoryWrapper)
@@ -35,7 +35,7 @@ struct StatisticsWeekGroupedView: View {
       }
     }
   }
-  
+
   private func unwrapCategory(wrappedCategory: StatisticsIntervalData.CategoryWrapper) -> Category? {
     guard case let .category(category) = wrappedCategory else { return nil }
     return category
