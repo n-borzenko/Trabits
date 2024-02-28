@@ -14,7 +14,7 @@ final class AppCoordinator {
   var window: UIWindow
 
   private var cancellables = Set<AnyCancellable>()
-  
+
   init(window: UIWindow) {
     self.window = window
 
@@ -29,24 +29,23 @@ final class AppCoordinator {
       }
       .store(in: &cancellables)
   }
-  
+
   private func setupOnboardingCoordinator() {
     let onboardingCoordinator = OnboardingCoordinator()
     childCoordinators.append(onboardingCoordinator)
     onboardingCoordinator.start()
     window.rootViewController = onboardingCoordinator.rootViewController
   }
-  
+
   private func setupMainCoordinator() {
     let mainCoordinator = MainCoordinator()
     childCoordinators.append(mainCoordinator)
     mainCoordinator.start()
     window.rootViewController = mainCoordinator.rootViewController
   }
-  
+
   deinit {
     cancellables.forEach { $0.cancel() }
     cancellables.removeAll()
   }
 }
-

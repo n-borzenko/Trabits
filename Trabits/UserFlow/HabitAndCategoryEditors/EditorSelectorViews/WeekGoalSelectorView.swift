@@ -12,7 +12,7 @@ struct WeekGoalSelectorView: View {
   @Binding var resetIsOn: Bool
   @State private var isAlertPresented = false
   var isNew: Bool
-  
+
   var body: some View {
     Section("Completed days per week") {
       Picker("Week goal", selection: $weekGoal) {
@@ -26,19 +26,17 @@ struct WeekGoalSelectorView: View {
           Toggle("Reset previously set goals", isOn: $resetIsOn)
             .tint(.neutral60)
           Divider()
-          Button(action: {
+          Button {
             isAlertPresented = true
-          }) {
+          } label: {
             Image(systemName: "info.circle")
               .font(.title2)
           }
           .foregroundColor(.neutral60)
           .buttonStyle(.borderless)
-          .alert(
-            "Resetting week goal",
-            isPresented: $isAlertPresented,
-            actions: { Button("OK", role: .cancel, action: { }) }
-          ) {
+          .alert("Resetting week goal", isPresented: $isAlertPresented) {
+            Button("OK", role: .cancel) {}
+          } message: {
             Text("Resetting previuosly set goals will affect your statistics.\nAlternatively, you can track new goal starting today.")
           }
         }

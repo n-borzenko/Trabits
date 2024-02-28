@@ -30,12 +30,12 @@ struct StatisticsWeekHabitChartView: View {
   }
   
   private var hasData: Bool {
-    results.progress.first(where: {
+    results.progress.first {
       switch $0 {
-      case .completed(completed: _, target: _), .partial(completed: _, target: _): return true
-      case .none(target: _): return false
+      case .completed, .partial: return true
+      case .none: return false
       }
-    }) != nil
+    } != nil
   }
   
   var body: some View {
@@ -83,7 +83,10 @@ struct StatisticsWeekHabitChartView: View {
     }
     .accessibilityElement(children: .contain)
     .accessibilityChartDescriptor(self)
-    .accessibilityHint("Swipe up or down to select an audio graph action, then double tap to activate. Double tap and hold, wait or the sound, then drag to hear data values.")
+    .accessibilityHint("""
+      Swipe up or down to select an audio graph action, then double tap to activate.
+      Double tap and hold, wait or the sound, then drag to hear data values.
+    """)
   }
   
   private func getProgressDetails(progress: StatisticsDayProgress) -> (isCompleted: Bool, value: Double, target: Double) {
@@ -208,23 +211,26 @@ extension StatisticsWeekHabitChartView: AXChartDescriptorRepresentable {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var habit: Habit? = nil
+  var habit: Habit?
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
   
   let statisticsRouter = StatisticsRouter()
-  let results = StatisticsWeekResults(dayTarget: habit?.sortedDayTargets.first, weekGoal: habit?.sortedWeekGoals.first,
-                                  weekResult: 4,
-                                  progress: [
-                                    .completed(completed: 3, target: 3),
-                                    .completed(completed: 2, target: 2),
-                                    .completed(completed: 2, target: 2),
-                                    .partial(completed: 1, target: 2),
-                                    .none(target: 6),
-                                    .completed(completed: 6, target: 4),
-                                    .none(target: Int(habit?.sortedDayTargets.first?.count ?? 4))
-                                  ])
+  let results = StatisticsWeekResults(
+    dayTarget: habit?.sortedDayTargets.first,
+    weekGoal: habit?.sortedWeekGoals.first,
+    weekResult: 4,
+    progress: [
+      .completed(completed: 3, target: 3),
+      .completed(completed: 2, target: 2),
+      .completed(completed: 2, target: 2),
+      .partial(completed: 1, target: 2),
+      .none(target: 6),
+      .completed(completed: 6, target: 4),
+      .none(target: Int(habit?.sortedDayTargets.first?.count ?? 4))
+    ]
+  )
   return StatisticsWeekHabitChartView(results: results, title: habit?.title, color: habit?.color)
     .environment(\.managedObjectContext, context)
     .environmentObject(statisticsRouter)

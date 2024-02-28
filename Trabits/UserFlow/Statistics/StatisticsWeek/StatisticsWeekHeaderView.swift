@@ -34,6 +34,6 @@ struct StatisticsWeekHeaderView: View {
 }
 
 #Preview {
-    StatisticsWeekHeaderView(title: "Summary")
+  StatisticsWeekHeaderView(title: "Summary")
     .environmentObject(UserDefaultsObserver())
 }

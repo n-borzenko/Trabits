@@ -11,7 +11,7 @@ struct StatisticsMonthView: View {
   @EnvironmentObject var userDefaultsObserver: UserDefaultsObserver
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var monthData: StatisticsMonthData
-  
+
   var body: some View {
     ScrollViewReader { proxy in
       GeometryReader { geo in
@@ -44,7 +44,7 @@ struct StatisticsMonthView: View {
       }
     }
   }
-  
+
   @ViewBuilder private func topView() -> some View {
     Rectangle()
       .frame(width: 0, height: 0)
@@ -64,4 +64,3 @@ struct StatisticsMonthView: View {
     .environmentObject(UserDefaultsObserver())
     .environmentObject(statisticsRouter)
 }
-

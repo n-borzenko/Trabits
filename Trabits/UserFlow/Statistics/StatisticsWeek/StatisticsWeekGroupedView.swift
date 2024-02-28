@@ -19,7 +19,9 @@ struct StatisticsWeekGroupedView: View {
           StatisticsListItem {
             StatisticsHabitView(habit: item.habit, results: item.results, isGrouped: true) {
               StatisticsWeekHabitGoalView(
-                weekGoal: Int(item.results.weekGoal?.count ?? 0), weekResult: item.results.weekResult, color: category?.color
+                weekGoal: Int(item.results.weekGoal?.count ?? 0),
+                weekResult: item.results.weekResult,
+                color: category?.color
               )
             } chart: {
               StatisticsWeekHabitChartView(

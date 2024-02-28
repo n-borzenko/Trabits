@@ -9,12 +9,12 @@ import SwiftUI
 
 struct StructureGroupedHabitView: View {
   @ObservedObject var habit: Habit
-  
+
   var body: some View {
     let weekGoal = habit.sortedWeekGoals.first
     let dayTarget = habit.sortedDayTargets.first
     let hasDetailsRow = (weekGoal?.count ?? 0) > 0 || (dayTarget?.count ?? 1) > 1
-    
+
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
         if habit.archivedAt != nil {
@@ -41,9 +41,9 @@ struct StructureGroupedHabitsView: View {
     ]
   )
   private var groupedHabitSections: SectionedFetchResults<String, Habit>
-  
+
   @Binding var isHabitEditorVisible: Bool
-  
+
   var body: some View {
     List {
       ForEach(groupedHabitSections) { category in
@@ -85,7 +85,7 @@ struct StructureGroupedHabitsView: View {
       }
     }
   }
-  
+
   private func unarchiveHabit(_ habit: Habit) {
     var notArchivedHabitsCount = 0
     do {
@@ -96,12 +96,12 @@ struct StructureGroupedHabitsView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     habit.archivedAt = nil
     habit.order = Int32(notArchivedHabitsCount)
     saveChanges()
   }
-  
+
   private func archiveHabit(_ habit: Habit) {
     var habits: [Habit] = []
     do {
@@ -112,7 +112,7 @@ struct StructureGroupedHabitsView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     if !habits.isEmpty {
       for index in 0..<habits.endIndex {
         habits[index].order -= 1
@@ -122,7 +122,7 @@ struct StructureGroupedHabitsView: View {
     habit.order = -1
     saveChanges()
   }
-  
+
   private func saveChanges() {
     do {
       try context.save()

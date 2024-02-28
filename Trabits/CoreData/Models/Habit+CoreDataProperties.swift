@@ -24,20 +24,20 @@ extension Habit: Identifiable {
   @NSManaged var dayResults: NSSet?
   @NSManaged var dayTargets: NSSet?
   @NSManaged var weekGoals: NSSet?
-  
+
   @objc var categoryGroupIdentifier: String {
     category?.objectID.uriRepresentation().lastPathComponent ?? "Uncategorized"
   }
-  
+
   public override func awakeFromInsert() {
     setPrimitiveValue(NSDate(), forKey: #keyPath(Habit.createdAt))
     super.awakeFromInsert()
   }
-  
+
   var sortedWeekGoals: [WeekGoal] {
     weekGoals?.sortedArray(using: [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: false)]) as? [WeekGoal] ?? []
   }
-  
+
   var sortedDayTargets: [DayTarget] {
     dayTargets?.sortedArray(using: [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: false)]) as? [DayTarget] ?? []
   }
@@ -48,7 +48,7 @@ extension Habit {
     let request = NSFetchRequest<Habit>(entityName: "Habit")
     request.sortDescriptors = [
       NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
-      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true)
     ]
     return request
   }
@@ -56,7 +56,7 @@ extension Habit {
   // from nil - all habits, from 0 - not archived habits, from n - subset of not archived habits
   @nonobjc class func orderedHabitsFetchRequest(startingFrom position: Int32? = nil, forDate date: Date? = nil) -> NSFetchRequest<Habit> {
     let request = orderedHabitsFetchRequest()
-    var predicates = [NSPredicate]()
+    var predicates: [NSPredicate] = []
     if let position {
       predicates.append(NSPredicate(format: "order >= %@", NSNumber(value: position)))
     }
@@ -68,13 +68,13 @@ extension Habit {
     }
     return request
   }
-  
+
   @nonobjc class func orderedGroupedHabitsFetchRequest(forDate date: Date? = nil) -> NSFetchRequest<Habit> {
     let request = NSFetchRequest<Habit>(entityName: "Habit")
     request.sortDescriptors = [
       NSSortDescriptor(keyPath: \Habit.category?.order, ascending: false),
       NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
-      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true)
     ]
     if let date {
       request.predicate = NSPredicate(format: "archivedAt == nil OR archivedAt >= %@", date as NSDate)
@@ -87,13 +87,13 @@ extension Habit {
 extension Habit {
   @objc(addDayResultsObject:)
   @NSManaged func addToDayResults(_ value: DayResult)
-  
+
   @objc(removeDayResultsObject:)
   @NSManaged func removeFromDayResults(_ value: DayResult)
-  
+
   @objc(addDayResults:)
   @NSManaged func addToDayResults(_ values: NSSet)
-  
+
   @objc(removeDayResults:)
   @NSManaged func removeFromDayResults(_ values: NSSet)
 }
@@ -102,13 +102,13 @@ extension Habit {
 extension Habit {
   @objc(addDayTargetsObject:)
   @NSManaged func addToDayTargets(_ value: DayTarget)
-  
+
   @objc(removeDayTargetsObject:)
   @NSManaged func removeFromDayTargets(_ value: DayTarget)
-  
+
   @objc(addDayTargets:)
   @NSManaged func addToDayTargets(_ values: NSSet)
-  
+
   @objc(removeDayTargets:)
   @NSManaged func removeFromDayTargets(_ values: NSSet)
 }
@@ -117,13 +117,13 @@ extension Habit {
 extension Habit {
   @objc(addWeekGoalsObject:)
   @NSManaged func addToWeekGoals(_ value: WeekGoal)
-  
+
   @objc(removeWeekGoalsObject:)
   @NSManaged func removeFromWeekGoals(_ value: WeekGoal)
-  
+
   @objc(addWeekGoals:)
   @NSManaged func addToWeekGoals(_ values: NSSet)
-  
+
   @objc(removeWeekGoals:)
   @NSManaged func removeFromWeekGoals(_ values: NSSet)
 }

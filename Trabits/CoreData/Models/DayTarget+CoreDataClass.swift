@@ -9,6 +9,4 @@
 import Foundation
 import CoreData
 
-public class DayTarget: NSManagedObject {
-
-}
+public class DayTarget: NSManagedObject { }

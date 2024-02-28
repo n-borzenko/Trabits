@@ -10,7 +10,7 @@ import SwiftUI
 struct StatisticsWeekPlainView: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var weekData: StatisticsWeekData
-  
+
   var body: some View {
     Section("Habits") {
       ForEach(weekData.habitsWithResults) { item in
@@ -39,7 +39,7 @@ struct StatisticsWeekPlainView: View {
   let statisticsRouter = StatisticsRouter()
   let context = PersistenceController.preview.container.viewContext
   let weekInterval = Calendar.current.weekInterval(for: Date())!
-  
+
   return StatisticsWeekPlainView(weekData: StatisticsWeekData(week: weekInterval, context: context))
     .environment(\.managedObjectContext, context)
     .environmentObject(statisticsRouter)

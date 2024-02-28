@@ -25,16 +25,18 @@ struct HabitEditorView: View {
   @Environment(\.managedObjectContext) var context
   @Environment(\.dismiss) var dismiss
   var habit: Habit?
-  
+
   @State private var habitDraft = HabitEditorDraft()
   @State private var selectedCategory: Category?
+  // swiftlint:disable redundant_type_annotation
   @State private var isValid: Bool = false
   @State private var isNew: Bool = true
   @State private var isInitiallySetUp: Bool = false
+  // swiftlint:enable redundant_type_annotation
   @State private var path = NavigationPath()
-  
+
   @FocusState private var focusedField: FocusedEditorField?
-  
+
   var body: some View {
     NavigationStack(path: $path) {
       List {
@@ -73,7 +75,7 @@ struct HabitEditorView: View {
           .disabled(!isValid)
         }
       }
-      .onAppear { 
+      .onAppear {
         setupHabitDraft()
         focusedField = .title
       }
@@ -86,7 +88,7 @@ extension HabitEditorView {
   private func setupHabitDraft() {
     guard !isInitiallySetUp else { return }
     isInitiallySetUp = true
-    
+
     guard let habit else { return }
     isNew = false
     isValid = true
@@ -98,7 +100,7 @@ extension HabitEditorView {
     habitDraft.title = habit.title ?? ""
     selectedCategory = habit.category
   }
-  
+
   private func validate() {
     if !habitDraft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
       isValid = true
@@ -106,16 +108,16 @@ extension HabitEditorView {
       isValid = false
     }
   }
-  
+
   private func saveHabit() {
     guard isValid else { return }
-    
+
     if let habit {
       updateExistingHabit(habit: habit)
     } else {
       createNewHabit()
     }
-    
+
     if context.hasChanges {
       do {
         try context.save()
@@ -125,7 +127,7 @@ extension HabitEditorView {
       }
     }
   }
-  
+
   private func createNewHabit() {
     var habitsCount = 0
     do {
@@ -136,22 +138,22 @@ extension HabitEditorView {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     let habit = Habit(context: context)
     habit.title = habitDraft.title.trimmingCharacters(in: .whitespacesAndNewlines)
     habit.color = PastelPalette.colors[habitDraft.colorIndex]
     habit.category = selectedCategory
     habit.order = Int32(habitsCount)
     habit.dayResults = Set<DayResult>() as NSSet
-    
+
     let weekGoal = WeekGoal(context: context)
     weekGoal.count = Int32(habitDraft.weekGoal)
     weekGoal.habit = habit
-    
+
     let dayTarget = DayTarget(context: context)
     dayTarget.count = Int32(habitDraft.dayTarget)
     dayTarget.habit = habit
-    
+
     do {
       try context.obtainPermanentIDs(for: [habit])
     } catch {
@@ -159,7 +161,7 @@ extension HabitEditorView {
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
   }
-  
+
   private func updateExistingHabit(habit: Habit) {
     habit.title = habitDraft.title.trimmingCharacters(in: .whitespacesAndNewlines)
     habit.color = PastelPalette.colors[habitDraft.colorIndex]
@@ -167,7 +169,7 @@ extension HabitEditorView {
     updateExistingWeekGoal(habit: habit)
     updateExistingDayTarget(habit: habit)
   }
-  
+
   private func updateExistingDayTarget(habit: Habit) {
     if habitDraft.resetAllDayTargetIsOn {
       // set new initial value
@@ -179,13 +181,13 @@ extension HabitEditorView {
       dayTarget.habit = habit
       return
     }
-    
+
     let sortedDayTargets = habit.sortedDayTargets
     guard habit.sortedDayTargets.count >= 1, habit.sortedDayTargets[0].count != habitDraft.dayTarget else {
       // last saved value is the same as in the habit draft
       return
     }
-    
+
     let currentDayTarget = sortedDayTargets[0]
     guard let applicableFrom = currentDayTarget.applicableFrom,
           Calendar.current.isDateInToday(applicableFrom) else {
@@ -196,17 +198,17 @@ extension HabitEditorView {
       dayTarget.habit = habit
       return
     }
-    
+
     guard sortedDayTargets.count >= 2, sortedDayTargets[1].count != habitDraft.dayTarget else {
       // previous value is the same as in the habit draft
       context.delete(currentDayTarget)
       return
     }
-    
+
     // rewrite today value
     currentDayTarget.count = Int32(habitDraft.dayTarget)
   }
-  
+
   private func updateExistingWeekGoal(habit: Habit) {
     if habitDraft.resetAllWeekGoalsIsOn {
       // set new initial value
@@ -218,16 +220,15 @@ extension HabitEditorView {
       weekGoal.habit = habit
       return
     }
-    
+
     let sortedWeekGoals = habit.sortedWeekGoals
     guard sortedWeekGoals.count >= 1, sortedWeekGoals[0].count != habitDraft.weekGoal else {
       // last saved value is the same as in the habit draft
       return
     }
-    
+
     let currentWeekGoal = sortedWeekGoals[0]
-    guard let applicableFrom = currentWeekGoal.applicableFrom,
-          Calendar.current.isDateInToday(applicableFrom) else {
+    guard let applicableFrom = currentWeekGoal.applicableFrom, Calendar.current.isDateInToday(applicableFrom) else {
       // create new item as last record was not made today
       let weekGoal = WeekGoal(context: context)
       weekGoal.count = Int32(habitDraft.weekGoal)
@@ -235,13 +236,13 @@ extension HabitEditorView {
       weekGoal.habit = habit
       return
     }
-    
+
     guard sortedWeekGoals.count >= 2, sortedWeekGoals[1].count != habitDraft.weekGoal else {
       // previous value is the same as in the habit draft
       context.delete(currentWeekGoal)
       return
     }
-    
+
     // rewrite today value
     currentWeekGoal.count = Int32(habitDraft.weekGoal)
   }
@@ -249,11 +250,11 @@ extension HabitEditorView {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var habit: Habit? = nil
+  var habit: Habit?
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
-  
+
   return HabitEditorView(habit: habit)
     .environment(\.managedObjectContext, context)
 }

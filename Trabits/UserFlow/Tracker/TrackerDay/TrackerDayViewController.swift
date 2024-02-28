@@ -14,9 +14,9 @@ protocol TrackerDayScrollDelegate: AnyObject {
 
 class TrackerDayViewController: UIViewController {
   private weak var trackerCoordinator: TrackerCoordinator?
-  
+
   private let context = PersistenceController.shared.container.viewContext
-  
+
   private var dataSource: TrackerDayDataProvider.DataSource!
   private var dataProvider: TrackerDayDataProvider!
 
@@ -25,24 +25,24 @@ class TrackerDayViewController: UIViewController {
   lazy private var collectionView: UICollectionView = {
     UICollectionView(frame: CGRect.zero, collectionViewLayout: createLayout())
   }()
-  
+
   private var cancellable: AnyCancellable?
-  
+
   var date: Date { dataProvider.date }
-  
+
   weak var delegate: TrackerDayScrollDelegate?
-  
+
   init(date: Date, trackerCoordinator: TrackerCoordinator? = nil) {
     self.trackerCoordinator = trackerCoordinator
     super.init(nibName: nil, bundle: nil)
     setupViews()
     configureDataSource()
-    
+
     dataProvider = TrackerDayDataProvider(dataSource: dataSource, date: date)
     cancellable = dataProvider.$isListEmpty.sink { [weak self] isEmpty in
       self?.emptyStateView.isHidden = !isEmpty
     }
-    
+
     collectionView.dataSource = dataSource
   }
 
@@ -50,7 +50,7 @@ class TrackerDayViewController: UIViewController {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   deinit {
     cancellable?.cancel()
     cancellable = nil
@@ -75,7 +75,7 @@ extension TrackerDayViewController {
     }
     return layout
   }
-  
+
   private func configureDataSource() {
     let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectID) = itemIdentifier else { return }
@@ -89,11 +89,11 @@ extension TrackerDayViewController {
         dataProvider.adjustCompletionFor(habit)
       }
     }
-    
+
     dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
     }
-    
+
     let headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
       elementKind: UICollectionView.elementKindSectionHeader
     ) { [unowned self] headerView, elementKind, indexPath in
@@ -102,20 +102,20 @@ extension TrackerDayViewController {
       margins.leading = 20
       margins.trailing = 20
       contentConfiguration.directionalLayoutMargins = margins
-      
+
       let itemIdentifier = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
       if itemIdentifier == TrackerDayDataProvider.SectionIdentifier.unknownCategory {
         contentConfiguration.text = "Uncategorized"
         headerView.contentConfiguration = contentConfiguration
         return
       }
-      
+
       guard case let TrackerDayDataProvider.SectionIdentifier.category(objectID) = itemIdentifier else { return }
       guard case let category = self.context.object(with: objectID) as? Category, let category else { return }
       contentConfiguration.text = category.title ?? "Untitled"
       headerView.contentConfiguration = contentConfiguration
     }
-    
+
     dataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
       collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
     }
@@ -136,7 +136,8 @@ extension TrackerDayViewController {
 
     emptyStateView = EmptyStateView(
       message: "List is empty. Please, create your first habit.",
-      actionTitle: "Go to My Habits") { [weak self] in
+      actionTitle: "Go to My Habits"
+    ) { [weak self] in
       self?.trackerCoordinator?.navigateToStructureTab()
     }
     view.addPinnedSubview(emptyStateView, layoutGuide: view.safeAreaLayoutGuide)

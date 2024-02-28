@@ -13,31 +13,31 @@ import CoreData
 struct StatisticsPaginationViewControllerWrapper: UIViewControllerRepresentable {
   @Environment(\.managedObjectContext) var managedObjectContext
   @EnvironmentObject var statisticsRouter: StatisticsRouter
-  
+
   func makeUIViewController(context: Context) -> StatisticsPaginationViewController {
     let controller = StatisticsPaginationViewController(statisticsRouter: statisticsRouter, context: managedObjectContext)
     return controller
   }
-  
+
   func updateUIViewController(_ uiViewController: StatisticsPaginationViewController, context: Context) { }
 }
 
 class StatisticsPaginationViewController: UIViewController {
   private var statisticsRouter: StatisticsRouter
   private var context: NSManagedObjectContext
-  
+
   private var pageViewController: PageViewController!
   private var subtitleViewContainer: UIHostingController<StatisticsSubtitleView>!
-  
+
   private var cancellable: AnyCancellable?
-  
+
   init(statisticsRouter: StatisticsRouter, context: NSManagedObjectContext) {
     self.statisticsRouter = statisticsRouter
     self.context = context
     super.init(nibName: nil, bundle: nil)
-    
+
     setupViews()
-    
+
     cancellable = statisticsRouter.$currentState.sink { [weak self] newValue in
       guard let self else { return }
       subtitleViewContainer.rootView.unit = newValue.contentType
@@ -45,12 +45,12 @@ class StatisticsPaginationViewController: UIViewController {
       currentDateUpdateHandler(newState: newValue)
     }
   }
-  
+
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   deinit {
     cancellable?.cancel()
     cancellable = nil
@@ -60,11 +60,11 @@ class StatisticsPaginationViewController: UIViewController {
 extension StatisticsPaginationViewController {
   private func setupViews() {
     view.backgroundColor = .systemBackground
-    
+
     let subtitleView = StatisticsSubtitleView(
       unit: statisticsRouter.currentState.contentType,
       subtitle: StatisticsRouter.generateTitle(contentType: statisticsRouter.currentState.contentType, date: statisticsRouter.currentState.date),
-      previousSelectionHandler: { [weak self] in 
+      previousSelectionHandler: { [weak self] in
         guard let self, let newDate = getCurrentPageDate(adjustment: -1) else { return }
         statisticsRouter.currentState.date = newDate
         UIAccessibility.post(notification: .pageScrolled, argument: nil)
@@ -75,7 +75,7 @@ extension StatisticsPaginationViewController {
         UIAccessibility.post(notification: .pageScrolled, argument: nil)
       }
     )
-    
+
     subtitleViewContainer = UIHostingController(rootView: subtitleView)
     addChild(subtitleViewContainer)
     subtitleViewContainer.view.translatesAutoresizingMaskIntoConstraints = false
@@ -84,7 +84,7 @@ extension StatisticsPaginationViewController {
     subtitleViewContainer.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
     subtitleViewContainer.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     subtitleViewContainer.didMove(toParent: self)
-    
+
     let pageContainerView = UIView()
     pageContainerView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(pageContainerView)
@@ -92,15 +92,15 @@ extension StatisticsPaginationViewController {
     pageContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
     pageContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     pageContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-    
+
     pageViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     pageViewController.delegate = self
     pageViewController.dataSource = self
     pageViewController.accessibilityScrollDelegate = self
-    
+
     addChild(pageViewController)
     pageContainerView.addPinnedSubview(pageViewController.view)
-    
+
     let initialControllers = [generatePageView(contentType: statisticsRouter.currentState.contentType, date: statisticsRouter.currentState.date)]
     pageViewController.setViewControllers(initialControllers, direction: .forward, animated: false)
     pageViewController.didMove(toParent: self)
@@ -118,7 +118,7 @@ extension StatisticsPaginationViewController: UIPageViewControllerDataSource {
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
     generatePageView(contentType: statisticsRouter.currentState.contentType, date: statisticsRouter.currentState.date, adjustment: -1)
   }
-  
+
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
     generatePageView(contentType: statisticsRouter.currentState.contentType, date: statisticsRouter.currentState.date, adjustment: 1)
   }
@@ -127,7 +127,7 @@ extension StatisticsPaginationViewController: UIPageViewControllerDataSource {
 extension StatisticsPaginationViewController: AccessibilityPageScrollDelegate {
   func selectNextPage(direction: UIPageViewController.NavigationDirection) -> Bool {
     guard let newDate = getCurrentPageDate(adjustment: direction == .forward ? 1 : -1) else { return false }
-    
+
     currentDateUpdateHandler(
       newState: StatisticsRouterState(contentType: statisticsRouter.currentState.contentType, date: newDate)
     ) { [weak self] _ in
@@ -136,7 +136,7 @@ extension StatisticsPaginationViewController: AccessibilityPageScrollDelegate {
       let message = "\(StatisticsRouter.generateTitle(contentType: statisticsRouter.currentState.contentType, date: newDate)) is selected"
       UIAccessibility.post(notification: .pageScrolled, argument: message)
     }
-    
+
     return true
   }
 }
@@ -148,7 +148,7 @@ extension StatisticsPaginationViewController {
       pageViewController.setViewControllers(initialControllers, direction: .forward, animated: false, completion: completion)
       return
     }
-    
+
     guard let currentPageDate = getCurrentPageDate(),
           !isDateInCurrentPageInterval(contentType: newState.contentType, testDate: newState.date) else { return }
     let direction: UIPageViewController.NavigationDirection = newState.date > currentPageDate ? .forward : .reverse
@@ -170,7 +170,7 @@ extension StatisticsPaginationViewController {
       return UIHostingController(rootView: StatisticsMonthView(monthData: monthData))
     }
   }
-  
+
   private func getCurrentPageDate(adjustment: Int = 0) -> Date? {
     switch statisticsRouter.currentState.contentType {
     case .weekly:
@@ -185,7 +185,7 @@ extension StatisticsPaginationViewController {
       return date
     }
   }
-  
+
   private func isDateInCurrentPageInterval(contentType: StatisticsContentType, testDate: Date) -> Bool {
     switch statisticsRouter.currentState.contentType {
     case .weekly:

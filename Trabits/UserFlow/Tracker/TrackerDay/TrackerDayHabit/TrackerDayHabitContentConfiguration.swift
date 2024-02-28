@@ -14,11 +14,11 @@ struct TrackerDayHabitContentConfiguration: UIContentConfiguration, Hashable {
   var weekResults = HabitWeekResults()
   var isArchived: Bool = false
   var completion: (() -> Void)? = nil
-
+  
   func makeContentView() -> UIView & UIContentView {
     return TrackerDayHabitContentView(configuration: self)
   }
-
+  
   func updated(for state: UIConfigurationState) -> TrackerDayHabitContentConfiguration {
     return self
   }

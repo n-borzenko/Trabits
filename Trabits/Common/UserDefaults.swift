@@ -29,7 +29,7 @@ extension UserDefaults {
     get { bool(forKey: Key.wasOnboardingShown.rawValue) }
     set { setValue(newValue, forKey: Key.wasOnboardingShown.rawValue) }
   }
-
+  
   func removeData(for key: Key) {
     removeObject(forKey: key.rawValue)
   }

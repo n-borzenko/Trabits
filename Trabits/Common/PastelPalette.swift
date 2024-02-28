@@ -30,7 +30,7 @@ enum PastelPalette {
     .amethyst,
     .lilac
   ]
-  
+
   static let colorTitles = [
     "marshmallow",
     "quartz",

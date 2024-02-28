@@ -234,7 +234,7 @@ struct StructureHabitDetailView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var habit: Habit? = nil
+  var habit: Habit?
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}

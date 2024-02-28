@@ -18,7 +18,7 @@ class TrackerWeekAccessibilityContainerView: UIView {
     super.init(frame: .zero)
     setupViews()
   }
-
+  
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -97,7 +97,7 @@ class TrackerWeekViewController: UIViewController {
     collectionView.delegate = self
     collectionView.dataSource = dataSource
     applySnapshot()
-
+    
     cancellable = dataProvider.$selectedDate.sink { [weak self] newSelectedDate in
       self?.selectedDateUpdateHandler(selectedDate: newSelectedDate)
     }
@@ -135,12 +135,12 @@ extension TrackerWeekViewController {
     configuration.scrollDirection = .horizontal
     return UICollectionViewCompositionalLayout(section: section, configuration: configuration)
   }
-
+  
   private func configureDataSource() {
     let dayCellRegistration = UICollectionView.CellRegistration<TrackerWeekDayCell, Date> { cell, indexPath, date in
       cell.fill(date: date)
     }
-
+    
     dataSource = DataSource(collectionView: collectionView) { collectionView, indexPath, date in
       collectionView.dequeueConfiguredReusableCell(using: dayCellRegistration, for: indexPath, item: date)
     }

@@ -10,16 +10,18 @@ import SwiftUI
 struct StatisticsHabitView<Results: StatisticsResults, Summary: View, Chart: View>: View {
   @ObservedObject var habit: Habit
   var results: Results
+  // swiftlint:disable redundant_type_annotation
   var isGrouped: Bool = false
-  
+  // swiftlint:enable redundant_type_annotation
+
   @ViewBuilder var summary: () -> Summary
   @ViewBuilder var chart: () -> Chart
-  
+
   var body: some View {
     let hasDetailsRow = (!isGrouped && habit.category != nil) ||
     (results.weekGoal?.count ?? 0) > 0 || (results.dayTarget?.count ?? 1) > 1
-    let color = isGrouped ? habit.category?.color : habit.color 
-    
+    let color = isGrouped ? habit.category?.color : habit.color
+
     return VStack {
       HStack {
         VStack(alignment: .leading, spacing: 4) {
@@ -31,7 +33,11 @@ struct StatisticsHabitView<Results: StatisticsResults, Summary: View, Chart: Vie
             .accessibilityHidden(true)
           Spacer(minLength: 0)
           if hasDetailsRow {
-            HabitDetailsRowView(category: isGrouped ? nil : habit.category, dayTarget: results.dayTarget, weekGoal: results.weekGoal)
+            HabitDetailsRowView(
+              category: isGrouped ? nil : habit.category,
+              dayTarget: results.dayTarget,
+              weekGoal: results.weekGoal
+            )
           }
         }
         .accessibilityElement(children: .combine)
@@ -45,7 +51,8 @@ struct StatisticsHabitView<Results: StatisticsResults, Summary: View, Chart: Vie
           .fill(
             LinearGradient(
               colors: [Color(uiColor: color ?? .neutral10), Color(uiColor: .neutral5)],
-              startPoint: UnitPoint(x: 0.0, y: 0.5), endPoint: UnitPoint(x: 1.0, y: 0.5)
+              startPoint: UnitPoint(x: 0.0, y: 0.5),
+              endPoint: UnitPoint(x: 1.0, y: 0.5)
             )
           )
       )
@@ -59,11 +66,11 @@ struct StatisticsHabitView<Results: StatisticsResults, Summary: View, Chart: Vie
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var habit: Habit? = nil
+  var habit: Habit?
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
-  
+
   return StatisticsHabitView(habit: habit!, results: StatisticsWeekResults()) {
     Text("Summary")
   } chart: {

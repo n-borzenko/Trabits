@@ -15,14 +15,14 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
     case category(NSManagedObjectID)
     case unknownCategory
   }
-
+  
   enum ItemIdentifier: Hashable {
     case habit(NSManagedObjectID)
   }
-
+  
   typealias DataSource = UICollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
   private typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
-
+  
   private let context = PersistenceController.shared.container.viewContext
   private var habitsFetchResultsController: NSFetchedResultsController<Habit>!
   private var categoriesFetchResultsController: NSFetchedResultsController<Category>!
@@ -42,13 +42,13 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
       }
     }
   }
-
+  
   var dataSource: DataSource!
   
   let date: Date
   
   @Published var isListEmpty = false
-
+  
   init(dataSource: DataSource, date: Date = Calendar.current.startOfDay(for: Date())) {
     self.date = date
     self.dataSource = dataSource
@@ -68,7 +68,7 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
     cancellables.forEach { $0.cancel() }
     cancellables.removeAll()
   }
-
+  
   func configureFetchedResultsControllers() {
     categoriesFetchResultsController = NSFetchedResultsController(
       fetchRequest: Category.orderedCategoriesFetchRequest(forDate: date),
@@ -158,7 +158,7 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
     results.weekResult = results.progress.filter({ $0 == .completed }).count
     return results
   }
-
+  
   private func saveContextChanges() {
     do {
       try context.save()
@@ -182,12 +182,12 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
   private func updateHabitsSnaphot(_ controller: NSFetchedResultsController<NSFetchRequestResult>? = nil,
                                    snapshot: NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>? = nil) {
     var newSnapshot = Snapshot()
-
+    
     defer {
       dataSource.apply(newSnapshot, animatingDifferences: true)
       isListEmpty = newSnapshot.itemIdentifiers.isEmpty
     }
-
+    
     guard let habits = habitsFetchResultsController.fetchedObjects, !habits.isEmpty else { return }
     
     newSnapshot.appendSections([.main])
@@ -217,7 +217,7 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
   private func updateGroupedHabitsSnaphot(_ controller: NSFetchedResultsController<NSFetchRequestResult>? = nil,
                                           snapshot: NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>? = nil) {
     var newSnapshot = Snapshot()
-
+    
     defer {
       dataSource.apply(newSnapshot, animatingDifferences: true)
       isListEmpty = newSnapshot.itemIdentifiers.isEmpty
@@ -256,7 +256,7 @@ extension TrackerDayDataProvider: NSFetchedResultsControllerDelegate {
   }
   
   private func getReconfiguredIdentifiers(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                                    snapshot: NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>) -> [ItemIdentifier] {
+                                          snapshot: NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>) -> [ItemIdentifier] {
     if controller == habitsFetchResultsController {
       let reconfiguredIdentifiers = snapshot.reloadedItemIdentifiers.map { ItemIdentifier.habit($0) }
       return reconfiguredIdentifiers

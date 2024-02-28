@@ -24,7 +24,7 @@ class TrackerContainerViewController: UIViewController {
   }
   
   private var cancellable: AnyCancellable?
-    
+  
   private var dateFormatter = {
     var dateFormatter = DateFormatter()
     dateFormatter.timeStyle = .none
@@ -119,7 +119,7 @@ extension TrackerContainerViewController {
       sheetController.detents = [.medium(), .large()]
       sheetController.preferredCornerRadius = 24
     }
-
+    
     modalPresentationStyle = .pageSheet
     present(containerController, animated: true)
   }
@@ -155,7 +155,7 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
     dayViewController.delegate = self
     return dayViewController
   }
- 
+  
   func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
     guard let controller = viewController as? TrackerDayViewController,
           let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {

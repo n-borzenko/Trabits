@@ -10,10 +10,9 @@ import CoreData
 
 struct CategoryPickerView: View {
   @Binding var selectedCategory: Category?
-  
-  @FetchRequest(
-    sortDescriptors: [SortDescriptor(\.order, order: .reverse)]
-  ) var categories: FetchedResults<Category>
+
+  @FetchRequest( sortDescriptors: [SortDescriptor(\.order, order: .reverse)] )
+  var categories: FetchedResults<Category>
   @State private var isCategoryEditorPresented = false
   @State private var listSelectionRefreshingId = UUID()
 
@@ -76,11 +75,11 @@ struct CategoryPickerView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var category: Category? = nil
+  var category: Category?
   do {
     category = try context.fetch(Category.orderedCategoriesFetchRequest()).first
   } catch {}
-  
+
   return NavigationStack {
     CategoryPickerView(selectedCategory: .constant(category))
       .environment(\.managedObjectContext, context)

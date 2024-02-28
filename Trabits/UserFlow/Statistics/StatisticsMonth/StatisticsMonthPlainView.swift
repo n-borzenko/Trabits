@@ -10,10 +10,10 @@ import SwiftUI
 struct StatisticsMonthPlainView<TopView: View>: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var monthData: StatisticsMonthData
-  
+
   var width: Double = 0.0
   @ViewBuilder var topView: () -> TopView
-  
+
   var body: some View {
     Section("Habits") {
       topView()
@@ -47,7 +47,7 @@ struct StatisticsMonthPlainView<TopView: View>: View {
   let context = PersistenceController.preview.container.viewContext
   let monthInterval = Calendar.current.monthInterval(for: Date())!
   let monthData = StatisticsMonthData(month: monthInterval, context: context)!
-  
+
   return StatisticsMonthPlainView(monthData: monthData) { }
     .environment(\.managedObjectContext, context)
     .environmentObject(statisticsRouter)

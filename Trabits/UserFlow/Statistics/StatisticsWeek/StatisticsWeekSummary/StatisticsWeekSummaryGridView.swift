@@ -9,10 +9,12 @@ import SwiftUI
 
 struct StatisticsWeekSummaryGridView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
-  
+
   var habitsWithResults: [StatisticsWeekData.HabitWithResults<StatisticsWeekResults>]
+  // swiftlint:disable redundant_type_annotation
   var isGrouped: Bool = false
-  
+  // swiftlint:enable redundant_type_annotation
+
   var body: some View {
     Grid {
       ForEach(habitsWithResults) { item in

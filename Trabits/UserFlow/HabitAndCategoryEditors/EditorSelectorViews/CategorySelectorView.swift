@@ -10,10 +10,12 @@ import SwiftUI
 struct CategorySelectorView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
   var category: Category?
-  
+
   var body: some View {
-    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .center))
-    
+    let layout = dynamicTypeSize.isAccessibilitySize ?
+    AnyLayout(VStackLayout(alignment: .leading)) :
+    AnyLayout(HStackLayout(alignment: .center))
+
     Section("Category") {
       NavigationLink(value: HabitEditorPath.category) {
         layout {
@@ -40,11 +42,11 @@ struct CategorySelectorView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var category: Category? = nil
+  var category: Category?
   do {
     category = try context.fetch(Category.orderedCategoriesFetchRequest()).first
   } catch { }
-  
+
   return NavigationStack {
     List {
       CategorySelectorView(category: category)

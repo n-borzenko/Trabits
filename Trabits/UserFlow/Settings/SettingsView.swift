@@ -13,10 +13,10 @@ struct SettingsItemView: View {
   var colorIndex: Int
   var title: String
   var value: String?
-  
+
   var body: some View {
     let squareSize: Double = dynamicTypeSize < .accessibility1 ? 28 : 40
-    
+
     LabeledContent {
       Text(value ?? "")
     } label: {
@@ -29,7 +29,7 @@ struct SettingsItemView: View {
             Image(systemName: imageName)
               .resizable()
               .aspectRatio(contentMode: .fit)
-              .foregroundColor(.inverted)
+              .foregroundColor(.white)
               .padding(10)
           }
         Text(title)
@@ -45,7 +45,7 @@ enum SettingsPath {
 
 struct SettingsView: View {
   @EnvironmentObject var settingsRouter: SettingsRouter
-  
+
   var body: some View {
     NavigationStack(path: $settingsRouter.path) {
       List {
@@ -76,7 +76,7 @@ struct SettingsView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  let settingsRouter = SettingsRouter()  
+  let settingsRouter = SettingsRouter()
   return SettingsView()
     .environment(\.managedObjectContext, context)
     .environmentObject(settingsRouter)

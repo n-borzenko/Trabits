@@ -10,7 +10,7 @@ import SwiftUI
 struct OnboardingItem: Identifiable {
   let imageName: String
   let message: String
-  
+
   var id: String { imageName }
 }
 
@@ -21,9 +21,9 @@ struct OnboardingView: View {
     OnboardingItem(imageName: "OnboardingAchievements", message: "Evaluate your achievements"),
     OnboardingItem(imageName: "OnboardingCelebration", message: "Celebrate your improvement")
   ]
-  
+
   @State private var selectedTab = 0
-  
+
   var body: some View {
     VStack {
       TabView(selection: $selectedTab) {
@@ -55,7 +55,7 @@ struct OnboardingView: View {
       .tabViewStyle(.page)
       .indexViewStyle(.page(backgroundDisplayMode: .always))
       .animation(.easeOut(duration: 0.5), value: selectedTab)
-      
+
       HStack {
         Spacer()
         if selectedTab == items.count - 1 {

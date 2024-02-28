@@ -14,7 +14,9 @@ struct StructureCategoryView: View {
     NavigationLink(value: category) {
       VStack(alignment: .leading, spacing: 2) {
         Text(category.title ?? "")
+        // swiftlint:disable empty_count
         if let count = category.habits?.count, count > 0 {
+          // swiftlint:enable empty_count
           Text("^[\(count) \("habit")](inflect: true)")
             .font(.caption)
             .foregroundColor(.secondary)

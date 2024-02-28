@@ -10,17 +10,25 @@ import SwiftUI
 struct WrappableHStack: Layout {
   var hSpacing: CGFloat = 12
   var vSpacing: CGFloat = 4
-  
+
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let width = proposal.replacingUnspecifiedDimensions().width
-    let result = CalculatedResult(width: width, subviews: subviews, proposal: proposal, hSpacing: hSpacing, vSpacing: vSpacing)
+    let result = CalculatedResult(
+      width: width, subviews: subviews, proposal: proposal, hSpacing: hSpacing, vSpacing: vSpacing
+    )
     return result.bounds.size
   }
-  
+
   func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
     let width = proposal.replacingUnspecifiedDimensions().width
-    let result = CalculatedResult(width: width, subviews: subviews, proposal: proposal, hSpacing: hSpacing, vSpacing: vSpacing)
-    
+    let result = CalculatedResult(
+      width: width,
+      subviews: subviews,
+      proposal: proposal,
+      hSpacing: hSpacing,
+      vSpacing: vSpacing
+    )
+
     for row in result.rows {
       for i in row.range {
         let subview = subviews[i]
@@ -30,24 +38,24 @@ struct WrappableHStack: Layout {
       }
     }
   }
-  
+
   struct CalculatedResult {
     var bounds = CGRect.zero
     var rows: [Row] = []
-    
+
     struct Row {
       var range: Range<Int>
       var offsets: [CGFloat]
       var frame: CGRect
     }
-    
+
     init(width: CGFloat, subviews: Subviews, proposal: ProposedViewSize, hSpacing: CGFloat, vSpacing: CGFloat) {
       var currentRowHeight = 0.0
       var currentRowWidth = 0.0
       var rowStartIndex = 0
       var currentRowOffset = 0.0
       var currentOffsets: [CGFloat] = []
-      
+
       for i in subviews.indices {
         let subview = subviews[i]
         let subviewSize = subview.sizeThatFits(proposal)
@@ -57,7 +65,8 @@ struct WrappableHStack: Layout {
             range: rowStartIndex..<i,
             offsets: currentOffsets,
             frame: CGRect(
-              x: 0, y: currentRowOffset,
+              x: 0,
+              y: currentRowOffset,
               width: currentRowWidth - hSpacing,
               height: currentRowHeight
             )
@@ -66,39 +75,40 @@ struct WrappableHStack: Layout {
           bounds.size.width = max(bounds.width, row.frame.width)
           bounds.size.height += row.frame.height
           bounds.size.height += rowStartIndex == 0 ? 0 : vSpacing
-          
+
           currentRowOffset += (currentRowHeight + vSpacing)
           currentRowHeight = 0.0
           currentRowWidth = 0.0
           rowStartIndex = i
           currentOffsets = []
         }
-        
+
         // subview fits in the current row
         currentOffsets.append(currentRowWidth)
         // if subview is larger than container it will be truncated
         currentRowWidth += min(subviewSize.width, width)
         currentRowHeight = max(currentRowHeight, subviewSize.height)
-        
+
         // last item has been just added
         if i == subviews.count - 1 {
           let row = Row(
             range: rowStartIndex..<(i + 1),
             offsets: currentOffsets,
             frame: CGRect(
-              x: 0, y: currentRowOffset,
+              x: 0,
+              y: currentRowOffset,
               width: currentRowWidth,
               height: currentRowHeight
             )
           )
-          
+
           rows.append(row)
           bounds.size.width = max(bounds.width, row.frame.width)
           bounds.size.height += row.frame.height
           bounds.size.height += rowStartIndex == 0 ? 0 : vSpacing
           break
         }
-        
+
         currentRowWidth += hSpacing
       }
     }
@@ -107,14 +117,14 @@ struct WrappableHStack: Layout {
 
 struct HabitDetailsRowView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
-  
+
   var category: Category?
   var dayTarget: DayTarget?
   var weekGoal: WeekGoal?
-  
+
   private struct DayTargetView: View {
     @ObservedObject var dayTarget: DayTarget
-    
+
     var body: some View {
       if dayTarget.count > 1 {
         HStack(spacing: 2) {
@@ -126,12 +136,14 @@ struct HabitDetailsRowView: View {
       }
     }
   }
-  
+
   private struct WeekGoalView: View {
     @ObservedObject var weekGoal: WeekGoal
-    
+
     var body: some View {
+      // swiftlint:disable empty_count
       if weekGoal.count > 0 {
+        // swiftlint:enable empty_count
         HStack(spacing: 2) {
           Image(systemName: "flame")
           Text("\(weekGoal.count)/week")
@@ -141,7 +153,7 @@ struct HabitDetailsRowView: View {
       }
     }
   }
-  
+
   var body: some View {
     WrappableHStack {
       if let category, let title = category.title, !title.isEmpty {
@@ -153,7 +165,7 @@ struct HabitDetailsRowView: View {
           .lineLimit(dynamicTypeSize >= .accessibility1 ? 2 : 1)
           .accessibilityLabel("Category \(title)")
       }
-      
+
       HStack(spacing: 12) {
         if let dayTarget {
           DayTargetView(dayTarget: dayTarget)
@@ -181,13 +193,17 @@ struct HabitArchivedStatusView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var habit: Habit? = nil
+  var habit: Habit?
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
-  
-  return HabitDetailsRowView(category: habit?.category, dayTarget: habit?.sortedDayTargets.first, weekGoal: habit?.sortedWeekGoals.first)
-    .environment(\.managedObjectContext, context)
-    .padding()
-    .background(Color(uiColor: habit?.color ?? .neutral5))
+
+  return HabitDetailsRowView(
+    category: habit?.category,
+    dayTarget: habit?.sortedDayTargets.first,
+    weekGoal: habit?.sortedWeekGoals.first
+  )
+  .environment(\.managedObjectContext, context)
+  .padding()
+  .background(Color(uiColor: habit?.color ?? .neutral5))
 }

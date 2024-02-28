@@ -13,13 +13,13 @@ struct HabitWeekResults: Hashable {
     case partial = "partially completed"
     case completed = "fully completed"
   }
-  
+
   var completionTarget: Int = 1
   var completionCount: Int = 0
   var weekGoal: Int = 0
   var weekResult: Int = 0
   var progress: [DayProgress] = Array(repeating: .none, count: 7)
-  
+
   func hash(into hasher: inout Hasher) {
     hasher.combine(completionTarget)
     hasher.combine(completionCount)
@@ -27,7 +27,7 @@ struct HabitWeekResults: Hashable {
     hasher.combine(weekResult)
     hasher.combine(progress)
   }
-  
+
   static func == (lhs: HabitWeekResults, rhs: HabitWeekResults) -> Bool {
     lhs.completionTarget == rhs.completionTarget &&
     lhs.completionCount == rhs.completionCount &&
@@ -35,7 +35,7 @@ struct HabitWeekResults: Hashable {
     lhs.weekResult == rhs.weekResult &&
     lhs.progress == rhs.progress
   }
-  
+
   var accessibilityShortDescription: String {
     var description = ""
     if completionTarget > 1 {
@@ -45,7 +45,7 @@ struct HabitWeekResults: Hashable {
     }
     return description
   }
-  
+
   var accessibilityLongDescription: String {
     var description = ""
     if weekGoal > 0 {

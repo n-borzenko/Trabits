@@ -13,17 +13,17 @@ final class SettingsRouter: ObservableObject {
 
 final class SettingsCoordinator: Coordinator {
   var childCoordinators: [any Coordinator] = []
-  
+
   private let settingsRouter = SettingsRouter()
-  
+
   lazy var rootViewController: UIViewController = {
     let settingsView = SettingsView()
       .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
       .environmentObject(settingsRouter)
-    
+
     return UIHostingController(rootView: settingsView)
   }()
-  
+
   func popToRoot() {
     settingsRouter.path.removeLast(settingsRouter.path.count)
   }
