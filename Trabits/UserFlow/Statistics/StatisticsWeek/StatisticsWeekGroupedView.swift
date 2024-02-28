@@ -34,7 +34,7 @@ struct StatisticsWeekGroupedView: View {
     }
   }
   
-  private func unwrapCategory(wrappedCategory: StatisticsWeekData.CategoryWrapper) -> Category? {
+  private func unwrapCategory(wrappedCategory: StatisticsIntervalData.CategoryWrapper) -> Category? {
     guard case let .category(category) = wrappedCategory else { return nil }
     return category
   }

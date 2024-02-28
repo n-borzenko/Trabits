@@ -70,7 +70,7 @@ class TrackerDayHabitResultsView: UIView {
       dayResultLabelImage.isHidden = true
     }
     
-    dayProgressView.progress = min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1)
+    dayProgressView.setProgress(min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1), animated: false)
     dayProgressView.progressTintColor = configuration.color
     
     accessibilityLabel = weekResults.accessibilityLongDescription

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct StatisticsHabitView<Summary: View, Chart: View>: View {
+struct StatisticsHabitView<Results: StatisticsResults, Summary: View, Chart: View>: View {
   @ObservedObject var habit: Habit
-  var results: StatisticsResults
+  var results: Results
   var isGrouped: Bool = false
   
   @ViewBuilder var summary: () -> Summary
@@ -64,7 +64,7 @@ struct StatisticsHabitView<Summary: View, Chart: View>: View {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
   
-  return StatisticsHabitView(habit: habit!, results: StatisticsResults()) {
+  return StatisticsHabitView(habit: habit!, results: StatisticsWeekResults()) {
     Text("Summary")
   } chart: {
     Text("Chart")

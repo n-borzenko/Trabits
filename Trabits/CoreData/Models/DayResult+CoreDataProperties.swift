@@ -20,6 +20,15 @@ extension DayResult {
     return NSFetchRequest<DayResult>(entityName: "DayResult")
   }
   
+  @nonobjc class func resultsFetchRequest(from startDate: Date, until endDate: Date) -> NSFetchRequest<DayResult> {
+    let request = fetchRequest()
+    let datePredicate = NSPredicate(format: "date >= %@ AND date < %@", startDate as NSDate, endDate as NSDate)
+    let habitPredicate = NSPredicate(format: "habit.archivedAt == nil OR habit.archivedAt >= %@", startDate as NSDate)
+    request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, habitPredicate])
+    request.sortDescriptors = [NSSortDescriptor(keyPath: \DayResult.date, ascending: true)]
+    return request
+  }
+  
   @nonobjc class func weekResultsFetchRequest(forDate date: Date) -> NSFetchRequest<DayResult> {
     let request = fetchRequest()
     guard let weekInterval = Calendar.current.weekInterval(for: date) else { return request }

@@ -112,6 +112,7 @@ class TrackerWeekViewController: UIViewController {
     super.viewDidAppear(animated)
     guard let indexPath = dataSource.indexPath(for: dataProvider.selectedDate) else { return }
     collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+    UIAccessibility.post(notification: .screenChanged, argument: accessibilityContainerView)
   }
   
   deinit {
