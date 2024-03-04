@@ -33,7 +33,10 @@ struct StatisticsMonthView: View {
         .listStyle(.grouped)
         .overlay {
           if monthData.habitsWithResults.isEmpty {
-            EmptyStateWrapperView(message: "List is empty. Please create a new habit.", actionTitle: "Add Habit") {
+            EmptyStateWrapperView(
+              message: "List is empty. Please create a new habit.",
+              actionTitle: "Go to My Habits"
+            ) {
               statisticsRouter.navigateToStructureTab()
             }
           }

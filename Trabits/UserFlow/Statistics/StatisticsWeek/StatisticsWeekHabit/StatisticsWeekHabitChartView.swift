@@ -51,7 +51,7 @@ struct StatisticsWeekHabitChartView: View {
       HStack(alignment: .bottom, spacing: 0) {
         ForEach(Array(results.progress.enumerated()), id: \.offset) { index, progress in
           let details = progress.details
-          let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+          let weekdayIndex = Calendar.current.weekdayIndex(index)
 
           VStack(spacing: 4) {
             bar(maxValue: maxValue, details: details, weekdayIndex: weekdayIndex)
@@ -155,7 +155,8 @@ extension StatisticsWeekHabitChartView: AXChartDescriptorRepresentable {
     let xAxis = AXCategoricalDataAxisDescriptor(
       title: "Day of the week",
       categoryOrder: (0...6).map {
-        Calendar.current.standaloneWeekdaySymbols[($0 + Calendar.current.firstWeekday - 1) % 7]
+        let weekdayIndex = Calendar.current.weekdayIndex($0)
+        return Calendar.current.standaloneWeekdaySymbols[weekdayIndex]
       }
     )
 
@@ -188,7 +189,7 @@ extension StatisticsWeekHabitChartView: AXChartDescriptorRepresentable {
   private func getChartSeries() -> [AXDataSeriesDescriptor] {
     let dataPoints = results.progress.enumerated().map { index, progress in
       let details = progress.details
-      let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+      let weekdayIndex = Calendar.current.weekdayIndex(index)
       let targetMessage = details.target > 0 ? "of \(details.target.formatted(.number.rounded())) " : ""
 
       return AXDataPoint(

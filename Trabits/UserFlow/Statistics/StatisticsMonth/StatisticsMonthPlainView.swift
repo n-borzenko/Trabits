@@ -15,7 +15,7 @@ struct StatisticsMonthPlainView<TopView: View>: View {
   @ViewBuilder var topView: () -> TopView
 
   var body: some View {
-    Section("Habits") {
+    Section(monthData.habitsWithResults.isEmpty ? "" : "Habits") {
       topView()
       ForEach(monthData.habitsWithResults) { item in
         StatisticsListItem {

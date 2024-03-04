@@ -54,7 +54,7 @@ struct HabitWeekResults: Hashable {
       description += "\(weekResult) targets completed this week. "
     }
     for index in 0..<progress.count {
-      let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+      let weekdayIndex = Calendar.current.weekdayIndex(index)
       description += "\(progress[index].rawValue) on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex]). "
     }
     return description

@@ -30,6 +30,7 @@ struct StatisticsWeekView: View {
           StatisticsWeekHeaderView(title: "Achievements")
         }
         .id("achievements")
+        .opacity(weekData.habitsWithResults.isEmpty ? 0.0 : 1.0)
 
         if userDefaultsObserver.isStatisticsSummaryPreferred {
           Section {
@@ -57,7 +58,10 @@ struct StatisticsWeekView: View {
       .listStyle(.grouped)
       .overlay {
         if weekData.habitsWithResults.isEmpty {
-          EmptyStateWrapperView(message: "List is empty. Please create a new habit.", actionTitle: "Add Habit") {
+          EmptyStateWrapperView(
+            message: "List is empty. Please create a new habit.",
+            actionTitle: "Go to My Habits"
+          ) {
             statisticsRouter.navigateToStructureTab()
           }
         }

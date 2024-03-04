@@ -133,7 +133,7 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
         results.completionTarget = Int(dayTargets[targetsIndex].count)
       }
 
-      let index = (Calendar.current.component(.weekday, from: currentDate) + 7 - Calendar.current.firstWeekday) % 7
+      let index = Calendar.current.viewWeekdayIndex(currentDate)
       if weekCompletions.completions[index] > 0 {
         results.progress[index] = weekCompletions.completions[index] >= dayTargets[targetsIndex].count ?
           .completed :
@@ -158,7 +158,7 @@ class TrackerDayDataProvider: NSObject, ObservableObject {
 
     for dayResult in dayResults {
       guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
-      let index = (Calendar.current.component(.weekday, from: resultDate) + 7 - Calendar.current.firstWeekday) % 7
+      let index = Calendar.current.viewWeekdayIndex(resultDate)
       completions[index] = Int(dayResult.completionCount)
       if dayResult.date == date {
         completionCount = Int(dayResult.completionCount)

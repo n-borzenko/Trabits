@@ -62,7 +62,7 @@ class StatisticsWeekData: StatisticsIntervalData {
 
     for dayResult in dayResults {
       guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
-      let index = (Calendar.current.component(.weekday, from: resultDate) + 7 - Calendar.current.firstWeekday) % 7
+      let index = Calendar.current.viewWeekdayIndex(resultDate)
       completions[index] = Int(dayResult.completionCount)
     }
 
@@ -77,7 +77,7 @@ class StatisticsWeekData: StatisticsIntervalData {
         targetsIndex -= 1
       }
 
-      let index = (Calendar.current.component(.weekday, from: currentDate) + 7 - Calendar.current.firstWeekday) % 7
+      let index = Calendar.current.viewWeekdayIndex(currentDate)
       let targetCount = Int(dayTargets[targetsIndex].count)
       if completions[index] > 0 {
         weekProgress[index] = completions[index] >= targetCount ?

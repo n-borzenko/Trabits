@@ -87,7 +87,7 @@ class UserDefaultsDataObserver: ObservableObject {
       .store(in: &cancellables)
   }
 
-  private func updateCounter() {
+  func updateCounter() {
     var count = 0
     count += UserDefaults.standard.hasData(for: .isHabitGroupingOn) ? 1 : 0
     count += UserDefaults.standard.hasData(for: .isStatisticsSummaryPreferred) ? 1 : 0
@@ -176,6 +176,7 @@ struct SettingsUserDataView: View {
     UserDefaults.standard.removeData(for: .isHabitGroupingOn)
     UserDefaults.standard.removeData(for: .isStatisticsSummaryPreferred)
     UserDefaults.standard.removeData(for: .wasOnboardingShown)
+    userDefaultsCounter.updateCounter()
 
     Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
       isDataDeletionInProgress = false

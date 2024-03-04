@@ -53,7 +53,7 @@ struct StatisticsWeekSummaryChartView: View {
   }
 
   private func getDescription(result: StatisticsDayProgress, index: Int) -> String {
-    let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+    let weekdayIndex = Calendar.current.weekdayIndex(index)
     return "\(result.message) on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex])"
   }
 }

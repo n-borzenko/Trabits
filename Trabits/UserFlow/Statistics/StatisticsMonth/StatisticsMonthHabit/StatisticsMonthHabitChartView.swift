@@ -39,7 +39,7 @@ struct StatisticsMonthHabitChartView: View {
               if let date {
                 let details = results.progress[weekIndex * 7 + index].details
                 let isCurrentMonth = date >= month.start && date < month.end
-                let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+                let weekdayIndex = Calendar.current.weekdayIndex(index)
 
                 cell(
                   details: details,
@@ -139,7 +139,7 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
       (0..<7).map { index in
         let date = Calendar.current.date(byAdding: .day, value: weekIndex * 7 + index, to: extendedMonth.start)
         guard let date else { return "" }
-        let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+        let weekdayIndex = Calendar.current.weekdayIndex(index)
         let weekdaySymbol = Calendar.current.standaloneWeekdaySymbols[weekdayIndex]
         return "\(date.formatted(date: .abbreviated, time: .omitted)), \(weekdaySymbol)"
       }
@@ -183,7 +183,7 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
         let date = Calendar.current.date(byAdding: .day, value: resultIndex, to: extendedMonth.start)
         guard let date else { return nil }
         let details = results.progress[resultIndex].details
-        let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+        let weekdayIndex = Calendar.current.weekdayIndex(index)
         let xValue =
           """
           \(date.formatted(date: .abbreviated, time: .omitted)),

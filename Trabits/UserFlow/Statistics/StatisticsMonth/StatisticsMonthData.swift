@@ -108,9 +108,7 @@ class StatisticsMonthData: StatisticsIntervalData {
     var completions = Array(repeating: 0, count: 7 * weekCount)
     for dayResult in dayResults {
       guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
-      let weekdayIndex = (
-        Calendar.current.component(.weekday, from: resultDate) + 7 - Calendar.current.firstWeekday
-      ) % 7
+      let weekdayIndex = Calendar.current.viewWeekdayIndex(resultDate)
       let weekIndex = Calendar.current.component(.weekOfYear, from: resultDate) - startWeekOfYear
       let index = weekdayIndex + weekIndex * 7
       completions[index] = Int(dayResult.completionCount)
