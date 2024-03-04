@@ -22,6 +22,7 @@ struct OnboardingView: View {
     OnboardingItem(imageName: "OnboardingCelebration", message: "Celebrate your improvement")
   ]
 
+  @AccessibilityFocusState private var focus: Int?
   @State private var selectedTab = 0
 
   var body: some View {
@@ -36,6 +37,7 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(minWidth: 32, minHeight: 32)
+                .accessibilityHidden(true)
               Spacer()
             }
             Spacer()
@@ -50,6 +52,7 @@ struct OnboardingView: View {
           .tag(index)
           .padding(.bottom, 24)
           .padding(.horizontal)
+          .accessibilityFocused($focus, equals: index)
         }
       }
       .tabViewStyle(.page)
@@ -73,6 +76,9 @@ struct OnboardingView: View {
         Spacer()
       }
       .padding(.bottom)
+    }
+    .onChange(of: selectedTab) { newValue in
+      focus = newValue
     }
   }
 }

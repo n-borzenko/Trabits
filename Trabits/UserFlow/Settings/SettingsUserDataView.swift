@@ -180,7 +180,7 @@ struct SettingsUserDataView: View {
 
     Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
       isDataDeletionInProgress = false
-      UIAccessibility.post(notification: .pageScrolled, argument: "All user data has been deleted")
+      UIAccessibility.post(notification: .announcement, argument: "All user data has been deleted")
     }
   }
 }

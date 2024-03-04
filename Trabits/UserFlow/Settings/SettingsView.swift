@@ -31,10 +31,12 @@ struct SettingsItemView: View {
               .aspectRatio(contentMode: .fit)
               .foregroundColor(.white)
               .padding(10)
+              .accessibilityHidden(true)
           }
         Text(title)
       }
     }
+    .accessibilityElement(children: .combine)
   }
 }
 
