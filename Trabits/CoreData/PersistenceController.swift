@@ -70,7 +70,7 @@ struct PersistenceController {
 
 extension PersistenceController {
   private func addHabit(viewContext: NSManagedObjectContext) {
-    var category: Category? = nil
+    var category: Category?
     do {
       category = try viewContext.fetch(Category.orderedCategoriesFetchRequest()).first
     } catch {}

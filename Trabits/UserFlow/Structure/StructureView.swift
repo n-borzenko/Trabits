@@ -68,7 +68,10 @@ struct StructureView: View {
               }
             }
             if !userDefaultsObserver.isHabitGroupingOn || structureRouter.selectedContentType == .categories {
-              Button("Reorder \(structureRouter.selectedContentType.rawValue.lowercased())", systemImage: "arrow.up.arrow.down") {
+              Button(
+                "Reorder \(structureRouter.selectedContentType.rawValue.lowercased())",
+                systemImage: "arrow.up.arrow.down"
+              ) {
                 structureRouter.editMode = .active
               }
             }

@@ -8,7 +8,12 @@
 import UIKit
 
 class TrackerDayHabitListCell: UICollectionViewListCell {
-  func createConfiguration(habit: Habit, isGrouped: Bool, weekResults: HabitWeekResults, completion: @escaping () -> Void) {
+  func createConfiguration(
+    habit: Habit,
+    isGrouped: Bool,
+    weekResults: HabitWeekResults,
+    completion: @escaping () -> Void
+  ) {
     var newConfiguration = TrackerDayHabitContentConfiguration()
     newConfiguration.title = habit.title ?? ""
     newConfiguration.categoryTitle = isGrouped ? nil : habit.category?.title

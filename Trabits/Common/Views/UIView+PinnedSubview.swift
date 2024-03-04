@@ -25,7 +25,10 @@ extension UIView {
       equalTo: layoutGuide?.leadingAnchor ?? leadingAnchor, constant: insets.left
     ).isActive = true
 
-    let trailingConstraint = subview.trailingAnchor.constraint(equalTo: layoutGuide?.trailingAnchor ?? trailingAnchor, constant: -insets.right)
+    let trailingConstraint = subview.trailingAnchor.constraint(
+      equalTo: layoutGuide?.trailingAnchor ?? trailingAnchor,
+      constant: -insets.right
+    )
     if flexibleTrailing {
       trailingConstraint.priority = .defaultHigh
     }

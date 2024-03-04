@@ -221,7 +221,6 @@ struct SettingsProgressView: View {
   }
 }
 
-
 #Preview {
   let context = PersistenceController.preview.container.viewContext
   return SettingsUserDataView()

@@ -35,27 +35,43 @@ struct StatisticsMonthHabitChartView: View {
         rowLayout(width: width) {
           HStack {
             ForEach(0..<7) { index in
-              if let date = Calendar.current.date(byAdding: .day, value: weekIndex * 7 + index, to: extendedMonth.start) {
-                let details = getProgressDetails(progress: results.progress[weekIndex * 7 + index])
+              let date = Calendar.current.date(byAdding: .day, value: weekIndex * 7 + index, to: extendedMonth.start)
+              if let date {
+                let details = results.progress[weekIndex * 7 + index].details
                 let isCurrentMonth = date >= month.start && date < month.end
                 let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
 
-                cell(details: details, day: Calendar.current.component(.day, from: date), isCurrentMonth: isCurrentMonth)
+                cell(
+                  details: details,
+                  day: Calendar.current.component(.day, from: date),
+                  isCurrentMonth: isCurrentMonth
+                )
                   .accessibilityElement(children: .ignore)
-                  .accessibilityLabel("""
-                      \(results.progress[weekIndex * 7 + index].message)
-                      on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex]),
-                      \(date.formatted(date: .abbreviated, time: .omitted))
-                  """)
+                  .accessibilityLabel(
+                    """
+                    \(results.progress[weekIndex * 7 + index].message)
+                    on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex]),
+                    \(date.formatted(date: .abbreviated, time: .omitted))
+                    """
+                  )
                   .accessibilityShowsLargeContentViewer {
-                    Text("\(results.progress[weekIndex * 7 + index].message) \(date.formatted(date: .numeric, time: .omitted))")
+                    Text(
+                      """
+                      \(results.progress[weekIndex * 7 + index].message)
+                      \(date.formatted(date: .numeric, time: .omitted))
+                      """
+                    )
                   }
               }
             }
           }
           HStack {
             Spacer(minLength: 0)
-            StatisticsHabitSmallWeekGoalView(weekGoal: weekProgress.weekGoal, weekResult: weekProgress.weekResult, color: color)
+            StatisticsHabitSmallWeekGoalView(
+              weekGoal: weekProgress.weekGoal,
+              weekResult: weekProgress.weekResult,
+              color: color
+            )
           }
         }
       }
@@ -65,25 +81,29 @@ struct StatisticsMonthHabitChartView: View {
     .frame(maxWidth: 500)
     .accessibilityElement(children: .contain)
     .accessibilityChartDescriptor(self)
-    .accessibilityHint("Swipe up or down to select an audio graph action, then double tap to activate. Double tap and hold, wait or the sound, then drag to hear data values.")
-  }
-
-  private func getProgressDetails(progress: StatisticsDayProgress) -> (isCompleted: Bool, value: Double, target: Double) {
-    switch progress {
-    case let .completed(completed: value, target: target): return (isCompleted: true, value: Double(value), target: Double(target))
-    case let .partial(completed: value, target: target): return (isCompleted: false, value: Double(value), target: Double(target))
-    case let .none(target: target): return (isCompleted: false, value: 0.0, target: Double(target))
-    }
+    .accessibilityHint(
+      """
+      Swipe up or down to select an audio graph action, then double tap to activate.
+      Double tap and hold, wait or the sound, then drag to hear data values.
+      """
+    )
   }
 
   @ViewBuilder private func rowLayout(width: Double, @ViewBuilder content: () -> some View) -> some View {
-    let layout = dynamicTypeSize.isAccessibilitySize && width < 500 ? AnyLayout(VStackLayout(alignment: .center)) : AnyLayout(HStackLayout(alignment: .center))
+    let layout = dynamicTypeSize.isAccessibilitySize && width < 500 ?
+    AnyLayout(VStackLayout(alignment: .center)) :
+    AnyLayout(HStackLayout(alignment: .center))
+
     layout {
       content()
     }
   }
 
-  @ViewBuilder private func cell(details: (isCompleted: Bool, value: Double, target: Double), day: Int, isCurrentMonth: Bool) -> some View {
+  @ViewBuilder private func cell(
+    details: StatisticsDayProgress.StatisticsDayProgressDetails,
+    day: Int,
+    isCurrentMonth: Bool
+  ) -> some View {
     let size = dynamicTypeSize.isAccessibilitySize ? 42.0 : 30.0
     let dotSize = dynamicTypeSize.isAccessibilitySize ? 8.0 : 4.0
     let circleColor = details.value > 0 ? Color(uiColor: color ?? .neutral10) : Color.neutral5
@@ -117,11 +137,11 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
   func makeChartDescriptor() -> AXChartDescriptor {
     let dates = results.weekProgress.enumerated().flatMap { weekIndex, _ in
       (0..<7).map { index in
-        guard let date = Calendar.current.date(byAdding: .day, value: weekIndex * 7 + index, to: extendedMonth.start) else {
-          return ""
-        }
+        let date = Calendar.current.date(byAdding: .day, value: weekIndex * 7 + index, to: extendedMonth.start)
+        guard let date else { return "" }
         let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
-        return "\(date.formatted(date: .abbreviated, time: .omitted)), \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex] )"
+        let weekdaySymbol = Calendar.current.standaloneWeekdaySymbols[weekdayIndex]
+        return "\(date.formatted(date: .abbreviated, time: .omitted)), \(weekdaySymbol)"
       }
     }
     let xAxis = AXCategoricalDataAxisDescriptor(
@@ -157,13 +177,18 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
   }
 
   private func getChartSeries() -> [AXDataSeriesDescriptor] {
-    let dataPoints: [AXDataPoint] = results.weekProgress.enumerated().flatMap { weekIndex, weekProgress in
+    let dataPoints: [AXDataPoint] = results.weekProgress.enumerated().flatMap { weekIndex, _ in
       (0..<7).compactMap { index in
         let resultIndex = weekIndex * 7 + index
-        guard let date = Calendar.current.date(byAdding: .day, value: resultIndex, to: extendedMonth.start) else { return nil }
-        let details = getProgressDetails(progress: results.progress[resultIndex])
+        let date = Calendar.current.date(byAdding: .day, value: resultIndex, to: extendedMonth.start)
+        guard let date else { return nil }
+        let details = results.progress[resultIndex].details
         let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
-        let xValue = "\(date.formatted(date: .abbreviated, time: .omitted)), \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex] )"
+        let xValue =
+          """
+          \(date.formatted(date: .abbreviated, time: .omitted)),
+          \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex])
+          """
 
         return AXDataPoint(
           x: xValue,
@@ -181,7 +206,10 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
 
     let weekResults = results.weekProgress.enumerated().map {
       $1.weekGoal > 0 ?
-      "\($1.weekResult) of \($1.weekGoal) targets completed on week \($0 + 1), goal \($1.weekResult > $1.weekGoal ? "" : "not " )achieved" :
+      """
+      \($1.weekResult) of \($1.weekGoal) targets completed on week \($0 + 1),
+      goal \($1.weekResult > $1.weekGoal ? "" : "not " )achieved
+      """ :
       "\($1.weekResult) targets completed on week \($0 + 1)"
     }
     return weekResults.joined(separator: "; ")
@@ -223,7 +251,13 @@ extension StatisticsMonthHabitChartView: AXChartDescriptorRepresentable {
     }
   )
 
-  return StatisticsMonthHabitChartView(month: monthData.month, extendedMonth: monthData.extendedMonth, results: results, title: habit?.title, color: habit?.color)
-    .environment(\.managedObjectContext, context)
-    .environmentObject(statisticsRouter)
+  return StatisticsMonthHabitChartView(
+    month: monthData.month,
+    extendedMonth: monthData.extendedMonth,
+    results: results,
+    title: habit?.title,
+    color: habit?.color
+  )
+  .environment(\.managedObjectContext, context)
+  .environmentObject(statisticsRouter)
 }

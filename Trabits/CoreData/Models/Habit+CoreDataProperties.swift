@@ -35,11 +35,15 @@ extension Habit: Identifiable {
   }
 
   var sortedWeekGoals: [WeekGoal] {
-    weekGoals?.sortedArray(using: [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: false)]) as? [WeekGoal] ?? []
+    weekGoals?.sortedArray(
+      using: [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: false)]
+    ) as? [WeekGoal] ?? []
   }
 
   var sortedDayTargets: [DayTarget] {
-    dayTargets?.sortedArray(using: [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: false)]) as? [DayTarget] ?? []
+    dayTargets?.sortedArray(
+      using: [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: false)]
+    ) as? [DayTarget] ?? []
   }
 }
 
@@ -54,7 +58,10 @@ extension Habit {
   }
 
   // from nil - all habits, from 0 - not archived habits, from n - subset of not archived habits
-  @nonobjc class func orderedHabitsFetchRequest(startingFrom position: Int32? = nil, forDate date: Date? = nil) -> NSFetchRequest<Habit> {
+  @nonobjc class func orderedHabitsFetchRequest(
+    startingFrom position: Int32? = nil,
+    forDate date: Date? = nil
+  ) -> NSFetchRequest<Habit> {
     let request = orderedHabitsFetchRequest()
     var predicates: [NSPredicate] = []
     if let position {

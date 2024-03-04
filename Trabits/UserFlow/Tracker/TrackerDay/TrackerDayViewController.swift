@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 protocol TrackerDayScrollDelegate: AnyObject {
-  func scrollOffsetUpdated(offset: Double) -> Void
+  func scrollOffsetUpdated(offset: Double)
 }
 
 class TrackerDayViewController: UIViewController {
@@ -59,7 +59,7 @@ class TrackerDayViewController: UIViewController {
 
 extension TrackerDayViewController {
   private func createLayout() -> UICollectionViewCompositionalLayout {
-    let layout = UICollectionViewCompositionalLayout { [unowned self] sectionIndex, layoutEnvironment in
+    let layout = UICollectionViewCompositionalLayout { [unowned self] _, layoutEnvironment in
       var configuration: UICollectionLayoutListConfiguration
       if !self.dataProvider.isHabitGroupingOn {
         configuration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -77,7 +77,9 @@ extension TrackerDayViewController {
   }
 
   private func configureDataSource() {
-    let habitCellRegistration = UICollectionView.CellRegistration<TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier> { [unowned self] cell, indexPath, itemIdentifier in
+    let habitCellRegistration = UICollectionView.CellRegistration<
+      TrackerDayHabitListCell, TrackerDayDataProvider.ItemIdentifier
+    > { [unowned self] cell, _, itemIdentifier in
       guard case let TrackerDayDataProvider.ItemIdentifier.habit(objectID) = itemIdentifier else { return }
       guard case let habit = self.context.object(with: objectID) as? Habit, let habit = habit else { return }
       cell.createConfiguration(
@@ -90,13 +92,15 @@ extension TrackerDayViewController {
       }
     }
 
-    dataSource = TrackerDayDataProvider.DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+    dataSource = TrackerDayDataProvider.DataSource(
+      collectionView: collectionView
+    ) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: habitCellRegistration, for: indexPath, item: itemIdentifier)
     }
 
     let headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(
       elementKind: UICollectionView.elementKindSectionHeader
-    ) { [unowned self] headerView, elementKind, indexPath in
+    ) { [unowned self] headerView, _, indexPath in
       var contentConfiguration = UIListContentConfiguration.prominentInsetGroupedHeader()
       var margins = contentConfiguration.directionalLayoutMargins
       margins.leading = 20
@@ -116,7 +120,7 @@ extension TrackerDayViewController {
       headerView.contentConfiguration = contentConfiguration
     }
 
-    dataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+    dataSource.supplementaryViewProvider = { collectionView, _, indexPath in
       collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
     }
   }

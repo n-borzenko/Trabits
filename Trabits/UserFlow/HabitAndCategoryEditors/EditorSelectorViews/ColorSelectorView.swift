@@ -72,7 +72,6 @@ struct ColorSelectorView: View {
   }
 }
 
-
 #Preview {
   List {
     ColorSelectorView(colorIndex: .constant(3))

@@ -55,7 +55,12 @@ struct SettingsView: View {
           }
         }
         Section("Application") {
-          SettingsItemView(imageName: "pencil.and.outline", colorIndex: 4, title: "Current version", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String)
+          SettingsItemView(
+            imageName: "pencil.and.outline",
+            colorIndex: 4,
+            title: "Current version",
+            value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+          )
           NavigationLink(value: SettingsPath.about) {
             SettingsItemView(imageName: "info.circle", colorIndex: 14, title: "About")
           }

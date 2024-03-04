@@ -12,7 +12,7 @@ struct StatisticsWeekResults: StatisticsResults {
   var dayTarget: DayTarget?
   var weekGoal: WeekGoal?
   var weekResult: Int = 0
-  var progress: [StatisticsDayProgress] = Array(repeating: .none(target: 1), count: 7)
+  var progress: [StatisticsDayProgress] = []
 }
 
 class StatisticsWeekData: StatisticsIntervalData {
@@ -33,13 +33,32 @@ class StatisticsWeekData: StatisticsIntervalData {
 
   private func getHabitData(habit: Habit) -> StatisticsWeekResults {
     var results = StatisticsWeekResults()
-    var completions = Array(repeating: 0, count: 7)
 
     guard let dayResults = dayResultsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }),
           let dayTargets = dayTargetsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }),
           let weekGoals = weekGoalsFetchResultsController.fetchedObjects?.filter({ $0.habit == habit }) else {
       return results
     }
+
+    results.progress = getWeekCompletions(dayResults: dayResults, dayTargets: dayTargets)
+
+    if let dayTarget = dayTargets.last {
+      results.dayTarget = dayTarget
+    }
+    if let weekGoal = weekGoals.last {
+      results.weekGoal = weekGoal
+    }
+
+    results.weekResult = results.progress.filter { item in
+      return if case .completed = item { true } else { false }
+    }.count
+
+    return results
+  }
+
+  private func getWeekCompletions(dayResults: [DayResult], dayTargets: [DayTarget]) -> [StatisticsDayProgress] {
+    var completions = Array(repeating: 0, count: 7)
+    var weekProgress: [StatisticsDayProgress] = Array(repeating: .none(target: 1), count: 7)
 
     for dayResult in dayResults {
       guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
@@ -61,23 +80,14 @@ class StatisticsWeekData: StatisticsIntervalData {
       let index = (Calendar.current.component(.weekday, from: currentDate) + 7 - Calendar.current.firstWeekday) % 7
       let targetCount = Int(dayTargets[targetsIndex].count)
       if completions[index] > 0 {
-        results.progress[index] = completions[index] >= targetCount ? .completed(completed: completions[index], target: targetCount) : .partial(completed: completions[index], target: targetCount)
+        weekProgress[index] = completions[index] >= targetCount ?
+          .completed(completed: completions[index], target: targetCount) :
+          .partial(completed: completions[index], target: targetCount)
       } else {
-        results.progress[index] = .none(target: targetCount)
+        weekProgress[index] = .none(target: targetCount)
       }
     }
 
-    if let dayTarget = dayTargets.last {
-      results.dayTarget = dayTarget
-    }
-    if let weekGoal = weekGoals.last {
-      results.weekGoal = weekGoal
-    }
-
-    results.weekResult = results.progress.filter{ item in
-      return if case .completed = item { true } else { false }
-    }.count
-
-    return results
+    return weekProgress
   }
 }

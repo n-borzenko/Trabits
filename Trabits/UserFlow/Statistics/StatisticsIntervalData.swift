@@ -20,6 +20,23 @@ enum StatisticsDayProgress {
     case .completed: return "fully completed"
     }
   }
+
+  struct StatisticsDayProgressDetails {
+    let isCompleted: Bool
+    let value: Double
+    let target: Double
+  }
+
+  var details: StatisticsDayProgressDetails {
+    return switch self {
+    case let .completed(completed: value, target: target):
+      StatisticsDayProgressDetails(isCompleted: true, value: Double(value), target: Double(target))
+    case let .partial(completed: value, target: target):
+      StatisticsDayProgressDetails(isCompleted: false, value: Double(value), target: Double(target))
+    case let .none(target: target):
+      StatisticsDayProgressDetails(isCompleted: false, value: 0.0, target: Double(target))
+    }
+  }
 }
 
 protocol StatisticsResults {
@@ -117,7 +134,9 @@ class StatisticsIntervalData: NSObject, ObservableObject {
 
   func fillHabitsAndCategories() {
     let habits = habitsFetchResultsController.fetchedObjects ?? []
-    var possibleСategories = (categoriesFetchResultsController.fetchedObjects ?? []).map { CategoryWrapper.category(category: $0) }
+    var possibleСategories = (categoriesFetchResultsController.fetchedObjects ?? []).map {
+      CategoryWrapper.category(category: $0)
+    }
     if habits.contains(where: { $0.category == nil }) {
       possibleСategories.append(.uncategorized)
     }
@@ -126,7 +145,10 @@ class StatisticsIntervalData: NSObject, ObservableObject {
 }
 
 extension StatisticsIntervalData: NSFetchedResultsControllerDelegate {
-  func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith diff: CollectionDifference<NSManagedObjectID>) {
+  func controller(
+    _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+    didChangeContentWith diff: CollectionDifference<NSManagedObjectID>
+  ) {
     fillHabitsAndCategories()
   }
 }

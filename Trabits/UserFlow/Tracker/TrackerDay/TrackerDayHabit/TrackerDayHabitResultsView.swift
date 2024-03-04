@@ -8,7 +8,7 @@
 import UIKit
 
 class TrackerDayHabitResultsView: UIView {
-  var configuration: TrackerDayHabitContentConfiguration? = nil {
+  var configuration: TrackerDayHabitContentConfiguration? {
     didSet { applyConfiguration() }
   }
 
@@ -70,25 +70,31 @@ class TrackerDayHabitResultsView: UIView {
       dayResultLabelImage.isHidden = true
     }
 
-    dayProgressView.setProgress(min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1), animated: false)
+    dayProgressView.setProgress(
+      min(Float(weekResults.completionCount) / Float(weekResults.completionTarget), 1),
+      animated: false
+    )
     dayProgressView.progressTintColor = configuration.color
 
     accessibilityLabel = weekResults.accessibilityLongDescription
   }
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    let isDifferentAccessibilityCategory = traitCollection.preferredContentSizeCategory.isAccessibilityCategory != previousTraitCollection?.preferredContentSizeCategory.isAccessibilityCategory
-    let isDifferentHorizontalSizeClass = traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass
+    let isAccessibilityCategory = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+    let isDifferentAccessibilityCategory = isAccessibilityCategory !=
+      previousTraitCollection?.preferredContentSizeCategory.isAccessibilityCategory
+    let isDifferentHorizontalSizeClass = traitCollection.horizontalSizeClass !=
+      previousTraitCollection?.horizontalSizeClass
 
     if isDifferentAccessibilityCategory {
-      let dayProgressViewHeight: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 20 : 10
+      let dayProgressViewHeight: Double = isAccessibilityCategory ? 20 : 10
       dayProgressViewHeightConstraint.constant = dayProgressViewHeight
-      dayProgressView.layer.sublayers?.last?.borderWidth = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 2 : 1
+      dayProgressView.layer.sublayers?.last?.borderWidth = isAccessibilityCategory ? 2 : 1
       dayProgressView.subviews.forEach { $0.layer.cornerRadius = dayProgressViewHeight / 2 }
     }
 
     if isDifferentAccessibilityCategory || isDifferentHorizontalSizeClass {
-      let isCompact = traitCollection.preferredContentSizeCategory.isAccessibilityCategory && traitCollection.horizontalSizeClass == .compact
+      let isCompact = isAccessibilityCategory && traitCollection.horizontalSizeClass == .compact
       stackView.alignment = isCompact ? .bottom : .center
 
       weekResultsStackView.axis = isCompact ? .vertical : .horizontal
@@ -101,7 +107,8 @@ class TrackerDayHabitResultsView: UIView {
       dayResultsStackView.axis = isCompact ? .vertical : .horizontal
       dayResultsStackView.alignment = isCompact ? .trailing : .center
 
-      // TrackerDayHabitListCell height needs to be calculated correctly after rotation from horizontal regular size class
+      // TrackerDayHabitListCell height needs to be calculated correctly
+      // after rotation from horizontal regular size class
       // to vertical compact size class with preferred accessibility category
       setNeedsLayout()
       layoutIfNeeded()
@@ -115,7 +122,8 @@ class TrackerDayHabitResultsView: UIView {
 
 extension TrackerDayHabitResultsView {
   private func setupViews() {
-    let isCompact = traitCollection.preferredContentSizeCategory.isAccessibilityCategory && traitCollection.horizontalSizeClass == .compact
+    let isCompact = traitCollection.preferredContentSizeCategory.isAccessibilityCategory &&
+      traitCollection.horizontalSizeClass == .compact
 
     stackView.axis = .horizontal
     stackView.alignment = isCompact ? .bottom : .center
@@ -159,11 +167,18 @@ extension TrackerDayHabitResultsView {
     emptyView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor).isActive = true
     emptyView.heightAnchor.constraint(equalToConstant: 0).isActive = true
 
+    setupDayResultsStackView(containerStack: stackView, isCompact: isCompact)
+
+    isAccessibilityElement = true
+    accessibilityTraits = [.staticText]
+  }
+
+  private func setupDayResultsStackView(containerStack: UIStackView, isCompact: Bool) {
     dayResultsStackView.axis = isCompact ? .vertical : .horizontal
     dayResultsStackView.distribution = .fill
     dayResultsStackView.alignment = isCompact ? .trailing : .center
     dayResultsStackView.spacing = 8
-    stackView.addArrangedSubview(dayResultsStackView)
+    containerStack.addArrangedSubview(dayResultsStackView)
 
     let dayResultLabelStackView = UIStackView()
     dayResultLabelStackView.axis = .horizontal
@@ -183,10 +198,11 @@ extension TrackerDayHabitResultsView {
     dayResultLabel.textAlignment = .right
     dayResultLabelStackView.addArrangedSubview(dayResultLabel)
 
-    let dayProgressViewHeight: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 20 : 10
+    let isAccessibilityCategory = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+    let dayProgressViewHeight: Double = isAccessibilityCategory ? 20 : 10
     dayProgressView.trackTintColor = .systemBackground
     dayProgressView.layer.sublayers?.last?.borderColor = UIColor.contrast.cgColor
-    dayProgressView.layer.sublayers?.last?.borderWidth = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 2 : 1
+    dayProgressView.layer.sublayers?.last?.borderWidth = isAccessibilityCategory ? 2 : 1
     dayProgressView.subviews.forEach {
       $0.layer.cornerRadius = dayProgressViewHeight / 2
       $0.clipsToBounds = true
@@ -195,10 +211,12 @@ extension TrackerDayHabitResultsView {
     dayResultsStackView.addArrangedSubview(dayProgressView)
     dayProgressViewHeightConstraint = dayProgressView.heightAnchor.constraint(equalToConstant: dayProgressViewHeight)
     dayProgressViewHeightConstraint.isActive = true
-    dayProgressView.widthAnchor.constraint(greaterThanOrEqualTo: weekProgressView.widthAnchor).isActive = true
-    dayProgressView.widthAnchor.constraint(lessThanOrEqualTo: weekProgressView.widthAnchor, multiplier: 1.5).isActive = true
-
-    isAccessibilityElement = true
-    accessibilityTraits = [.staticText]
+    dayProgressView.widthAnchor.constraint(
+      greaterThanOrEqualTo: weekProgressView.widthAnchor
+    ).isActive = true
+    dayProgressView.widthAnchor.constraint(
+      lessThanOrEqualTo: weekProgressView.widthAnchor,
+      multiplier: 1.5
+    ).isActive = true
   }
 }

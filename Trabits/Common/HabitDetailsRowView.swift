@@ -30,24 +30,24 @@ struct WrappableHStack: Layout {
     )
 
     for row in result.rows {
-      for i in row.range {
-        let subview = subviews[i]
-        let x = bounds.origin.x + row.offsets[i - row.range.lowerBound]
-        let y = bounds.origin.y + row.frame.midY
-        subview.place(at: CGPoint(x: x, y: y), anchor: .leading, proposal: proposal)
+      for index in row.range {
+        let subview = subviews[index]
+        let xValue = bounds.origin.x + row.offsets[index - row.range.lowerBound]
+        let yValue = bounds.origin.y + row.frame.midY
+        subview.place(at: CGPoint(x: xValue, y: yValue), anchor: .leading, proposal: proposal)
       }
     }
   }
 
+  struct CalculatedResultRow {
+    var range: Range<Int>
+    var offsets: [CGFloat]
+    var frame: CGRect
+  }
+
   struct CalculatedResult {
     var bounds = CGRect.zero
-    var rows: [Row] = []
-
-    struct Row {
-      var range: Range<Int>
-      var offsets: [CGFloat]
-      var frame: CGRect
-    }
+    var rows: [CalculatedResultRow] = []
 
     init(width: CGFloat, subviews: Subviews, proposal: ProposedViewSize, hSpacing: CGFloat, vSpacing: CGFloat) {
       var currentRowHeight = 0.0
@@ -56,21 +56,13 @@ struct WrappableHStack: Layout {
       var currentRowOffset = 0.0
       var currentOffsets: [CGFloat] = []
 
-      for i in subviews.indices {
-        let subview = subviews[i]
+      for index in subviews.indices {
+        let subview = subviews[index]
         let subviewSize = subview.sizeThatFits(proposal)
         if currentRowWidth + subviewSize.width > width {
           // subview doesn't fit in the current row
-          let row = Row(
-            range: rowStartIndex..<i,
-            offsets: currentOffsets,
-            frame: CGRect(
-              x: 0,
-              y: currentRowOffset,
-              width: currentRowWidth - hSpacing,
-              height: currentRowHeight
-            )
-          )
+          let rect = CGRect(x: 0, y: currentRowOffset, width: currentRowWidth - hSpacing, height: currentRowHeight)
+          let row = CalculatedResultRow(range: rowStartIndex..<index, offsets: currentOffsets, frame: rect)
           rows.append(row)
           bounds.size.width = max(bounds.width, row.frame.width)
           bounds.size.height += row.frame.height
@@ -79,7 +71,7 @@ struct WrappableHStack: Layout {
           currentRowOffset += (currentRowHeight + vSpacing)
           currentRowHeight = 0.0
           currentRowWidth = 0.0
-          rowStartIndex = i
+          rowStartIndex = index
           currentOffsets = []
         }
 
@@ -90,17 +82,9 @@ struct WrappableHStack: Layout {
         currentRowHeight = max(currentRowHeight, subviewSize.height)
 
         // last item has been just added
-        if i == subviews.count - 1 {
-          let row = Row(
-            range: rowStartIndex..<(i + 1),
-            offsets: currentOffsets,
-            frame: CGRect(
-              x: 0,
-              y: currentRowOffset,
-              width: currentRowWidth,
-              height: currentRowHeight
-            )
-          )
+        if index == subviews.count - 1 {
+          let rect = CGRect(x: 0, y: currentRowOffset, width: currentRowWidth, height: currentRowHeight)
+          let row = CalculatedResultRow(range: rowStartIndex..<(index + 1), offsets: currentOffsets, frame: rect)
 
           rows.append(row)
           bounds.size.width = max(bounds.width, row.frame.width)

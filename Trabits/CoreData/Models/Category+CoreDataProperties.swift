@@ -52,7 +52,10 @@ extension Category {
 
   @nonobjc class func orderedCategoriesFetchRequest(forDate date: Date) -> NSFetchRequest<Category> {
     let request = orderedCategoriesFetchRequest()
-    request.predicate = NSPredicate(format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0", date as NSDate)
+    request.predicate = NSPredicate(
+      format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0",
+      date as NSDate
+    )
     return request
   }
 }

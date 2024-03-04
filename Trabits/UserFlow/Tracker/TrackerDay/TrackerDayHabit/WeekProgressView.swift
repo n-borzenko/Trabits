@@ -106,9 +106,9 @@ class WeekProgressView: UIView {
   var progress: [HabitWeekResults.DayProgress] {
     didSet {
       guard progress.count == stackView.arrangedSubviews.count else { return }
-      for i in 0..<progress.count {
-        guard let circleView = stackView.arrangedSubviews[i] as? WeekProgressCircleView else { continue }
-        circleView.progress = progress[i]
+      for index in 0..<progress.count {
+        guard let circleView = stackView.arrangedSubviews[index] as? WeekProgressCircleView else { continue }
+        circleView.progress = progress[index]
       }
     }
   }

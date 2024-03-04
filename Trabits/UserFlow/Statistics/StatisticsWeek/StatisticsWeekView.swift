@@ -11,7 +11,7 @@ struct StatisticsWeekView: View {
   @EnvironmentObject var userDefaultsObserver: UserDefaultsObserver
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var weekData: StatisticsWeekData
-  
+
   var body: some View {
     ScrollViewReader { proxy in
       List {
@@ -21,7 +21,7 @@ struct StatisticsWeekView: View {
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .id("top")
-          
+
           StatisticsListItem {
             StatisticsWeekAchievementsView(weekData: weekData)
           }
@@ -30,7 +30,7 @@ struct StatisticsWeekView: View {
           StatisticsWeekHeaderView(title: "Achievements")
         }
         .id("achievements")
-        
+
         if userDefaultsObserver.isStatisticsSummaryPreferred {
           Section {
             StatisticsListItem {

@@ -9,13 +9,13 @@ import SwiftUI
 
 struct StructureHabitView: View {
   @ObservedObject var habit: Habit
-  
+
   var body: some View {
     let weekGoal = habit.sortedWeekGoals.first
     let dayTarget = habit.sortedDayTargets.first
     let hasDetailsRow = habit.category != nil ||
     (weekGoal?.count ?? 0) > 0 || (dayTarget?.count ?? 1) > 1
-    
+
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
         if habit.archivedAt != nil {
@@ -42,7 +42,7 @@ struct StructureHabitsView: View {
   )
   private var habits: FetchedResults<Habit>
   @Binding var isHabitEditorVisible: Bool
-  
+
   var body: some View {
     List {
       ForEach(habits) { habit in
@@ -82,7 +82,7 @@ struct StructureHabitsView: View {
       }
     }
   }
-  
+
   private func reorderHabits(indices: IndexSet, destinationIndex: Int) {
     guard indices.count == 1, let sourceIndex = indices.first else { return }
     let habit = habits[sourceIndex]
@@ -99,7 +99,7 @@ struct StructureHabitsView: View {
     }
     saveChanges()
   }
-  
+
   private func unarchiveHabit(_ habit: Habit) {
     var notArchivedHabitsCount = 0
     do {
@@ -110,12 +110,12 @@ struct StructureHabitsView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     habit.archivedAt = nil
     habit.order = Int32(notArchivedHabitsCount)
     saveChanges()
   }
-  
+
   private func archiveHabit(_ habit: Habit) {
     var habits: [Habit] = []
     do {
@@ -126,7 +126,7 @@ struct StructureHabitsView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     if !habits.isEmpty {
       for index in 0..<habits.endIndex {
         habits[index].order -= 1
@@ -136,7 +136,7 @@ struct StructureHabitsView: View {
     habit.order = -1
     saveChanges()
   }
-  
+
   private func saveChanges() {
     do {
       try context.save()

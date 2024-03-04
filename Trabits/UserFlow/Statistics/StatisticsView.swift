@@ -12,7 +12,7 @@ struct StatisticsView: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @StateObject private var userDefaultsObserver = UserDefaultsObserver()
   @State private var isDatePickerVisible = false
-  
+
   var body: some View {
     NavigationStack {
       VStack {
@@ -28,8 +28,8 @@ struct StatisticsView: View {
         .onChange(of: statisticsRouter.pickerContentType) { newValue in
           statisticsRouter.currentState = StatisticsRouterState(contentType: newValue, date: Date())
         }
-        
-        StatisticsPaginationViewControllerWrapper()
+
+        StatisticsPaginationControllerWrapper()
           .environmentObject(userDefaultsObserver)
       }
       .background(Color(uiColor: .systemBackground))

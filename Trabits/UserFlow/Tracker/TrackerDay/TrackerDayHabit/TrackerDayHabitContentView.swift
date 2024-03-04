@@ -76,13 +76,16 @@ class TrackerDayHabitContentView: UIView, UIContentView {
   }
 
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    if traitCollection.preferredContentSizeCategory.isAccessibilityCategory != previousTraitCollection?.preferredContentSizeCategory.isAccessibilityCategory {
+    let previousCategory = previousTraitCollection?.preferredContentSizeCategory.isAccessibilityCategory
+    if traitCollection.preferredContentSizeCategory.isAccessibilityCategory != previousCategory {
       stackView.spacing = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 8 : 4
       categoryLabel.numberOfLines = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 2 : 1
 
       var buttonConfiguration = completionButton.configuration
       let insetSize = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 13.0 : 8.0
-      buttonConfiguration?.contentInsets = NSDirectionalEdgeInsets(top: insetSize, leading: insetSize, bottom: insetSize, trailing: insetSize)
+      buttonConfiguration?.contentInsets = NSDirectionalEdgeInsets(
+        top: insetSize, leading: insetSize, bottom: insetSize, trailing: insetSize
+      )
       let strokeWidth = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 3.0 : 2.0
       buttonConfiguration?.background.strokeWidth = strokeWidth
       completionButton.configuration = buttonConfiguration
@@ -92,7 +95,13 @@ class TrackerDayHabitContentView: UIView, UIContentView {
 
 extension TrackerDayHabitContentView {
   private func setupViews() {
-    addPinnedSubview(backgroundView, insets: UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12), layoutGuide: safeAreaLayoutGuide, flexibleBottom: true, flexibleTrailing: true)
+    addPinnedSubview(
+      backgroundView,
+      insets: UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12),
+      layoutGuide: safeAreaLayoutGuide,
+      flexibleBottom: true,
+      flexibleTrailing: true
+    )
     backgroundView.layer.cornerRadius = 8
 
     stackView.axis = .vertical
@@ -113,12 +122,42 @@ extension TrackerDayHabitContentView {
     mainStackView.spacing = 16
     stackView.addArrangedSubview(mainStackView)
 
+    setupTitleAndLabelsStackView(containerStack: mainStackView)
+
+    mainStackView.addArrangedSubview(completionButton)
+    completionButton.addTarget(self, action: #selector(completionHandler), for: .touchUpInside)
+    completionButton.heightAnchor.constraint(equalTo: completionButton.widthAnchor).isActive = true
+    completionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+
+    var buttonConfiguration = UIButton.Configuration.bordered()
+    buttonConfiguration.background.strokeColor = .contrast
+    let strokeWidth: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 3 : 2
+    buttonConfiguration.background.strokeWidth = strokeWidth
+    buttonConfiguration.cornerStyle = .capsule
+    let insetSize: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 13 : 8
+    buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(
+      top: insetSize, leading: insetSize, bottom: insetSize, trailing: insetSize
+    )
+    buttonConfiguration.baseForegroundColor = .contrast
+    completionButton.configuration = buttonConfiguration
+
+    stackView.addArrangedSubview(resultsView)
+    resultsView.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
+
+    isAccessibilityElement = false
+    accessibilityElements = [backgroundView, resultsView]
+    backgroundView.isAccessibilityElement = true
+    backgroundView.accessibilityTraits = .button
+    backgroundView.accessibilityHint = "Double tap to adjust completion"
+  }
+
+  private func setupTitleAndLabelsStackView(containerStack: UIStackView) {
     let titleAndLabelsStackView = UIStackView()
     titleAndLabelsStackView.axis = .vertical
     titleAndLabelsStackView.distribution = .equalSpacing
     titleAndLabelsStackView.alignment = .leading
     titleAndLabelsStackView.spacing = 4
-    mainStackView.addArrangedSubview(titleAndLabelsStackView)
+    containerStack.addArrangedSubview(titleAndLabelsStackView)
 
     archivedLabel.text = "Archived"
     archivedLabel.font = UIFont.preferredFont(forTextStyle: .caption2)
@@ -145,29 +184,5 @@ extension TrackerDayHabitContentView {
     categoryLabel.layer.masksToBounds = true
     categoryLabel.layer.cornerRadius = 4
     titleAndLabelsStackView.addArrangedSubview(categoryLabel)
-
-    mainStackView.addArrangedSubview(completionButton)
-    completionButton.addTarget(self, action: #selector(completionHandler), for: .touchUpInside)
-    completionButton.heightAnchor.constraint(equalTo: completionButton.widthAnchor).isActive = true
-    completionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-
-    var buttonConfiguration = UIButton.Configuration.bordered()
-    buttonConfiguration.background.strokeColor = .contrast
-    let strokeWidth: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 3 : 2
-    buttonConfiguration.background.strokeWidth = strokeWidth
-    buttonConfiguration.cornerStyle = .capsule
-    let insetSize: Double = traitCollection.preferredContentSizeCategory.isAccessibilityCategory ? 13 : 8
-    buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: insetSize, leading: insetSize, bottom: insetSize, trailing: insetSize)
-    buttonConfiguration.baseForegroundColor = .contrast
-    completionButton.configuration = buttonConfiguration
-
-    stackView.addArrangedSubview(resultsView)
-    resultsView.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
-
-    isAccessibilityElement = false
-    accessibilityElements = [backgroundView, resultsView]
-    backgroundView.isAccessibilityElement = true
-    backgroundView.accessibilityTraits = .button
-    backgroundView.accessibilityHint = "Double tap to adjust completion"
   }
 }

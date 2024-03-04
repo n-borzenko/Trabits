@@ -57,8 +57,19 @@ struct StatisticsMonthHabitProgressView: View {
       let angle = updatedProgressWidth * 90 / height
       let offset = cornerRadius * cos(angle * Double.pi / 180)
 
-      path.addArc(center: CGPoint(x: cornerRadius - 2 * offset, y: cornerRadius), radius: cornerRadius, startAngle: Angle(degrees: -angle), endAngle: Angle(degrees: angle), clockwise: false)
-      path.addArc(center: CGPoint(x: cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: Angle(degrees: 180 - angle), endAngle: Angle(degrees: 180 + angle), clockwise: false)
+      path.addArc(
+        center: CGPoint(x: cornerRadius - 2 * offset, y: cornerRadius),
+        radius: cornerRadius,
+        startAngle: Angle(degrees: -angle),
+        endAngle: Angle(degrees: angle),
+        clockwise: false
+      )
+      path.addArc(
+        center: CGPoint(x: cornerRadius, y: cornerRadius),
+        radius: cornerRadius, startAngle: Angle(degrees: 180 - angle),
+        endAngle: Angle(degrees: 180 + angle),
+        clockwise: false
+      )
       path.closeSubpath()
     }
   }

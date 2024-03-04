@@ -10,10 +10,10 @@ import SwiftUI
 struct HabitDetailObjectivesView: View {
   var objectives: [HabitObjective]
   var imageName: String
-  
+
   var body: some View {
     let items = Array(zip(objectives.indices, objectives))
-    
+
     return ScrollView(.horizontal) {
       LazyHStack(spacing: 16) {
         ForEach(items, id: \.0) { index, objective in
@@ -24,7 +24,7 @@ struct HabitDetailObjectivesView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityValue("\(index == 0 ? "Current value" : " ") \(objective.count) ")
-            
+
             if let startDate = objective.applicableFrom {
               Text("Since \(startDate.formatted(date: .abbreviated, time: .omitted))")
                 .font(.caption)
@@ -52,23 +52,23 @@ struct StructureHabitDetailView: View {
   @EnvironmentObject var structureRouter: StructureRouter
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.managedObjectContext) var context
-  
+
   @State private var isEditorVisible = false
   @State private var isRemovingDataAlertVisible = false
   @State private var isDeletingHabitAlertVisible = false
-  
+
   @ObservedObject var habit: Habit
-  
+
   var body: some View {
     let isArchived = habit.archivedAt != nil
-    
+
     List {
       Section("Title") {
         StructureListItem(backgroundColor: habit.color) {
           Text(habit.title ?? "")
         }
       }
-      
+
       if let category = habit.category {
         Section("Category") {
           StructureListItem(backgroundColor: .neutral5) {
@@ -81,21 +81,28 @@ struct StructureHabitDetailView: View {
           }
         }
       }
-      
+
       Section("Day targets") {
         HabitDetailObjectivesView(objectives: habit.sortedDayTargets, imageName: "target")
           .accessibilityElement(children: .contain)
       }
-      
+
       Section("Week goals") {
         HabitDetailObjectivesView(objectives: habit.sortedWeekGoals, imageName: "flame")
           .accessibilityElement(children: .contain)
       }
-      
+
       Section("Status") {
         StructureListItem(backgroundColor: .neutral5) {
           HStack {
-            Text(isArchived ? "Archived from \(Calendar.current.startOfDay(for: habit.archivedAt!).formatted(date: .abbreviated, time: .omitted))" : "Active")
+            Text(isArchived ?
+              """
+              Archived from \(
+                Calendar.current.startOfDay(for: habit.archivedAt!).formatted(date: .abbreviated, time: .omitted)
+              )
+              """ :
+              "Active"
+            )
             Spacer()
             Button(action: isArchived ? unarchiveHabit : archiveHabit) {
               Text(isArchived ? "Unarchive" : "Archive")
@@ -109,7 +116,7 @@ struct StructureHabitDetailView: View {
           }
         }
       }
-      
+
       Section {
         StructureListItem(backgroundColor: .neutral5) {
           Button(role: .destructive) {
@@ -156,7 +163,7 @@ struct StructureHabitDetailView: View {
       HabitEditorView(habit: habit)
     }
   }
-  
+
   private func unarchiveHabit() {
     var notArchivedHabitsCount = 0
     do {
@@ -167,12 +174,12 @@ struct StructureHabitDetailView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     habit.archivedAt = nil
     habit.order = Int32(notArchivedHabitsCount)
     saveChanges()
   }
-  
+
   private func archiveHabit() {
     var habits: [Habit] = []
     do {
@@ -183,7 +190,7 @@ struct StructureHabitDetailView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     if !habits.isEmpty {
       for index in 0..<habits.endIndex {
         habits[index].order -= 1
@@ -193,7 +200,7 @@ struct StructureHabitDetailView: View {
     habit.order = -1
     saveChanges()
   }
-  
+
   private func deleteHabit() {
     var habits: [Habit] = []
     do {
@@ -204,7 +211,7 @@ struct StructureHabitDetailView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     if !habits.isEmpty {
       for index in 0..<habits.endIndex {
         habits[index].order -= 1
@@ -214,14 +221,15 @@ struct StructureHabitDetailView: View {
     saveChanges()
     structureRouter.path.removeLast()
   }
-  
+
   private func removeCompletions() {
     habit.dayResults?.forEach {
-      context.delete($0 as! DayResult)
+      guard let dayResult = $0 as? DayResult else { return }
+      context.delete(dayResult)
     }
     saveChanges()
   }
-  
+
   private func saveChanges() {
     do {
       try context.save()
@@ -238,9 +246,9 @@ struct StructureHabitDetailView: View {
   do {
     habit = try context.fetch(Habit.orderedHabitsFetchRequest()).first
   } catch {}
-  
+
   let structureRouter = StructureRouter()
-  
+
   return NavigationStack(path: .constant(structureRouter.path)) {
     StructureHabitDetailView(habit: habit!)
   }

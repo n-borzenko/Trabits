@@ -174,7 +174,8 @@ extension HabitEditorView {
     if habitDraft.resetAllDayTargetIsOn {
       // set new initial value
       habit.dayTargets?.forEach {
-        context.delete($0 as! DayTarget)
+        guard let dayTarget = $0 as? DayTarget else { return }
+        context.delete(dayTarget)
       }
       let dayTarget = DayTarget(context: context)
       dayTarget.count = Int32(habitDraft.dayTarget)
@@ -213,7 +214,8 @@ extension HabitEditorView {
     if habitDraft.resetAllWeekGoalsIsOn {
       // set new initial value
       habit.weekGoals?.forEach {
-        context.delete($0 as! WeekGoal)
+        guard let weekGoal = $0 as? WeekGoal else { return }
+        context.delete(weekGoal)
       }
       let weekGoal = WeekGoal(context: context)
       weekGoal.count = Int32(habitDraft.weekGoal)

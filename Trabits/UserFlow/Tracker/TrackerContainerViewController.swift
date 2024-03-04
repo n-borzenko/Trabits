@@ -11,42 +11,42 @@ import Combine
 class TrackerContainerViewController: UIViewController {
   private weak var trackerCoordinator: TrackerCoordinator?
   private let dataProvider = TrackerDataProvider()
-  
+
   private var weekViewController: TrackerWeekViewController!
   private var dayPageViewController: PageViewController!
-  
+
   private let underlinedContainerView = UnderlinedContainerView()
-  
+
   private var isNegativeCollectionScrollOffset = true {
     didSet {
       underlinedContainerView.isLineVisible = !isNegativeCollectionScrollOffset
     }
   }
-  
+
   private var cancellable: AnyCancellable?
-  
+
   private var dateFormatter = {
     var dateFormatter = DateFormatter()
     dateFormatter.timeStyle = .none
     dateFormatter.dateStyle = .long
     return dateFormatter
   }()
-  
+
   init(trackerCoordinator: TrackerCoordinator? = nil) {
     self.trackerCoordinator = trackerCoordinator
     super.init(nibName: nil, bundle: nil)
     setupViews()
-    
+
     cancellable = dataProvider.$selectedDate.sink { [weak self] newSelectedDate in
       self?.selectedDateUpdateHandler(selectedDate: newSelectedDate)
     }
   }
-  
+
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   deinit {
     cancellable?.cancel()
     cancellable = nil
@@ -56,20 +56,20 @@ class TrackerContainerViewController: UIViewController {
 extension TrackerContainerViewController {
   private func setupViews() {
     view.backgroundColor = .systemBackground
-    
+
     view.addSubview(underlinedContainerView)
     underlinedContainerView.translatesAutoresizingMaskIntoConstraints = false
     underlinedContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
     underlinedContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
     underlinedContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     underlinedContainerView.heightAnchor.constraint(equalToConstant: 69).isActive = true
-    
+
     weekViewController = TrackerWeekViewController(dataProvider: dataProvider)
     addChild(weekViewController)
     weekViewController.view.translatesAutoresizingMaskIntoConstraints = false
     underlinedContainerView.appendSubview(weekViewController.view)
     weekViewController.didMove(toParent: self)
-    
+
     let dayContainerView = UIView()
     view.addSubview(dayContainerView)
     dayContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -77,22 +77,25 @@ extension TrackerContainerViewController {
     dayContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
     dayContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     dayContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-    
+
     dayPageViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     dayPageViewController.delegate = self
     dayPageViewController.dataSource = self
     dayPageViewController.accessibilityScrollDelegate = self
-    
+
     addChild(dayPageViewController)
     dayContainerView.addPinnedSubview(dayPageViewController.view)
-    let dayViewController = TrackerDayViewController(date: dataProvider.selectedDate, trackerCoordinator: trackerCoordinator)
+    let dayViewController = TrackerDayViewController(
+      date: dataProvider.selectedDate,
+      trackerCoordinator: trackerCoordinator
+    )
     dayViewController.delegate = self
     let dayPageViewInitialControllers = [dayViewController]
     dayPageViewController.setViewControllers(dayPageViewInitialControllers, direction: .forward, animated: false)
     dayPageViewController.didMove(toParent: self)
-    
+
     navigationItem.largeTitleDisplayMode = .never
-    
+
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "house"),
       style: .plain,
@@ -100,7 +103,7 @@ extension TrackerContainerViewController {
       action: #selector(chooseToday)
     )
     navigationItem.leftBarButtonItem?.title = "Choose today"
-    
+
     navigationItem.rightBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "calendar"),
       style: .plain,
@@ -109,7 +112,7 @@ extension TrackerContainerViewController {
     )
     navigationItem.rightBarButtonItem?.title = "Choose date"
   }
-  
+
   @objc private func chooseDate() {
     let datePickerController = DatePickerViewController(date: dataProvider.selectedDate)
     datePickerController.delegate = self
@@ -119,26 +122,37 @@ extension TrackerContainerViewController {
       sheetController.detents = [.medium(), .large()]
       sheetController.preferredCornerRadius = 24
     }
-    
+
     modalPresentationStyle = .pageSheet
     present(containerController, animated: true)
   }
-  
+
   @objc func chooseToday() {
     dataProvider.selectedDate = Calendar.current.startOfDay(for: Date())
-    UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
+    UIAccessibility.post(
+      notification: .pageScrolled,
+      argument: "\(dataProvider.generateSelectedDateDescription()) is selected"
+    )
   }
 }
 
 extension TrackerContainerViewController: DatePickerViewControllerDelegate {
   func dateSelectionHandler(date: Date) {
     dataProvider.selectedDate = date
-    UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
+    UIAccessibility.post(
+      notification: .pageScrolled,
+      argument: "\(dataProvider.generateSelectedDateDescription()) is selected"
+    )
   }
 }
 
 extension TrackerContainerViewController: UIPageViewControllerDelegate {
-  func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    didFinishAnimating finished: Bool,
+    previousViewControllers: [UIViewController],
+    transitionCompleted completed: Bool
+  ) {
     guard completed,
           let controller = pageViewController.viewControllers?.first as? TrackerDayViewController else { return }
     dataProvider.selectedDate = controller.date
@@ -146,7 +160,10 @@ extension TrackerContainerViewController: UIPageViewControllerDelegate {
 }
 
 extension TrackerContainerViewController: UIPageViewControllerDataSource {
-  func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerBefore viewController: UIViewController
+  ) -> UIViewController? {
     guard let controller = viewController as? TrackerDayViewController,
           let newDate = Calendar.current.date(byAdding: .day, value: -1, to: controller.date) else {
       return nil
@@ -155,8 +172,11 @@ extension TrackerContainerViewController: UIPageViewControllerDataSource {
     dayViewController.delegate = self
     return dayViewController
   }
-  
-  func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerAfter viewController: UIViewController
+  ) -> UIViewController? {
     guard let controller = viewController as? TrackerDayViewController,
           let newDate = Calendar.current.date(byAdding: .day, value: 1, to: controller.date) else {
       return nil
@@ -176,7 +196,10 @@ extension TrackerContainerViewController: AccessibilityPageScrollDelegate {
     updateDayPageViewController(newDate: newDate) { [weak self] _ in
       guard let self else { return }
       dataProvider.selectedDate = newDate
-      UIAccessibility.post(notification: .pageScrolled, argument: "\(dataProvider.generateSelectedDateDescription()) is selected")
+      UIAccessibility.post(
+        notification: .pageScrolled,
+        argument: "\(dataProvider.generateSelectedDateDescription()) is selected"
+      )
     }
     return true
   }
@@ -189,10 +212,12 @@ extension TrackerContainerViewController {
       let direction: UIPageViewController.NavigationDirection = newDate > dayController.date ? .forward : .reverse
       let newDayController = TrackerDayViewController(date: newDate, trackerCoordinator: trackerCoordinator)
       newDayController.delegate = self
-      dayPageViewController.setViewControllers([newDayController], direction: direction, animated: true, completion: completion)
+      dayPageViewController.setViewControllers(
+        [newDayController], direction: direction, animated: true, completion: completion
+      )
     }
   }
-  
+
   func selectedDateUpdateHandler(selectedDate: Date) {
     navigationItem.title = dateFormatter.string(from: selectedDate)
     updateDayPageViewController(newDate: selectedDate)

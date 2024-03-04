@@ -48,7 +48,9 @@ class StatisticsMonthData: StatisticsIntervalData {
   private func getHabitData(habit: Habit) -> StatisticsMonthResults {
     var results = StatisticsMonthResults()
 
-    guard let lastDayOfTheMonth = Calendar.current.date(byAdding: .day, value: -1, to: month.end) else { return results }
+    guard let lastDayOfTheMonth = Calendar.current.date(byAdding: .day, value: -1, to: month.end) else {
+      return results
+    }
     results.monthLength = Calendar.current.component(.day, from: lastDayOfTheMonth)
     let startWeekOfYear = Calendar.current.component(.weekOfYear, from: month.start)
     let weekCount = Calendar.current.component(.weekOfYear, from: lastDayOfTheMonth) - startWeekOfYear + 1
@@ -59,11 +61,56 @@ class StatisticsMonthData: StatisticsIntervalData {
       return results
     }
 
+    let monthCompletions = getMonthCompletions(
+      dayResults: dayResults,
+      dayTargets: dayTargets,
+      weekCount: weekCount,
+      startWeekOfYear: startWeekOfYear
+    )
+    results.progress = monthCompletions.monthProgress
+    results.monthResult = monthCompletions.monthResult
+
+    if let dayTarget = dayTargets.last {
+      results.dayTarget = dayTarget
+    }
+    if let weekGoal = weekGoals.last {
+      results.weekGoal = weekGoal
+    }
+
+    var weekProgress: [StatisticsMonthResults.StatisticsWeekProgress] = []
+    for weekIndex in 0..<weekCount {
+      var weekResult = 0
+      for weekdayIndex in 0..<7 {
+        if case .completed = monthCompletions.monthProgress[weekdayIndex + weekIndex * 7] {
+          weekResult += 1
+        }
+      }
+
+      var weekGoal: WeekGoal?
+      if let nextWeekDate = Calendar.current.date(byAdding: .day, value: (weekIndex + 1) * 7, to: extendedMonth.start) {
+        weekGoal = weekGoals.last { $0.applicableFrom == nil || $0.applicableFrom! < nextWeekDate }
+      }
+      weekProgress.append(
+        StatisticsMonthResults.StatisticsWeekProgress(weekGoal: Int(weekGoal?.count ?? 0), weekResult: weekResult)
+      )
+    }
+    results.weekProgress = weekProgress
+
+    return results
+  }
+
+  private func getMonthCompletions(
+    dayResults: [DayResult],
+    dayTargets: [DayTarget],
+    weekCount: Int,
+    startWeekOfYear: Int
+  ) -> (monthProgress: [StatisticsDayProgress], monthResult: Int) {
     var completions = Array(repeating: 0, count: 7 * weekCount)
     for dayResult in dayResults {
       guard dayResult.completionCount > 0, let resultDate = dayResult.date else { continue }
-      let weekdayIndex = (Calendar.current.component(.weekday, from: resultDate) + 7
-                          - Calendar.current.firstWeekday) % 7
+      let weekdayIndex = (
+        Calendar.current.component(.weekday, from: resultDate) + 7 - Calendar.current.firstWeekday
+      ) % 7
       let weekIndex = Calendar.current.component(.weekOfYear, from: resultDate) - startWeekOfYear
       let index = weekdayIndex + weekIndex * 7
       completions[index] = Int(dayResult.completionCount)
@@ -97,36 +144,7 @@ class StatisticsMonthData: StatisticsIntervalData {
         monthProgress[index] = .none(target: targetCount)
       }
     }
-    results.progress = monthProgress
-    results.monthResult = monthResult
 
-    if let dayTarget = dayTargets.last {
-      results.dayTarget = dayTarget
-    }
-
-    if let weekGoal = weekGoals.last {
-      results.weekGoal = weekGoal
-    }
-
-    var weekProgress: [StatisticsMonthResults.StatisticsWeekProgress] = []
-    for weekIndex in 0..<weekCount {
-      var weekResult = 0
-      for weekdayIndex in 0..<7 {
-        if case .completed = monthProgress[weekdayIndex + weekIndex * 7] {
-          weekResult += 1
-        }
-      }
-
-      var weekGoal: WeekGoal?
-      if let nextWeekDate = Calendar.current.date(byAdding: .day, value: (weekIndex + 1) * 7, to: extendedMonth.start) {
-        weekGoal = weekGoals.last { $0.applicableFrom == nil || $0.applicableFrom! < nextWeekDate }
-      }
-      weekProgress.append(
-        StatisticsMonthResults.StatisticsWeekProgress(weekGoal: Int(weekGoal?.count ?? 0), weekResult: weekResult)
-      )
-    }
-    results.weekProgress = weekProgress
-
-    return results
+    return (monthProgress, monthResult)
   }
 }

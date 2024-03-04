@@ -37,7 +37,12 @@ struct WeekGoalSelectorView: View {
           .alert("Resetting week goal", isPresented: $isAlertPresented) {
             Button("OK", role: .cancel) {}
           } message: {
-            Text("Resetting previuosly set goals will affect your statistics.\nAlternatively, you can track new goal starting today.")
+            Text(
+              """
+              Resetting previuosly set goals will affect your statistics.
+              Alternatively, you can track new goal starting today.
+              """
+            )
           }
         }
       }

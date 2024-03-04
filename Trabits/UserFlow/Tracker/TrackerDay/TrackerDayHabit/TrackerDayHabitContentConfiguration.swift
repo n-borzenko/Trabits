@@ -9,20 +9,20 @@ import UIKit
 
 struct TrackerDayHabitContentConfiguration: UIContentConfiguration, Hashable {
   var title: String = ""
-  var categoryTitle: String? = nil
+  var categoryTitle: String?
   var color: UIColor = .clear
   var weekResults = HabitWeekResults()
   var isArchived: Bool = false
-  var completion: (() -> Void)? = nil
-  
+  var completion: (() -> Void)?
+
   func makeContentView() -> UIView & UIContentView {
     return TrackerDayHabitContentView(configuration: self)
   }
-  
+
   func updated(for state: UIConfigurationState) -> TrackerDayHabitContentConfiguration {
     return self
   }
-  
+
   func hash(into hasher: inout Hasher) {
     hasher.combine(title)
     hasher.combine(categoryTitle)
@@ -30,7 +30,7 @@ struct TrackerDayHabitContentConfiguration: UIContentConfiguration, Hashable {
     hasher.combine(weekResults)
     hasher.combine(isArchived)
   }
-  
+
   static func == (lhs: TrackerDayHabitContentConfiguration, rhs: TrackerDayHabitContentConfiguration) -> Bool {
     lhs.title == rhs.title &&
     lhs.categoryTitle == rhs.categoryTitle &&

@@ -59,7 +59,8 @@ struct DayTargetSelectorView: View {
   var isNew: Bool
 
   var body: some View {
-    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .center))
+    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) :
+      AnyLayout(HStackLayout(alignment: .center))
 
     Section("Completions per day") {
       layout {
@@ -87,7 +88,12 @@ struct DayTargetSelectorView: View {
           ) {
             Button("OK", role: .cancel) {}
           } message: {
-            Text("Resetting previuosly set targets will affect your statistics.\nAlternatively, you can track new target starting today.")
+            Text(
+              """
+              Resetting previuosly set targets will affect your statistics.
+              Alternatively, you can track new target starting today.
+              """
+            )
           }
         }
       }
