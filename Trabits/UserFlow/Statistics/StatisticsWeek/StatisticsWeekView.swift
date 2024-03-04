@@ -34,7 +34,10 @@ struct StatisticsWeekView: View {
         if userDefaultsObserver.isStatisticsSummaryPreferred {
           Section {
             StatisticsListItem {
-              StatisticsWeekSummaryGridView(habitsWithResults: weekData.habitsWithResults)
+              StatisticsWeekSummaryGridView(
+                weekData: weekData,
+                isGrouped: userDefaultsObserver.isHabitGroupingOn
+              )
             }
             .id("grid")
           }
