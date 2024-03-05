@@ -22,5 +22,9 @@ class TrackerDayHabitListCell: UICollectionViewListCell {
     newConfiguration.weekResults = weekResults
     newConfiguration.completion = completion
     contentConfiguration = newConfiguration
+
+    var newBackgroundConfiguration = backgroundConfiguration
+    newBackgroundConfiguration?.backgroundColor = .systemBackground
+    backgroundConfiguration = newBackgroundConfiguration
   }
 }
