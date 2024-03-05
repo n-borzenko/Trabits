@@ -9,12 +9,12 @@ import SwiftUI
 
 struct CategoryDetailHabitView: View {
   @ObservedObject var habit: Habit
-  
+
   var body: some View {
     let weekGoal = habit.sortedWeekGoals.first
     let dayTarget = habit.sortedDayTargets.first
     let hasDetailsRow = (weekGoal?.count ?? 0) > 0 || (dayTarget?.count ?? 1) > 1
-    
+
     return NavigationLink(value: habit) {
       VStack(alignment: .leading, spacing: 4) {
         if habit.archivedAt != nil {
@@ -38,7 +38,7 @@ struct StructureCategoryDetailView: View {
   @State private var isHabitsSectionExpanded = false
   @State private var isDeletingCategoryAlertVisible = false
   @ObservedObject var category: Category
-  
+
   var body: some View {
     let habitsCount = category.habits?.count ?? 0
     List {
@@ -47,7 +47,7 @@ struct StructureCategoryDetailView: View {
           Text(category.title ?? "")
         }
       }
-      
+
       Section {
         StructureListItem(backgroundColor: .neutral5) {
           DisclosureGroup(
@@ -63,7 +63,7 @@ struct StructureCategoryDetailView: View {
           .tint(Color(uiColor: habitsCount == 0 ? .clear : .contrast))
         }
       }
-      
+
       Section(footer: HStack {
         Text("Habits in the category will not be deleted")
           .font(.footnote)
@@ -101,7 +101,7 @@ struct StructureCategoryDetailView: View {
       CategoryEditorView(category: category)
     }
   }
-  
+
   private func deleteCategory() {
     var categories: [Category] = []
     do {
@@ -112,7 +112,7 @@ struct StructureCategoryDetailView: View {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     if !categories.isEmpty {
       for index in 0..<categories.endIndex {
         categories[index].order += 1
@@ -122,7 +122,7 @@ struct StructureCategoryDetailView: View {
     saveChanges()
     structureRouter.path.removeLast()
   }
-  
+
   private func saveChanges() {
     do {
       try context.save()
@@ -135,13 +135,13 @@ struct StructureCategoryDetailView: View {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var category: Category? = nil
+  var category: Category?
   do {
     category = try context.fetch(Category.orderedCategoriesFetchRequest()).first
   } catch {}
-  
+
   let structureRouter = StructureRouter()
-  
+
   return NavigationStack(path: .constant(structureRouter.path)) {
     StructureCategoryDetailView(category: category!)
   }

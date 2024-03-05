@@ -11,7 +11,7 @@ struct StatisticsWeekSummaryChartView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
   var results: StatisticsWeekResults
   var color: UIColor?
-  
+
   var body: some View {
     HStack(spacing: dynamicTypeSize.isAccessibilitySize ? 6 : 4) {
       ForEach(Array(results.progress.enumerated()), id: \.offset) { index, result in
@@ -43,17 +43,17 @@ struct StatisticsWeekSummaryChartView: View {
     .accessibilityElement(children: .combine)
     .accessibilityAddTraits(.isStaticText)
   }
-  
+
   private func getProperties(result: StatisticsDayProgress) -> (hasBorder: Bool, hasDot: Bool) {
     switch result {
-    case .completed(completed: _, target: _): return (hasBorder: true, hasDot: true)
-    case .partial(completed: _, target: _): return (hasBorder: true, hasDot: false)
-    case .none(target: _): return (hasBorder: false, hasDot: false)
+    case .completed: return (hasBorder: true, hasDot: true)
+    case .partial: return (hasBorder: true, hasDot: false)
+    case .none: return (hasBorder: false, hasDot: false)
     }
   }
-  
+
   private func getDescription(result: StatisticsDayProgress, index: Int) -> String {
-    let weekdayIndex = (index + Calendar.current.firstWeekday - 1) % 7
+    let weekdayIndex = Calendar.current.weekdayIndex(index)
     return "\(result.message) on \(Calendar.current.standaloneWeekdaySymbols[weekdayIndex])"
   }
 }

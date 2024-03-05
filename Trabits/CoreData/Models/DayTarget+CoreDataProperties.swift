@@ -16,11 +16,13 @@ extension DayTarget: Identifiable, HabitObjective {
 }
 
 extension DayTarget {
-  @nonobjc private class func fetchRequest() -> NSFetchRequest<DayTarget> {
+  @nonobjc
+  private class func fetchRequest() -> NSFetchRequest<DayTarget> {
     return NSFetchRequest<DayTarget>(entityName: "DayTarget")
   }
-  
-  @nonobjc class func targetsFetchRequest(from startDate: Date, until endDate: Date) -> NSFetchRequest<DayTarget> {
+
+  @nonobjc
+  class func targetsFetchRequest(from startDate: Date, until endDate: Date) -> NSFetchRequest<DayTarget> {
     let request = fetchRequest()
     let datePredicate = NSPredicate(format: "applicableFrom == nil OR applicableFrom < %@", endDate as NSDate)
     let habitPredicate = NSPredicate(format: "habit.archivedAt == nil OR habit.archivedAt >= %@", startDate as NSDate)
@@ -28,8 +30,9 @@ extension DayTarget {
     request.sortDescriptors = [NSSortDescriptor(keyPath: \DayTarget.applicableFrom, ascending: true)]
     return request
   }
-  
-  @nonobjc class func targetsUntilNextWeekFetchRequest(forDate date: Date) -> NSFetchRequest<DayTarget> {
+
+  @nonobjc
+  class func targetsUntilNextWeekFetchRequest(forDate date: Date) -> NSFetchRequest<DayTarget> {
     let request = fetchRequest()
     guard let weekInterval = Calendar.current.weekInterval(for: date) else { return request }
     let datePredicate = NSPredicate(format: "applicableFrom == nil OR applicableFrom < %@", weekInterval.end as NSDate)

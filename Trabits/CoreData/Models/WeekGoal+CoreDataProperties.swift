@@ -19,7 +19,7 @@ extension WeekGoal {
   @nonobjc private class func fetchRequest() -> NSFetchRequest<WeekGoal> {
     return NSFetchRequest<WeekGoal>(entityName: "WeekGoal")
   }
-  
+
   @nonobjc class func goalsFetchRequest(from startDate: Date, until endDate: Date) -> NSFetchRequest<WeekGoal> {
     let request = fetchRequest()
     let datePredicate = NSPredicate(format: "applicableFrom == nil OR applicableFrom < %@", endDate as NSDate)
@@ -28,7 +28,7 @@ extension WeekGoal {
     request.sortDescriptors = [NSSortDescriptor(keyPath: \WeekGoal.applicableFrom, ascending: true)]
     return request
   }
-  
+
   @nonobjc class func goalsUntilNextWeekFetchRequest(forDate date: Date) -> NSFetchRequest<WeekGoal> {
     let request = fetchRequest()
     guard let weekInterval = Calendar.current.weekInterval(for: date) else { return request }

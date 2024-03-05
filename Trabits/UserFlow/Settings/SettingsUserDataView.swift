@@ -16,7 +16,7 @@ struct SettingsDataHabitsView: View {
     ]
   )
   private var habits: FetchedResults<Habit>
-  
+
   var body: some View {
     LabeledContent("Habit records:", value: "\(habits.count)")
   }
@@ -25,7 +25,7 @@ struct SettingsDataHabitsView: View {
 struct SettingsDataDayResultsView: View {
   @FetchRequest(sortDescriptors: [SortDescriptor(\.date, order: .forward)])
   private var dayResults: FetchedResults<DayResult>
-  
+
   var body: some View {
     LabeledContent("Day result records:", value: "\(dayResults.count)")
   }
@@ -34,7 +34,7 @@ struct SettingsDataDayResultsView: View {
 struct SettingsDataDayTargetsView: View {
   @FetchRequest(sortDescriptors: [SortDescriptor(\.applicableFrom, order: .forward)])
   private var dayTargets: FetchedResults<DayTarget>
-  
+
   var body: some View {
     LabeledContent("Day target records:", value: "\(dayTargets.count)")
   }
@@ -43,7 +43,7 @@ struct SettingsDataDayTargetsView: View {
 struct SettingsDataWeekGoalsView: View {
   @FetchRequest(sortDescriptors: [SortDescriptor(\.applicableFrom, order: .forward)])
   private var weekGoals: FetchedResults<WeekGoal>
-  
+
   var body: some View {
     LabeledContent("Week goal records:", value: "\(weekGoals.count)")
   }
@@ -52,7 +52,7 @@ struct SettingsDataWeekGoalsView: View {
 struct SettingsDataCategoriesView: View {
   @FetchRequest(sortDescriptors: [SortDescriptor(\.order, order: .forward)])
   private var categories: FetchedResults<Category>
-  
+
   var body: some View {
     LabeledContent("Category records:", value: "\(categories.count)")
   }
@@ -61,9 +61,9 @@ struct SettingsDataCategoriesView: View {
 @MainActor
 class UserDefaultsDataObserver: ObservableObject {
   @Published var count = 0
-  
+
   private var cancellables = Set<AnyCancellable>()
-  
+
   init() {
     UserDefaults.standard
       .publisher(for: \.isHabitGroupingOn)
@@ -71,14 +71,14 @@ class UserDefaultsDataObserver: ObservableObject {
         self?.updateCounter()
       }
       .store(in: &cancellables)
-    
+
     UserDefaults.standard
       .publisher(for: \.isStatisticsSummaryPreferred)
       .sink { [weak self] _ in
         self?.updateCounter()
       }
       .store(in: &cancellables)
-    
+
     UserDefaults.standard
       .publisher(for: \.wasOnboardingShown)
       .sink { [weak self] _ in
@@ -86,15 +86,15 @@ class UserDefaultsDataObserver: ObservableObject {
       }
       .store(in: &cancellables)
   }
-  
-  private func updateCounter() {
+
+  func updateCounter() {
     var count = 0
     count += UserDefaults.standard.hasData(for: .isHabitGroupingOn) ? 1 : 0
     count += UserDefaults.standard.hasData(for: .isStatisticsSummaryPreferred) ? 1 : 0
     count += UserDefaults.standard.hasData(for: .wasOnboardingShown) ? 1 : 0
     self.count = count
   }
-  
+
   deinit {
     cancellables.forEach { $0.cancel() }
     cancellables.removeAll()
@@ -107,13 +107,17 @@ struct SettingsUserDataView: View {
   @State private var isDataDeletionAlertIsVisible = false
   @State private var isDataDeletionInProgress = false
   @State private var storedSettingsNumber = 0
-  
+
   var body: some View {
     List {
       Section {
-        Text("All user data is stored on the device and is never shared with any server or third-party service. We do not use cookies or collect anonymous statistics. In the event that conditions outlined above undergo any changes, user will be notified.")
-          .font(.headline)
-          .padding(.vertical, 6)
+        Text("""
+          All user data is stored on the device and is never shared with any server or third-party service.
+          We do not use cookies or collect anonymous statistics.
+          In the event that conditions outlined above undergo any changes, user will be notified.
+        """)
+        .font(.headline)
+        .padding(.vertical, 6)
       }
       Section("User settings") {
         Text("Application state settings are stored in UserDefaults")
@@ -148,34 +152,35 @@ struct SettingsUserDataView: View {
     }
     .navigationTitle("User data")
   }
-  
+
   private func deleteAllData() {
     isDataDeletionInProgress = true
-    
+
     // remove all core data objects
     do {
       let habitsFetchRequest = Habit.orderedHabitsFetchRequest()
       let habits = try context.fetch(habitsFetchRequest)
       habits.forEach { context.delete($0) }
-      
+
       let categoriesFetchRequest = Category.orderedCategoriesFetchRequest()
       let categories = try context.fetch(categoriesFetchRequest)
       categories.forEach { context.delete($0) }
-      
+
       try context.save()
     } catch {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     // remove user defaults data
     UserDefaults.standard.removeData(for: .isHabitGroupingOn)
     UserDefaults.standard.removeData(for: .isStatisticsSummaryPreferred)
     UserDefaults.standard.removeData(for: .wasOnboardingShown)
-    
+    userDefaultsCounter.updateCounter()
+
     Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
       isDataDeletionInProgress = false
-      UIAccessibility.post(notification: .pageScrolled, argument: "All user data has been deleted")
+      UIAccessibility.post(notification: .announcement, argument: "All user data has been deleted")
     }
   }
 }
@@ -183,7 +188,7 @@ struct SettingsUserDataView: View {
 struct SettingsProgressView: View {
   @Binding var isDataDeletionInProgress: Bool
   @State private var rotationAngle = 0.0
-  
+
   var body: some View {
     Group {
       if isDataDeletionInProgress {
@@ -216,7 +221,6 @@ struct SettingsProgressView: View {
     }
   }
 }
-
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext

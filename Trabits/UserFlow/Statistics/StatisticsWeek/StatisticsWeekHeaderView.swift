@@ -10,11 +10,12 @@ import SwiftUI
 struct StatisticsWeekHeaderView: View {
   @EnvironmentObject var userDefaultsObserver: UserDefaultsObserver
   var title: String
-  
+
   var body: some View {
     let label = UserDefaults.standard.isStatisticsSummaryPreferred ? "Show detailed charts" : "Show summary"
-    let imageName = "rectangle.arrowtriangle.2.\(UserDefaults.standard.isStatisticsSummaryPreferred ? "outward" : "inward")"
-    
+    let imageDirection = UserDefaults.standard.isStatisticsSummaryPreferred ? "outward" : "inward"
+    let imageName = "rectangle.arrowtriangle.2.\(imageDirection)"
+
     return HStack(alignment: .center) {
       Text(title)
       Spacer()
@@ -34,6 +35,6 @@ struct StatisticsWeekHeaderView: View {
 }
 
 #Preview {
-    StatisticsWeekHeaderView(title: "Summary")
+  StatisticsWeekHeaderView(title: "Summary")
     .environmentObject(UserDefaultsObserver())
 }

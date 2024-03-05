@@ -10,7 +10,7 @@ import SwiftUI
 struct ColorSelectorView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Binding var colorIndex: Int
-  
+
   var body: some View {
     Section("Color") {
       ScrollView(.horizontal) {
@@ -26,7 +26,7 @@ struct ColorSelectorView: View {
                   .padding(dynamicTypeSize >= .accessibility1 ? 18 : 10)
                   .tint(colorIndex == index ? Color(.contrast) : .clear)
               }
-              .background (
+              .background(
                 ZStack {
                   Circle()
                     .fill(Color(uiColor: color))
@@ -51,7 +51,7 @@ struct ColorSelectorView: View {
           .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment:
-              if colorIndex < PastelPalette.colors.count - 1  {
+              if colorIndex < PastelPalette.colors.count - 1 {
                 colorIndex += 1
               } else {
                 colorIndex = 0
@@ -71,7 +71,6 @@ struct ColorSelectorView: View {
     }
   }
 }
-
 
 #Preview {
   List {

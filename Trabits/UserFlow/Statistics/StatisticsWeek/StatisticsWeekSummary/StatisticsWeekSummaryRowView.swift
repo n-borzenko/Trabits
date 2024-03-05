@@ -9,11 +9,11 @@ import SwiftUI
 
 struct StatisticsWeekSummaryRowView<Title: View, Chart: View, Goal: View>: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
-  
+
   @ViewBuilder var title: () -> Title
   @ViewBuilder var chart: () -> Chart
   @ViewBuilder var goal: () -> Goal
-  
+
   var body: some View {
     if dynamicTypeSize.isAccessibilitySize {
       GridRow {

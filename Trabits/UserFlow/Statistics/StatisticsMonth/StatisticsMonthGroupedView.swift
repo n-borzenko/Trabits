@@ -10,10 +10,10 @@ import SwiftUI
 struct StatisticsMonthGroupedView<TopView: View>: View {
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var monthData: StatisticsMonthData
-  
+
   var width: Double = 0.0
   @ViewBuilder var topView: () -> TopView
-  
+
   var body: some View {
     ForEach(monthData.categories) { categoryWrapper in
       let category = unwrapCategory(wrappedCategory: categoryWrapper)
@@ -21,7 +21,7 @@ struct StatisticsMonthGroupedView<TopView: View>: View {
         if let firstCategory = monthData.categories.first, categoryWrapper == firstCategory {
           topView()
         }
-        
+
         ForEach(monthData.habitsWithResults.filter { $0.habit.category == category }) { item in
           StatisticsListItem {
             StatisticsHabitView(habit: item.habit, results: item.results, isGrouped: true) {
@@ -45,7 +45,7 @@ struct StatisticsMonthGroupedView<TopView: View>: View {
       }
     }
   }
-  
+
   private func unwrapCategory(wrappedCategory: StatisticsIntervalData.CategoryWrapper) -> Category? {
     guard case let .category(category) = wrappedCategory else { return nil }
     return category
@@ -57,7 +57,7 @@ struct StatisticsMonthGroupedView<TopView: View>: View {
   let context = PersistenceController.preview.container.viewContext
   let monthInterval = Calendar.current.monthInterval(for: Date())!
   let monthData = StatisticsMonthData(month: monthInterval, context: context)!
-  
+
   return StatisticsMonthGroupedView(monthData: monthData) { }
     .environment(\.managedObjectContext, context)
     .environmentObject(statisticsRouter)

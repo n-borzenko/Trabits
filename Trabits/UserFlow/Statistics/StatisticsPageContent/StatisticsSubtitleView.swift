@@ -12,7 +12,7 @@ struct StatisticsSubtitleView: View {
   var subtitle: String
   var previousSelectionHandler: () -> Void
   var nextSelectionHandler: () -> Void
-  
+
   var body: some View {
     HStack {
       Button {
@@ -23,12 +23,12 @@ struct StatisticsSubtitleView: View {
       .accessibilityShowsLargeContentViewer {
         Label("Previous \(unit.itemTitle)", systemImage: "chevron.left")
       }
-      
+
       Spacer()
       Text(subtitle)
         .accessibilityShowsLargeContentViewer()
       Spacer()
-      
+
       Button {
         nextSelectionHandler()
       } label: {

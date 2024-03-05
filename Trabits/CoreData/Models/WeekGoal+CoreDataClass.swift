@@ -9,6 +9,4 @@
 import Foundation
 import CoreData
 
-public class WeekGoal: NSManagedObject {
-
-}
+public class WeekGoal: NSManagedObject { }

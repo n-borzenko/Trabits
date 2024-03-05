@@ -30,14 +30,14 @@ extension Category {
 
   @objc(removeHabits:)
   @NSManaged func removeFromHabits(_ values: NSSet)
-  
+
   func getSortedHabits() -> [Habit] {
     let sortDescriptors = [
       NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
-      NSSortDescriptor(keyPath: \Habit.order, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true)
     ]
     return habits?.sortedArray(using: sortDescriptors) as? [Habit] ?? []
-  } 
+  }
 }
 
 extension Category {
@@ -49,10 +49,13 @@ extension Category {
     }
     return request
   }
-  
+
   @nonobjc class func orderedCategoriesFetchRequest(forDate date: Date) -> NSFetchRequest<Category> {
     let request = orderedCategoriesFetchRequest()
-    request.predicate = NSPredicate(format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0", date as NSDate)
+    request.predicate = NSPredicate(
+      format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0",
+      date as NSDate
+    )
     return request
   }
 }

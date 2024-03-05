@@ -13,6 +13,7 @@ struct StatisticsListItem<Content: View>: View {
   var body: some View {
     content()
     .listRowSeparator(.hidden)
+    .listRowBackground(Color.clear)
     .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
   }
 }

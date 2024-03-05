@@ -7,8 +7,8 @@
 
 import SwiftUI
 
+// swiftlint:disable force_unwrapping
 struct SettingsAboutView: View {
-  
   var body: some View {
     List {
       Section("Contacts") {
@@ -36,6 +36,7 @@ struct SettingsAboutView: View {
     }
   }
 }
+// swiftlint:enable force_unwrapping
 
 #Preview {
   SettingsAboutView()

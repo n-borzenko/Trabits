@@ -9,12 +9,14 @@ import SwiftUI
 
 struct StructureCategoryView: View {
   @ObservedObject var category: Category
-  
+
   var body: some View {
     NavigationLink(value: category) {
       VStack(alignment: .leading, spacing: 2) {
         Text(category.title ?? "")
+        // swiftlint:disable empty_count
         if let count = category.habits?.count, count > 0 {
+          // swiftlint:enable empty_count
           Text("^[\(count) \("habit")](inflect: true)")
             .font(.caption)
             .foregroundColor(.secondary)
@@ -31,9 +33,9 @@ struct StructureCategoriesView: View {
     sortDescriptors: [SortDescriptor(\.order, order: .reverse)]
   )
   private var categories: FetchedResults<Category>
-  
+
   @Binding var isCategoryEditorVisible: Bool
-  
+
   var body: some View {
     List {
       ForEach(categories) { category in
@@ -55,7 +57,7 @@ struct StructureCategoriesView: View {
       }
     }
   }
-  
+
   private func reorderCategories(indices: IndexSet, destinationIndex: Int) {
     guard indices.count == 1, let sourceIndex = indices.first else { return }
     let category = categories[sourceIndex]
@@ -72,7 +74,7 @@ struct StructureCategoriesView: View {
     }
     saveChanges()
   }
-  
+
   private func deleteCategories(indices: IndexSet) {
     guard indices.count == 1, let categoryIndex = indices.first else { return }
     let category = categories[categoryIndex]
@@ -82,7 +84,7 @@ struct StructureCategoriesView: View {
     context.delete(category)
     saveChanges()
   }
-  
+
   private func saveChanges() {
     do {
       try context.save()

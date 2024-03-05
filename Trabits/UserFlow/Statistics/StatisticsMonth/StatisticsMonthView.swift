@@ -11,7 +11,7 @@ struct StatisticsMonthView: View {
   @EnvironmentObject var userDefaultsObserver: UserDefaultsObserver
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var monthData: StatisticsMonthData
-  
+
   var body: some View {
     ScrollViewReader { proxy in
       GeometryReader { geo in
@@ -33,7 +33,10 @@ struct StatisticsMonthView: View {
         .listStyle(.grouped)
         .overlay {
           if monthData.habitsWithResults.isEmpty {
-            EmptyStateWrapperView(message: "List is empty. Please create a new habit.", actionTitle: "Add Habit") {
+            EmptyStateWrapperView(
+              message: "List is empty. Please create a new habit.",
+              actionTitle: "Go to My Habits"
+            ) {
               statisticsRouter.navigateToStructureTab()
             }
           }
@@ -44,7 +47,7 @@ struct StatisticsMonthView: View {
       }
     }
   }
-  
+
   @ViewBuilder private func topView() -> some View {
     Rectangle()
       .frame(width: 0, height: 0)
@@ -64,4 +67,3 @@ struct StatisticsMonthView: View {
     .environmentObject(UserDefaultsObserver())
     .environmentObject(statisticsRouter)
 }
-

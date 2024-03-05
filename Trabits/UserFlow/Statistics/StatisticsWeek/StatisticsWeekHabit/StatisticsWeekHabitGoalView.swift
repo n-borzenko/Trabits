@@ -9,16 +9,16 @@ import SwiftUI
 
 struct StatisticsWeekHabitGoalView: View {
   @Environment(\.dynamicTypeSize) var dynamicTypeSize
-  
+
   var weekGoal: Int
   var weekResult: Int
   var color: UIColor?
-  
+
   var body: some View {
     let hasWeekGoal = weekGoal > 0
     let isWeekGoalAchieved = weekResult >= weekGoal
     let isSymbolVisible = hasWeekGoal && isWeekGoalAchieved
-    
+
     return VStack(spacing: dynamicTypeSize.isAccessibilitySize ? 12.0 : 8.0) {
       Image(systemName: "flame")
         .font(.caption)
@@ -26,10 +26,10 @@ struct StatisticsWeekHabitGoalView: View {
         .padding(dynamicTypeSize.isAccessibilitySize ? 8 : 4)
         .tint(Color(.contrast))
         .opacity(isSymbolVisible ? 1 : 0)
-        .background (
+        .background(
           ZStack {
             Circle()
-              .fill(Color(uiColor: isSymbolVisible ? color ?? .neutral10 : .white))
+              .fill(Color(uiColor: isSymbolVisible ? color ?? .neutral10 : .systemBackground))
             Circle()
               .stroke(
                 Color(.contrast),
@@ -43,7 +43,8 @@ struct StatisticsWeekHabitGoalView: View {
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
-      hasWeekGoal ? "\(weekResult) of \(weekGoal) targets completed this week , goal \(isWeekGoalAchieved ? "" : "not " )achieved" :
+      hasWeekGoal ?
+      "\(weekResult) of \(weekGoal) targets completed this week , goal \(isWeekGoalAchieved ? "" : "not " )achieved" :
         "\(weekResult) targets completed this week"
     )
   }

@@ -11,7 +11,7 @@ struct StatisticsWeekView: View {
   @EnvironmentObject var userDefaultsObserver: UserDefaultsObserver
   @EnvironmentObject var statisticsRouter: StatisticsRouter
   @ObservedObject var weekData: StatisticsWeekData
-  
+
   var body: some View {
     ScrollViewReader { proxy in
       List {
@@ -21,7 +21,7 @@ struct StatisticsWeekView: View {
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .id("top")
-          
+
           StatisticsListItem {
             StatisticsWeekAchievementsView(weekData: weekData)
           }
@@ -30,11 +30,15 @@ struct StatisticsWeekView: View {
           StatisticsWeekHeaderView(title: "Achievements")
         }
         .id("achievements")
-        
+        .opacity(weekData.habitsWithResults.isEmpty ? 0.0 : 1.0)
+
         if userDefaultsObserver.isStatisticsSummaryPreferred {
           Section {
             StatisticsListItem {
-              StatisticsWeekSummaryGridView(habitsWithResults: weekData.habitsWithResults)
+              StatisticsWeekSummaryGridView(
+                weekData: weekData,
+                isGrouped: userDefaultsObserver.isHabitGroupingOn
+              )
             }
             .id("grid")
           }
@@ -54,7 +58,10 @@ struct StatisticsWeekView: View {
       .listStyle(.grouped)
       .overlay {
         if weekData.habitsWithResults.isEmpty {
-          EmptyStateWrapperView(message: "List is empty. Please create a new habit.", actionTitle: "Add Habit") {
+          EmptyStateWrapperView(
+            message: "List is empty. Please create a new habit.",
+            actionTitle: "Go to My Habits"
+          ) {
             statisticsRouter.navigateToStructureTab()
           }
         }

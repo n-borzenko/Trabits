@@ -19,19 +19,19 @@ class TrackerWeekDayContentView: UIView, UIContentView {
 
   private let weekdayLabel = UILabel()
   private let dayLabel = UILabel()
-  
+
   static let dayFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "dd"
     return formatter
   }()
-  
+
   static let weekdayFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "EEEEEE"
     return formatter
   }()
-  
+
   static let fullDayFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .full
@@ -70,19 +70,19 @@ class TrackerWeekDayContentView: UIView, UIContentView {
     dayLabel.layer.masksToBounds = true
     dayLabel.layer.borderWidth = 1
     stackView.addArrangedSubview(dayLabel)
-    
+
     dayLabel.heightAnchor.constraint(equalTo: stackView.heightAnchor, multiplier: 0.6).isActive = true
     let widthConstraint = dayLabel.widthAnchor.constraint(equalTo: dayLabel.heightAnchor, multiplier: 1.0)
     widthConstraint.priority = .defaultHigh
     widthConstraint.isActive = true
-    
+
     showsLargeContentViewer = true
   }
 
   func apply(configuration: TrackerWeekDayContentConfiguration) {
     guard configuration != currentConfiguration else { return }
     currentConfiguration = configuration
-        
+
     largeContentTitle = TrackerWeekDayContentView.fullDayFormatter.string(from: configuration.date)
     dayLabel.text = TrackerWeekDayContentView.dayFormatter.string(from: configuration.date)
     weekdayLabel.text = TrackerWeekDayContentView.weekdayFormatter.string(from: configuration.date)
@@ -126,7 +126,7 @@ struct TrackerWeekDayContentConfiguration: UIContentConfiguration, Hashable {
 
   func updated(for state: UIConfigurationState) -> TrackerWeekDayContentConfiguration {
     guard let state = state as? UICellConfigurationState else { return self }
-    
+
     var configuration = self
     configuration.isSelected = state.isSelected
     return configuration

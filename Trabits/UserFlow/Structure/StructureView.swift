@@ -10,10 +10,10 @@ import SwiftUI
 struct StructureView: View {
   @EnvironmentObject var structureRouter: StructureRouter
   @StateObject private var userDefaultsObserver = UserDefaultsObserver()
-  
+
   @State private var isHabitEditorVisible = false
   @State private var isCategoryEditorVisible = false
-  
+
   var body: some View {
     NavigationStack(path: $structureRouter.path) {
       VStack {
@@ -25,7 +25,7 @@ struct StructureView: View {
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
-        
+
         Group {
           if structureRouter.selectedContentType == .habits && !userDefaultsObserver.isHabitGroupingOn {
             StructureHabitsView(isHabitEditorVisible: $isHabitEditorVisible)
@@ -67,8 +67,11 @@ struct StructureView: View {
               case .categories: isCategoryEditorVisible = true
               }
             }
-            if !userDefaultsObserver.isHabitGroupingOn || structureRouter.selectedContentType == .categories  {
-              Button("Reorder \(structureRouter.selectedContentType.rawValue.lowercased())", systemImage: "arrow.up.arrow.down") {
+            if !userDefaultsObserver.isHabitGroupingOn || structureRouter.selectedContentType == .categories {
+              Button(
+                "Reorder \(structureRouter.selectedContentType.rawValue.lowercased())",
+                systemImage: "arrow.up.arrow.down"
+              ) {
                 structureRouter.editMode = .active
               }
             }

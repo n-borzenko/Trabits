@@ -10,7 +10,7 @@ import SwiftUI
 struct TitleSelectorView: View {
   @Binding var title: String
   @FocusState.Binding var focusedField: FocusedEditorField?
-  
+
   var body: some View {
     Section("Title") {
       TextField("Title", text: $title)

@@ -11,9 +11,13 @@ import SwiftUI
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var appCoordinator: AppCoordinator?
 
-  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
-    
+
     let window = UIWindow(frame: windowScene.coordinateSpace.bounds)
     window.windowScene = windowScene
     appCoordinator = AppCoordinator(window: window)
@@ -32,4 +36,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     PersistenceController.shared.saveContext()
   }
 }
-

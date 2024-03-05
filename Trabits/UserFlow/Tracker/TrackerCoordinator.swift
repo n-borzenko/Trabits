@@ -12,19 +12,19 @@ final class TrackerCoordinator: Coordinator {
   var childCoordinators: [any Coordinator] = []
   private lazy var trackerContainerViewController = TrackerContainerViewController(trackerCoordinator: self)
   lazy var rootViewController = UINavigationController(rootViewController: trackerContainerViewController)
-  
+
   init(mainCoordinator: MainCoordinator? = nil) {
     self.mainCoordinator = mainCoordinator
   }
-  
+
   func start() {
     rootViewController.navigationBar.prefersLargeTitles = false
   }
-  
+
   func popToRoot() {
     trackerContainerViewController.chooseToday()
   }
-  
+
   func navigateToStructureTab() {
     mainCoordinator?.selectedTab = .structure
   }

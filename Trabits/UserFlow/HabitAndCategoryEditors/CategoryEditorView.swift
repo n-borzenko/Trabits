@@ -17,13 +17,13 @@ struct CategoryEditorView: View {
   @Environment(\.managedObjectContext) var context
   @Environment(\.dismiss) var dismiss
   var category: Category?
-  
+
   @State private var categoryDraft = CategoryEditorDraft()
   @State private var isValid = false
   @State private var isNew = true
-  
+
   @FocusState private var focusedField: FocusedEditorField?
-  
+
   var body: some View {
     NavigationStack {
       List {
@@ -65,7 +65,7 @@ extension CategoryEditorView {
     }
     categoryDraft.title = category.title ?? ""
   }
-  
+
   private func validate() {
     if !categoryDraft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
       isValid = true
@@ -73,7 +73,7 @@ extension CategoryEditorView {
       isValid = false
     }
   }
-  
+
   private func saveCategory() {
     guard isValid else { return }
 
@@ -82,7 +82,7 @@ extension CategoryEditorView {
     } else {
       createNewCategory()
     }
-    
+
     if context.hasChanges {
       do {
         try context.save()
@@ -92,7 +92,7 @@ extension CategoryEditorView {
       }
     }
   }
-  
+
   private func createNewCategory() {
     var categoriesCount = 0
     do {
@@ -103,13 +103,13 @@ extension CategoryEditorView {
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
-    
+
     let category = Category(context: context)
     category.title = categoryDraft.title.trimmingCharacters(in: .whitespacesAndNewlines)
     category.color = PastelPalette.colors[categoryDraft.colorIndex]
     category.order = -Int32(categoriesCount)
     category.habits = Set<Habit>() as NSSet
-    
+
     do {
       try context.obtainPermanentIDs(for: [category])
     } catch {
@@ -117,7 +117,7 @@ extension CategoryEditorView {
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
   }
-  
+
   private func updateExistingCategory(category: Category) {
     category.title = categoryDraft.title.trimmingCharacters(in: .whitespacesAndNewlines)
     category.color = PastelPalette.colors[categoryDraft.colorIndex]
@@ -126,11 +126,11 @@ extension CategoryEditorView {
 
 #Preview {
   let context = PersistenceController.preview.container.viewContext
-  var category: Category? = nil
+  var category: Category?
   do {
     category = try context.fetch(Category.orderedCategoriesFetchRequest()).first
   } catch {}
-  
+
   return CategoryEditorView(category: category)
     .environment(\.managedObjectContext, context)
 }

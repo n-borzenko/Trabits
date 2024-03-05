@@ -9,13 +9,15 @@ import SwiftUI
 
 struct DayTargetStepperView: View {
   @Binding var value: Int
-  
+
   private let minValue = 1
   private let maxValue = 100
-  
+
   var body: some View {
     HStack(spacing: 8) {
-      Button(action: { value = max(value - 1, minValue) }) {
+      Button {
+        value = max(value - 1, minValue)
+      } label: {
         Image(systemName: "minus")
           .frame(maxHeight: .infinity)
       }
@@ -23,7 +25,9 @@ struct DayTargetStepperView: View {
       .disabled(value == minValue)
       Text("\(value)")
         .foregroundColor(.secondary)
-      Button(action: { value = min(value + 1, maxValue) }) {
+      Button {
+        value = min(value + 1, maxValue)
+      } label: {
         Image(systemName: "plus")
           .frame(maxHeight: .infinity)
       }
@@ -36,10 +40,10 @@ struct DayTargetStepperView: View {
       switch direction {
       case .increment:
         guard value < maxValue else { break }
-        value = value + 1
+        value += 1
       case .decrement:
         guard value > minValue else { break }
-        value = value - 1
+        value -= 1
       @unknown default:
         break
       }
@@ -53,10 +57,11 @@ struct DayTargetSelectorView: View {
   @Binding var resetIsOn: Bool
   @State private var isAlertPresented = false
   var isNew: Bool
-  
+
   var body: some View {
-    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .center))
-    
+    let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) :
+      AnyLayout(HStackLayout(alignment: .center))
+
     Section("Completions per day") {
       layout {
         Text("Day target")
@@ -69,9 +74,9 @@ struct DayTargetSelectorView: View {
           Toggle("Reset previously set targets", isOn: $resetIsOn)
             .tint(.neutral60)
           Divider()
-          Button(action: {
+          Button {
             isAlertPresented = true
-          }) {
+          } label: {
             Image(systemName: "info.circle")
               .font(.title2)
           }
@@ -79,10 +84,16 @@ struct DayTargetSelectorView: View {
           .buttonStyle(.borderless)
           .alert(
             "Resetting day target",
-            isPresented: $isAlertPresented,
-            actions: { Button("OK", role: .cancel, action: { }) }
+            isPresented: $isAlertPresented
           ) {
-            Text("Resetting previuosly set targets will affect your statistics.\nAlternatively, you can track new target starting today.")
+            Button("OK", role: .cancel) {}
+          } message: {
+            Text(
+              """
+              Resetting previuosly set targets will affect your statistics.
+              Alternatively, you can track new target starting today.
+              """
+            )
           }
         }
       }

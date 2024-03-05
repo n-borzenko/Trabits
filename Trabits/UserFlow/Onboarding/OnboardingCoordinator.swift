@@ -9,7 +9,7 @@ import SwiftUI
 
 final class OnboardingCoordinator: Coordinator {
   var childCoordinators: [any Coordinator] = []
-  
+
   lazy var rootViewController: UIViewController = {
     let onboardingView = OnboardingView()
     return UIHostingController(rootView: onboardingView)

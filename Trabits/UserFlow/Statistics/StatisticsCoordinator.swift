@@ -10,7 +10,7 @@ import SwiftUI
 enum StatisticsContentType: String, CaseIterable {
   case weekly = "Weekly"
   case monthly = "Monthly"
-  
+
   var itemTitle: String {
     switch self {
     case .weekly: return "week"
@@ -31,13 +31,13 @@ struct StatisticsRouterState {
 final class StatisticsRouter: ObservableObject {
   @Published var pickerContentType = StatisticsContentType.weekly
   @Published var currentState = StatisticsRouterState(contentType: .weekly, date: Date())
-  
+
   weak var delegate: StatisticsRouterDelegate?
-  
+
   func navigateToStructureTab() {
     delegate?.navigateToStructureTab()
   }
-  
+
   static func generateTitle(contentType: StatisticsContentType, date: Date) -> String {
     switch contentType {
     case .weekly:
@@ -46,7 +46,7 @@ final class StatisticsRouter: ObservableObject {
       let startDateString = interval.start.formatted(date: .abbreviated, time: .omitted)
       let endDateString = endDate.formatted(date: .abbreviated, time: .omitted)
       return "\(startDateString) - \(endDateString)"
-      
+
     case .monthly:
       return Calendar.current.monthSymbols[Calendar.current.component(.month, from: date) - 1]
     }
@@ -64,27 +64,27 @@ extension StatisticsRouter: DatePickerViewControllerDelegate {
 final class StatisticsCoordinator: Coordinator, StatisticsRouterDelegate {
   private weak var mainCoordinator: MainCoordinator?
   var childCoordinators: [any Coordinator] = []
-  
+
   private var statisticsRouter = StatisticsRouter()
-  
+
   lazy var rootViewController: UIViewController = {
     let statisticsView = StatisticsView()
       .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
       .environmentObject(statisticsRouter)
-    
+
     return UIHostingController(rootView: statisticsView)
   }()
-  
+
   init(mainCoordinator: MainCoordinator? = nil) {
     self.mainCoordinator = mainCoordinator
     self.statisticsRouter.delegate = self
   }
-  
+
   func popToRoot() {
     statisticsRouter.currentState = StatisticsRouterState(contentType: .weekly, date: Date())
     statisticsRouter.pickerContentType = .weekly
   }
-  
+
   func navigateToStructureTab() {
     mainCoordinator?.selectedTab = .structure
   }
