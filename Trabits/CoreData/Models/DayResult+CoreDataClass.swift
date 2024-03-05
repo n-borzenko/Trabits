@@ -9,6 +9,4 @@
 import Foundation
 import CoreData
 
-public class DayResult: NSManagedObject {
-
-}
+public class DayResult: NSManagedObject { }

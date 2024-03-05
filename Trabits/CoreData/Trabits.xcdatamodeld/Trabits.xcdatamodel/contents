@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="22G91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="22G74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Category" representedClassName=".Category" syncable="YES">
         <attribute name="color" attributeType="Transformable" valueTransformerName="UIColorValueTransformer" customClassName="UIColor"/>
         <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="habits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Habit" inverseName="category" inverseEntity="Habit"/>
+        <relationship name="habits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Habit" inverseName="category" inverseEntity="Habit"/>
     </entity>
     <entity name="DayResult" representedClassName=".DayResult" syncable="YES">
+        <attribute name="completionCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="completedHabits" toMany="YES" deletionRule="Nullify" destinationEntity="Habit" inverseName="dayResults" inverseEntity="Habit"/>
+        <relationship name="habit" maxCount="1" deletionRule="Nullify" destinationEntity="Habit" inverseName="dayResults" inverseEntity="Habit"/>
+    </entity>
+    <entity name="DayTarget" representedClassName=".DayTarget" syncable="YES">
+        <attribute name="applicableFrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="count" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="habit" maxCount="1" deletionRule="Nullify" destinationEntity="Habit" inverseName="dayTargets" inverseEntity="Habit"/>
     </entity>
     <entity name="Habit" representedClassName=".Habit" syncable="YES">
+        <attribute name="archivedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="color" optional="YES" attributeType="Transformable" valueTransformerName="UIColorValueTransformer" customClassName="UIColor"/>
+        <attribute name="createdAt" attributeType="Date" defaultDateTimeInterval="720489600" usesScalarValueType="NO"/>
         <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
-        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="habits" inverseEntity="Category"/>
-        <relationship name="dayResults" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DayResult" inverseName="completedHabits" inverseEntity="DayResult"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="habits" inverseEntity="Category"/>
+        <relationship name="dayResults" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayResult" inverseName="habit" inverseEntity="DayResult"/>
+        <relationship name="dayTargets" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayTarget" inverseName="habit" inverseEntity="DayTarget"/>
+        <relationship name="weekGoals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WeekGoal" inverseName="habit" inverseEntity="WeekGoal"/>
+    </entity>
+    <entity name="WeekGoal" representedClassName=".WeekGoal" syncable="YES">
+        <attribute name="applicableFrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="count" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="habit" maxCount="1" deletionRule="Nullify" destinationEntity="Habit" inverseName="weekGoals" inverseEntity="Habit"/>
     </entity>
 </model>

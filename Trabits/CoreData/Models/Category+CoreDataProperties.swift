@@ -15,11 +15,6 @@ extension Category: Identifiable {
   @NSManaged var habits: NSSet?
 
   @NSManaged var order: Int32
-
-  var orderPriority: Int {
-    get { Int(order) }
-    set { order = Int32(newValue) }
-  }
 }
 
 // MARK: Generated accessors for habits
@@ -35,33 +30,32 @@ extension Category {
 
   @objc(removeHabits:)
   @NSManaged func removeFromHabits(_ values: NSSet)
-  
+
   func getSortedHabits() -> [Habit] {
-    return habits?.sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as? [Habit] ?? []
+    let sortDescriptors = [
+      NSSortDescriptor(keyPath: \Habit.archivedAt, ascending: true),
+      NSSortDescriptor(keyPath: \Habit.order, ascending: true)
+    ]
+    return habits?.sortedArray(using: sortDescriptors) as? [Habit] ?? []
   }
 }
 
 extension Category {
-  @nonobjc class func fetchRequest() -> NSFetchRequest<Category> {
-    return NSFetchRequest<Category>(entityName: "Category")
-  }
-  
-  @nonobjc class func singleCategoryFetchRequest(objectID: NSManagedObjectID) -> NSFetchRequest<Category> {
-    let request = fetchRequest()
-    request.predicate = NSPredicate(format: "self == %@", objectID)
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+  @nonobjc class func orderedCategoriesFetchRequest(startingFrom position: Int32? = nil) -> NSFetchRequest<Category> {
+    let request = NSFetchRequest<Category>(entityName: "Category")
+    request.sortDescriptors = [NSSortDescriptor(keyPath: \Category.order, ascending: false)]
+    if let position {
+      request.predicate = NSPredicate(format: "order <= %@", NSNumber(value: position))
+    }
     return request
   }
 
-  @nonobjc class func orderedCategoriesFetchRequest() -> NSFetchRequest<Category> {
-    let request = fetchRequest()
-    request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-    return request
-  }
-
-  @nonobjc class func nonEmptyCategoriesFetchRequest() -> NSFetchRequest<Category> {
+  @nonobjc class func orderedCategoriesFetchRequest(forDate date: Date) -> NSFetchRequest<Category> {
     let request = orderedCategoriesFetchRequest()
-    request.predicate = NSPredicate(format: "habits.@count > 0")
+    request.predicate = NSPredicate(
+      format: "SUBQUERY(habits, $h, $h.archivedAt == nil OR $h.archivedAt >= %@).@count > 0",
+      date as NSDate
+    )
     return request
   }
 }
