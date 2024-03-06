@@ -110,15 +110,23 @@ struct SettingsUserDataView: View {
 
   var body: some View {
     List {
-      Section {
-        Text("""
-          All user data is stored on the device and is never shared with any server or third-party service.
-          We do not use cookies or collect anonymous statistics.
-          In the event that conditions outlined above undergo any changes, user will be notified.
+      Section("Privacy policy") {
+        Text(
+        """
+        We do not collect, use, save, or have access to any of your personal data stored in the application.
+        All user data is stored locally on your device and is never shared with any server or third-party service.
+        Your individual settings within the application are also stored solely on your device.
         """)
-        .font(.headline)
         .padding(.vertical, 6)
+
+        LabeledContent {
+          Link("trabits.nborzenko.me", destination: URL(string: "https://trabits.nborzenko.me/#privacy_policy")!)
+            .tint(.secondary)
+        } label: {
+          Text("Policy")
+        }
       }
+
       Section("User settings") {
         Text("Application state settings are stored in UserDefaults")
           .font(.headline)

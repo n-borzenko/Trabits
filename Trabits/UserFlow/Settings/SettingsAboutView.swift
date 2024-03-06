@@ -13,7 +13,7 @@ struct SettingsAboutView: View {
     List {
       Section("Contacts") {
         LabeledContent {
-          Link("trabits.nborzenko.me", destination: URL(string: "https://www.trabits.nborzenko.me/")!)
+          Link("trabits.nborzenko.me", destination: URL(string: "https://trabits.nborzenko.me/")!)
             .tint(.secondary)
         } label: {
           Text("Webpage")
