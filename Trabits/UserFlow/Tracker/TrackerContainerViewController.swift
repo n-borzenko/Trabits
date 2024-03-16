@@ -11,6 +11,7 @@ import Combine
 class TrackerContainerViewController: UIViewController {
   private weak var trackerCoordinator: TrackerCoordinator?
   private let dataProvider = TrackerDataProvider()
+  private var userDefaultsObserver = UserDefaultsObserver()
 
   private var weekViewController: TrackerWeekViewController!
   private var dayPageViewController: PageViewController!
@@ -23,7 +24,7 @@ class TrackerContainerViewController: UIViewController {
     }
   }
 
-  private var cancellable: AnyCancellable?
+  private var cancellables = Set<AnyCancellable>()
 
   private var dateFormatter = {
     var dateFormatter = DateFormatter()
@@ -37,9 +38,20 @@ class TrackerContainerViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
     setupViews()
 
-    cancellable = dataProvider.$selectedDate.sink { [weak self] newSelectedDate in
-      self?.selectedDateUpdateHandler(selectedDate: newSelectedDate)
-    }
+    dataProvider.$selectedDate
+      .sink { [weak self] newSelectedDate in
+        self?.selectedDateUpdateHandler(selectedDate: newSelectedDate)
+      }
+      .store(in: &cancellables)
+    userDefaultsObserver.$isHabitGroupingOn
+      .sink { [weak self] isHabitGroupingOn in
+        guard let self else { return }
+        let leftBarButtonTitle = isHabitGroupingOn ? "Hide category groups" : "Group by category"
+        navigationItem.leftBarButtonItem?.title = leftBarButtonTitle
+        let leftBarButtonImage = UIImage(systemName: isHabitGroupingOn ? "folder.fill" : "folder")
+        navigationItem.leftBarButtonItem?.image = leftBarButtonImage
+      }
+      .store(in: &cancellables)
   }
 
   @available(*, unavailable)
@@ -48,8 +60,8 @@ class TrackerContainerViewController: UIViewController {
   }
 
   deinit {
-    cancellable?.cancel()
-    cancellable = nil
+    cancellables.forEach { $0.cancel() }
+    cancellables.removeAll()
   }
 }
 
@@ -97,12 +109,13 @@ extension TrackerContainerViewController {
     navigationItem.largeTitleDisplayMode = .never
 
     navigationItem.leftBarButtonItem = UIBarButtonItem(
-      image: UIImage(systemName: "house"),
+      image: UIImage(systemName: userDefaultsObserver.isHabitGroupingOn ? "folder.fill" : "folder"),
       style: .plain,
       target: self,
-      action: #selector(chooseToday)
+      action: #selector(toggleGroupByCategory)
     )
-    navigationItem.leftBarButtonItem?.title = "Choose today"
+    let leftButtonTitle = userDefaultsObserver.isHabitGroupingOn ? "Hide category groups" : "Group by category"
+    navigationItem.leftBarButtonItem?.title = leftButtonTitle
 
     navigationItem.rightBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "calendar"),
@@ -111,6 +124,14 @@ extension TrackerContainerViewController {
       action: #selector(chooseDate)
     )
     navigationItem.rightBarButtonItem?.title = "Choose date"
+  }
+
+  func chooseToday() {
+    dataProvider.selectedDate = Calendar.current.startOfDay(for: Date())
+    UIAccessibility.post(
+      notification: .pageScrolled,
+      argument: "\(dataProvider.generateSelectedDateDescription()) is selected"
+    )
   }
 
   @objc private func chooseDate() {
@@ -127,12 +148,8 @@ extension TrackerContainerViewController {
     present(containerController, animated: true)
   }
 
-  @objc func chooseToday() {
-    dataProvider.selectedDate = Calendar.current.startOfDay(for: Date())
-    UIAccessibility.post(
-      notification: .pageScrolled,
-      argument: "\(dataProvider.generateSelectedDateDescription()) is selected"
-    )
+  @objc private func toggleGroupByCategory() {
+    UserDefaults.standard.isHabitGroupingOn = !userDefaultsObserver.isHabitGroupingOn
   }
 }
 
