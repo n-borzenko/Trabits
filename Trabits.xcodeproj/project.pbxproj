@@ -64,6 +64,7 @@
 		1994EEE22B222FAA00651674 /* StructureHabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1994EEE12B222FAA00651674 /* StructureHabitsView.swift */; };
 		1994EEE42B2230A800651674 /* StructureGroupedHabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1994EEE32B2230A800651674 /* StructureGroupedHabitsView.swift */; };
 		1994EEE62B2230B900651674 /* StructureCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1994EEE52B2230B900651674 /* StructureCategoriesView.swift */; };
+		199AF4B32BA90A0700F65EE1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 196829C82B3DF1B900FC8E30 /* PrivacyInfo.xcprivacy */; };
 		199B8E5F2B150D1D00DD2DA1 /* WeekGoal+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199B8E5B2B150D1D00DD2DA1 /* WeekGoal+CoreDataClass.swift */; };
 		199B8E602B150D1D00DD2DA1 /* WeekGoal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199B8E5C2B150D1D00DD2DA1 /* WeekGoal+CoreDataProperties.swift */; };
 		199B8E612B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199B8E5D2B150D1D00DD2DA1 /* DayTarget+CoreDataClass.swift */; };
@@ -572,6 +573,7 @@
 			files = (
 				19CC938E2B07DD3C0026789C /* Logo.png in Resources */,
 				194AC5AC2A40F49B00383B29 /* LaunchScreen.storyboard in Resources */,
+				199AF4B32BA90A0700F65EE1 /* PrivacyInfo.xcprivacy in Resources */,
 				194AC5A92A40F49B00383B29 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
