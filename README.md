@@ -29,7 +29,7 @@ Promotional description is located at https://trabits.nborzenko.me/.
 
 ## Screenshots
 
-<img src='https://trabits.nborzenko.me/screenshots-light/tracker-large.png' width='200' />
+<img src='https://trabits.nborzenko.me/screenshots-light/tracker.png' width='200' />
 <img src='https://trabits.nborzenko.me/screenshots-dark/weekly-detailed.png' width='200' />
 <img src='https://trabits.nborzenko.me/screenshots-light/monthly.png' width='200' />
 <img src='https://trabits.nborzenko.me/screenshots-dark/habit-editor.png' width='200' />
