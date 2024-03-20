@@ -4,9 +4,9 @@
 
 Trabits is a habit tracker application.
 
-It is available in the App Store https://apps.apple.com/app/id6478707901.
+It is available [on the App Store](https://apps.apple.com/app/id6478707901).
 
-Promotional description is located at https://trabits.nborzenko.me/.
+[Promotional description](https://trabits.nborzenko.me/).
 
 #### Key features of the application
 
